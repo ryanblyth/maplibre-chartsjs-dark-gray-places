@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- State Route Shield - configurable rounded rectangle -->
+  <!-- Background fill -->
+  <path id="background" fill="{{background}}" d="M97.49,49.997V5.543c0-1.679-1.364-3.043-3.043-3.043H5.541C3.874,2.5,2.51,3.864,2.51,5.543v44.454v44.453c0,1.679,1.364,3.051,3.031,3.051h88.906c1.679,0,3.043-1.372,3.043-3.051V49.997z"/>
+  <!-- Outline/border -->
+  <path id="outline" fill="none" stroke="{{stroke}}" stroke-width="{{strokeWidth}}" d="M97.49,49.997V5.543c0-1.679-1.364-3.043-3.043-3.043H5.541C3.874,2.5,2.51,3.864,2.51,5.543v44.454v44.453c0,1.679,1.364,3.051,3.031,3.051h88.906c1.679,0,3.043-1.372,3.043-3.051V49.997z"/>
+</svg>

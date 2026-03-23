@@ -1,0 +1,95 @@
+{
+  "airport": {
+    "width": 21,
+    "height": 21,
+    "x": 0,
+    "y": 0,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "airfield": {
+    "width": 21,
+    "height": 21,
+    "x": 21,
+    "y": 0,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "hospital": {
+    "width": 21,
+    "height": 21,
+    "x": 42,
+    "y": 0,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "museum": {
+    "width": 21,
+    "height": 21,
+    "x": 63,
+    "y": 0,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "park": {
+    "width": 21,
+    "height": 21,
+    "x": 84,
+    "y": 0,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "rail": {
+    "width": 21,
+    "height": 21,
+    "x": 0,
+    "y": 21,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "school": {
+    "width": 21,
+    "height": 21,
+    "x": 21,
+    "y": 21,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "stadium": {
+    "width": 21,
+    "height": 21,
+    "x": 42,
+    "y": 21,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "zoo": {
+    "width": 21,
+    "height": 21,
+    "x": 63,
+    "y": 21,
+    "pixelRatio": 1,
+    "sdf": true
+  },
+  "shield-interstate-custom": {
+    "width": 28,
+    "height": 28,
+    "x": 0,
+    "y": 42,
+    "pixelRatio": 1
+  },
+  "shield-ushighway-custom": {
+    "width": 26,
+    "height": 26,
+    "x": 0,
+    "y": 70,
+    "pixelRatio": 1
+  },
+  "shield-state-custom": {
+    "width": 34,
+    "height": 34,
+    "x": 0,
+    "y": 96,
+    "pixelRatio": 1
+  }
+}

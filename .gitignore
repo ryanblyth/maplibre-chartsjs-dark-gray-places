@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+yarn.lock
+
+# Emitted from shared/utils/*.ts (run `npm install` — prepare runs build:utils)
+shared/utils/*.js
+
+# Build artifacts
+*.log
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+
+# Temporary files
+*.tmp
+.cache/
