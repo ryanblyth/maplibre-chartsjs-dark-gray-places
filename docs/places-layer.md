@@ -40,6 +40,8 @@ This generates `style.json` with the places source and layers.
 
 ### 3. Initialize Interactivity
 
+In this repository, **`preview.html`** loads **`map.js`**, which imports `initializePlacesInteractivity` from `./shared/utils/placesMapSetup.js` (compiled from `placesMapSetup.ts`). Use that file as the reference wiring for the preview.
+
 For a TypeScript/ES Module environment:
 
 ```typescript

@@ -1,6 +1,6 @@
 # Customizing Your Map
 
-This guide explains how to customize the My Custom Map Fixed map.
+This guide explains how to customize the My Custom Map Fixed map. The development preview (`preview.html`) includes the map plus a **charts dock** (census charts, place search); map styling still comes from `styles/theme.ts` as described below.
 
 ## Color Customization
 

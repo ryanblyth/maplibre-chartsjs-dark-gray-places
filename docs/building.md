@@ -26,7 +26,26 @@ This runs `scripts/build-styles.ts`, which:
    - `style.json` - Copy of generated file (for compatibility)
    - `map-config.js` - JavaScript configuration for preview
 
-### 2. Build Shields (Optional)
+### 2. Build Browser Utilities (`shared/utils`)
+
+```bash
+npm run build:utils
+```
+
+This runs the TypeScript compiler (`tsc --project tsconfig.browser.json`), which compiles **browser-facing** modules under `shared/utils/*.ts` to **`shared/utils/*.js`**. Those `.js` files are imported by `map.js` and `charts-dock-panel.js` at runtime.
+
+- The emitted `.js` files are listed in `.gitignore`; regenerate them after pulling or editing the `.ts` sources.
+- **`npm install`** runs the **`prepare`** script, which executes `npm run build:utils`, so a fresh clone gets compiled utilities without an extra step.
+
+For both style JSON and utilities:
+
+```bash
+npm run build
+```
+
+This runs `build:utils` then `build:styles`.
+
+### 3. Build Shields (Optional)
 
 ```bash
 npm run build:shields
@@ -158,9 +177,11 @@ Used by `preview.html` to configure the map.
 
 ## TypeScript Compilation
 
-The build uses `tsx` to run TypeScript directly, no separate compilation needed.
+**Style and tooling scripts** use **`tsx`** to run TypeScript directly (e.g. `scripts/build-styles.ts`) — no separate compile step for those.
 
-TypeScript configuration is in `tsconfig.json`:
+**Browser utilities** under `shared/utils/` use **`tsc`** via `npm run build:utils` and `tsconfig.browser.json` (see [Build Browser Utilities](#2-build-browser-utilitiessharedutils) above).
+
+Root TypeScript configuration is in `tsconfig.json`:
 
 ```json
 {

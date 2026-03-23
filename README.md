@@ -1,26 +1,30 @@
 # My Custom Map Fixed Map
 
-A custom MapLibre basemap created from the dark-gray template.
+A custom MapLibre basemap created from the dark-gray template. The development preview (`preview.html`) includes a **map plus a charts dock** (Chart.js, place search, census charts).
 
 ## Quick Start
 
-1. **Install dependencies:**
+1. **Install dependencies** (also compiles browser utilities — see Scripts):
    ```bash
    npm install
    ```
+   This runs `prepare`, which executes `npm run build:utils` and emits `shared/utils/*.js` from the TypeScript sources.
 
-2. **Build the map style:**
+2. **Start the development server** (from the repository root, where `package.json` and `serve.js` live):
+   ```bash
+   npm run serve
+   ```
+   The console prints `Serving files from:` — that path should be this repo root. If `style.json` / `map-config.js` are missing or stale, run step 3 first.
+
+3. **Rebuild the map style** when you change `styles/theme.ts` or need a fresh `style.json`:
    ```bash
    npm run build:styles
    ```
 
-3. **Start the development server:**
-   ```bash
-   npm run serve
-   ```
+4. **View the preview:**
+   Open [http://localhost:8080/preview.html](http://localhost:8080/preview.html) (or the same path on whatever port you set — see Troubleshooting).
 
-4. **View the map:**
-   Open [http://localhost:8080/preview.html](http://localhost:8080/preview.html)
+**One-shot full build and serve:** `npm run dev` runs `build` (utils + styles) then `serve`.
 
 ## Project Structure
 
@@ -33,12 +37,12 @@ A custom MapLibre basemap created from the dark-gray template.
 ├── scripts/            # Build scripts
 │   ├── build-styles.ts # Generate style.json
 │   └── build-shields.ts # Build highway shields
-├── shared/             # Shared utilities (layers, expressions)
+├── shared/             # Shared utilities (layers, expressions, places/*.ts)
 ├── charts/             # Chart.js dock modules (preview.html)
 ├── data/               # Places index, manifest, search helpers
 ├── docs/               # Documentation
 ├── preview.html        # Development preview page (map + charts dock)
-├── map.js              # Map bootstrap
+├── map.js              # Map bootstrap (source — not generated)
 ├── charts-dock-panel.js
 ├── charts-dock-search.js
 ├── serve.js           # Development server
@@ -66,13 +70,14 @@ See [docs/customizing.md](docs/customizing.md) for detailed customization guide.
 
 ### Building Styles
 
-The build system converts TypeScript source files into MapLibre-compatible JSON:
+The build system converts TypeScript style sources into MapLibre-compatible JSON:
 
 ```bash
 npm run build:styles
 ```
 
 This generates:
+
 - `style.json` - Main style file (used by the map)
 - `style.generated.json` - Same content, formatted output
 - `map-config.js` - Map initialization config
@@ -104,20 +109,17 @@ This map is designed to work with Cloudflare Pages or any static hosting.
 
 ### Assets Strategy
 
-- **Local files**: Sprites (bundled in `sprites/`)
-- **CDN files**: 
+- **Local files**: Sprites (bundled in `sprites/`), preview HTML/JS modules, charts dock
+- **CDN files**:
   - Glyphs (fonts): `https://data.storypath.studio/glyphs/`
   - Starfield script: `https://data.storypath.studio/js/maplibre-gl-starfield.js`
   - PMTiles data: External URLs in `style.json`
+  - Preview import map: Chart.js and Fuse load from `https://esm.sh/` (see [preview.html](preview.html))
 
 ### Using in Production
 
-1. Build the styles: `npm run build:styles`
-2. Deploy these files:
-   - `style.json`
-   - `sprites/` directory
-   - `preview.html` (or your custom HTML)
-   - `map.js` (if generated)
+1. Build for production as needed: `NODE_ENV=production npm run build:styles` (and ensure `shared/utils/*.js` exist — run `npm run build:utils` or rely on `npm install` / CI).
+2. Deploy the static set described in [docs/deploying.md](docs/deploying.md), including at minimum for the full preview: `preview.html`, `map.js`, `map-config.js`, `style.json`, `sprites/`, `charts/`, `data/`, `charts-dock-panel.js`, `charts-dock-search.js`, and `shared/utils/*.js`.
 
 See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 
@@ -126,13 +128,17 @@ See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 - [Customizing the Map](docs/customizing.md) - How to edit colors, layers, and settings
 - [Build System](docs/building.md) - Understanding the build process
 - [Deployment](docs/deploying.md) - Deploying to production
+- [Places layer](docs/places-layer.md) - Places interactivity and popups
 
 ## Scripts
 
+- `prepare` (runs on `npm install`) - `npm run build:utils` — compile `shared/utils/*.ts` to `.js`
+- `npm run build:utils` - TypeScript compile for browser utilities only
 - `npm run build:styles` - Build map style from TypeScript source
 - `npm run build:shields` - Rebuild highway shield sprites
-- `npm run serve` - Start development server
-- `npm run dev` - Build and serve (convenience command)
+- `npm run build` - `build:utils` then `build:styles`
+- `npm run serve` - Start development server (default port 8080, override with `PORT`)
+- `npm run dev` - Full build then serve
 
 ## Requirements
 
@@ -146,21 +152,31 @@ This map uses external CDN assets to reduce bundle size:
 - **Glyphs** (fonts): Loaded from `https://data.storypath.studio/glyphs/`
 - **Starfield**: Loaded from `https://data.storypath.studio/js/maplibre-gl-starfield.js`
 - **PMTiles data**: Map data loaded from external URLs
+- **Preview**: MapLibre, PMTiles, and starfield from `unpkg.com` / `data.storypath.studio`; Chart.js and Fuse from `esm.sh` per `preview.html` import map
 
 These are loaded on-demand and cached by the browser.
 
 ## Troubleshooting
 
 **Map not rendering?**
+
 - Check browser console for errors
-- Ensure you've run `npm run build:styles`
-- Verify development server is running
+- Ensure `style.json` exists and matches your build (run `npm run build:styles` after theme edits)
+- Run `npm install` or `npm run build:utils` so `shared/utils/*.js` exists
+- Verify the development server is running from the **repository root** (check `Serving files from:` in the terminal)
+
+**`EADDRINUSE` / port 8080 already in use?**
+
+- Another process (often an old `node serve.js`) is still bound to 8080. Stop it, or run `PORT=8081 npm run serve` and open `http://localhost:8081/preview.html`.
+- Find the listener: `lsof -nP -iTCP:8080 -sTCP:LISTEN`
 
 **Styles not updating?**
+
 - Run `npm run build:styles` after editing `theme.ts`
 - Hard refresh browser (Cmd+Shift+R / Ctrl+Shift+R)
 
 **Missing sprites?**
+
 - Ensure `sprites/` directory exists
 - Check that sprite paths in `style.json` are correct
 
