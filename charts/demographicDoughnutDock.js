@@ -4,20 +4,9 @@
 import { Chart } from "chart.js";
 import { dockHtmlLegendPlugin } from "./htmlLegendDockPlugin.js";
 import { ensureDoughnutChartComponentsRegistered } from "./doughnutDockRegistry.js";
+import { safeNumber, formatPercent } from "./chartUtils.js";
 
 let chartInstance = null;
-
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
 
 function buildDataset(attrs) {
   const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);

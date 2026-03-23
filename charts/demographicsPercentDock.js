@@ -12,29 +12,11 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { safeNumber, formatPercent, tickColor } from "./chartUtils.js";
 
-const TICK_COLOR = "#c9d1d9";
-const TICK_COLOR_LIGHT = "#444444";
 const BAR_LABEL_COLOR = "rgba(232, 234, 237, 0.55)";
 
-function tickColor() {
-  const dock = document.getElementById("charts-dock");
-  return dock?.classList.contains("charts-dock-light") ? TICK_COLOR_LIGHT : TICK_COLOR;
-}
-
 let chartInstance = null;
-
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
 
 function buildMetrics(attrs) {
   const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);

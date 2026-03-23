@@ -32,6 +32,7 @@ import {
   redrawStateTopCitiesChart,
 } from "./charts/stateTopCitiesDock.js";
 import { loadManifest } from "./data/manifestLoader.js";
+import { formatNumber } from "./charts/chartUtils.js";
 
 const EVENT_NAME = "place-selected";
 
@@ -53,11 +54,6 @@ const commuteCanvas = document.getElementById("dock-commute-percent-chart");
 const demographicDoughnutCanvas = document.getElementById("dock-demographic-doughnut-chart");
 const commuteDoughnutCanvas = document.getElementById("dock-commute-doughnut-chart");
 const stateTopCitiesCanvas = document.getElementById("dock-state-top-cities-chart");
-
-function formatNumber(n) {
-  if (n == null || Number.isNaN(n)) return "—";
-  return new Intl.NumberFormat("en-US").format(n);
-}
 
 function destroyAllCharts() {
   destroyDemographicsPercentChart();
@@ -231,45 +227,30 @@ async function loadFromGeoid(geoid, replaceHistoryState = false) {
 export async function selectPlaceFromSearch({ geoid, displayName }) {
   if (!geoid) return;
   const fallbackName = displayName || `Place ${geoid}`;
+
+  let attrs = null;
   try {
     const statefp = geoid.slice(0, 2);
     const data = await loadPlacesAttributesByState(statefp);
-    const attrs = data[geoid] ?? null;
-    render({
-      geoid,
-      attrs,
-      displayName: fallbackName,
-    });
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("q");
-      url.searchParams.set("geoid", geoid);
-      window.history.pushState({ geoid }, "", url);
-    } catch {
-      /* ignore */
-    }
-    window.dispatchEvent(
-      new CustomEvent("charts-dock-focus-place", { detail: { geoid } })
-    );
+    attrs = data[geoid] ?? null;
   } catch (err) {
     console.error("charts-dock-panel: selectPlaceFromSearch failed", err);
-    render({
-      geoid,
-      attrs: null,
-      displayName: fallbackName,
-    });
-    try {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("q");
-      url.searchParams.set("geoid", geoid);
-      window.history.pushState({ geoid }, "", url);
-    } catch {
-      /* ignore */
-    }
-    window.dispatchEvent(
-      new CustomEvent("charts-dock-focus-place", { detail: { geoid } })
-    );
   }
+
+  render({ geoid, attrs, displayName: fallbackName });
+
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("q");
+    url.searchParams.set("geoid", geoid);
+    window.history.pushState({ geoid }, "", url);
+  } catch {
+    /* non-browser */
+  }
+
+  window.dispatchEvent(
+    new CustomEvent("charts-dock-focus-place", { detail: { geoid } })
+  );
 }
 
 function syncValuesButtonLabel() {
