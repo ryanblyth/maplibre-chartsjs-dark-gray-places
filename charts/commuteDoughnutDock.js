@@ -4,47 +4,9 @@
 import { Chart } from "chart.js";
 import { dockHtmlLegendPlugin } from "./htmlLegendDockPlugin.js";
 import { ensureDoughnutChartComponentsRegistered } from "./doughnutDockRegistry.js";
+import { buildCommuteShares, formatPercent } from "./chartUtils.js";
 
 let chartInstance = null;
-
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
-
-function buildDataset(attrs) {
-  const pctDriveAlone = safeNumber(attrs.pct_drive_alone);
-  const pctCarpool = safeNumber(attrs.pct_carpool);
-  const pctTransit = safeNumber(attrs.pct_transit);
-  const pctWfh = safeNumber(attrs.pct_wfh);
-  const otherCommuteModes = Math.max(
-    0,
-    100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh)
-  );
-  return {
-    labels: [
-      "Drive Alone",
-      "Carpool",
-      "Transit",
-      "Work From Home",
-      "Other commute modes",
-    ],
-    data: [
-      pctDriveAlone,
-      pctCarpool,
-      pctTransit,
-      pctWfh,
-      otherCommuteModes,
-    ],
-  };
-}
 
 function destroyChart() {
   if (chartInstance) {
@@ -65,7 +27,7 @@ export function setCommuteDoughnutDockChart(canvas, attrs) {
 
   ensureDoughnutChartComponentsRegistered();
 
-  const { labels, data } = buildDataset(attrs);
+  const { labels, data } = buildCommuteShares(attrs);
 
   if (chartInstance) {
     chartInstance.data.labels = labels;

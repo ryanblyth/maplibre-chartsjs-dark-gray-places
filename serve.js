@@ -9,9 +9,8 @@
 
 import { createServer } from "http";
 import { statSync, createReadStream, existsSync } from "fs";
-import { extname, relative, resolve } from "path";
+import { extname, relative, resolve, dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname);
@@ -60,7 +59,7 @@ const server = createServer((req, res) => {
   const filePath = urlToFilePath(req.url || "/");
 
   if (!filePath || !existsSync(filePath)) {
-    res.writeHead(404);
+    res.writeHead(404, { "Content-Type": "text/plain" });
     res.end("Not found");
     return;
   }
@@ -80,24 +79,35 @@ const server = createServer((req, res) => {
     return;
   }
 
-  // Handle Range requests (for PMTiles)
   const range = req.headers.range;
   if (range) {
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1;
-    const chunksize = end - start + 1;
+
+    if (Number.isNaN(start) || start < 0 || start >= stat.size || end < start) {
+      res.writeHead(416, { "Content-Range": `bytes */${stat.size}` });
+      res.end();
+      return;
+    }
+
+    const clampedEnd = Math.min(end, stat.size - 1);
+    const chunksize = clampedEnd - start + 1;
 
     res.writeHead(206, {
-      "Content-Range": `bytes ${start}-${end}/${stat.size}`,
+      "Content-Range": `bytes ${start}-${clampedEnd}/${stat.size}`,
       "Accept-Ranges": "bytes",
       "Content-Length": chunksize,
     });
 
-    createReadStream(filePath, { start, end }).pipe(res);
+    const stream = createReadStream(filePath, { start, end: clampedEnd });
+    stream.on("error", () => { res.destroy(); });
+    stream.pipe(res);
   } else {
     res.writeHead(200, { "Content-Length": stat.size });
-    createReadStream(filePath).pipe(res);
+    const stream = createReadStream(filePath);
+    stream.on("error", () => { res.destroy(); });
+    stream.pipe(res);
   }
 });
 

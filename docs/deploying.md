@@ -29,16 +29,30 @@ The map uses a hybrid approach for assets:
 - **Glyphs** (fonts) - `https://data.storypath.studio/glyphs/`
 - **Starfield script** - `https://data.storypath.studio/js/maplibre-gl-starfield.js`
 - **PMTiles data** - Map data URLs in `style.json`
+- **Preview (`preview.html`)** - MapLibre / PMTiles from `unpkg.com`; Chart.js and Fuse from `https://esm.sh/` (see import map in `preview.html`)
+- **Census / places data** - Attribute JSON and places index URLs under `https://data.storypath.studio/` (configured in `shared/utils/placesData.js`, `data/dockDataConfig.js`)
 
 ## Deployment Steps
 
 ### 1. Build for Production
 
+Install dependencies (this runs `prepare`, which compiles `shared/utils/*.ts` → `.js`), then build styles:
+
 ```bash
+npm ci
 NODE_ENV=production npm run build:styles
 ```
 
-This generates:
+Or run the full pipeline in one step:
+
+```bash
+npm ci
+NODE_ENV=production npm run build
+```
+
+`npm run build` runs `build:utils` then `build:styles`. This ensures:
+
+- `shared/utils/*.js` exists for browser imports from `map.js` and `charts-dock-panel.js`
 - `style.json` - MapLibre style definition
 - `map-config.js` - Map initialization config
 
@@ -63,25 +77,41 @@ NODE_ENV=production npm run build:styles
 
 ### 3. Files to Deploy
 
-Deploy these files to your static host:
+The repository root is the app root. For the **full preview** (map + charts dock + search), deploy at least:
 
 ```
 /
-├── style.json          # Generated MapLibre style
-├── sprites/            # Sprite files (required)
+├── preview.html
+├── map.js                         # Map entry (source, not generated)
+├── map-config.js
+├── style.json
+├── style.generated.json           # optional; not required at runtime if you only reference style.json
+├── sprites/
 │   ├── basemap.json
 │   ├── basemap.png
 │   ├── basemap@2x.json
 │   └── basemap@2x.png
-├── preview.html        # Or your custom HTML page
-└── map-config.js       # Map initialization config (if using)
+├── charts-dock-panel.js
+├── charts-dock-resize.js
+├── charts-dock-search.js
+├── charts/                        # Chart.js dock modules
+├── data/                          # Places index URL, manifest, search helpers
+└── shared/utils/
+    ├── placesData.js              # Required — emitted by npm run build:utils
+    ├── placesMapSetup.js
+    ├── placesPopup.js
+    └── …                          # other compiled .js peers of .ts sources
 ```
 
+You do **not** need to deploy TypeScript sources (`shared/utils/*.ts`, `styles/`, `scripts/`) if the compiled `shared/utils/*.js` files are already on the host from your CI build (or committed — see `.gitignore`).
+
 **Do NOT deploy:**
+
 - `node_modules/`
-- `styles/` (source files)
-- `scripts/` (build scripts)
-- `shared/` (build utilities)
+- `styles/`, `scripts/` (source-only for builds)
+- `shared/utils/*.ts` (optional to omit if `.js` is present)
+
+**Hosting note:** A build command of **only** `npm run build:styles` does **not** produce `shared/utils/*.js`. Use `npm run build` or run `npm install` / `npm run build:utils` before publish so the browser can load `./shared/utils/placesMapSetup.js` and related modules.
 
 ## Platform-Specific Guides
 
@@ -90,7 +120,7 @@ Deploy these files to your static host:
 1. **Connect your repository** to Cloudflare Pages
 
 2. **Build settings:**
-   - Build command: `npm run build:styles`
+   - Build command: `npm ci && npm run build` (or `npm install && npm run build`)
    - Build output directory: `/` (root)
    - Root directory: `/`
 
@@ -104,7 +134,7 @@ Your map will be available at `https://your-project.pages.dev`
 
 2. **Build settings:**
    ```
-   Build command: npm run build:styles
+   Build command: npm ci && npm run build
    Publish directory: /
    ```
 
@@ -117,7 +147,7 @@ Your map will be available at `https://your-project.pages.dev`
 2. **Build settings:**
    ```
    Framework Preset: Other
-   Build Command: npm run build:styles
+   Build Command: npm ci && npm run build
    Output Directory: /
    ```
 
@@ -127,12 +157,13 @@ Your map will be available at `https://your-project.pages.dev`
 
 1. **Build locally:**
    ```bash
-   npm run build:styles
+   npm install
+   npm run build
    ```
 
-2. **Commit generated files:**
+2. **Commit files to publish** (adjust to your policy — some artifacts may already be tracked):
    ```bash
-   git add style.json map-config.js sprites/
+   git add style.json style.generated.json map-config.js sprites/ shared/utils/*.js preview.html map.js charts/ data/ charts-dock-panel.js charts-dock-resize.js charts-dock-search.js
    git commit -m "Build for production"
    ```
 
@@ -142,14 +173,11 @@ Your map will be available at `https://your-project.pages.dev`
 
 1. **Build locally:**
    ```bash
-   NODE_ENV=production npm run build:styles
+   npm install
+   NODE_ENV=production npm run build
    ```
 
-2. **Upload files** to your server:
-   - `style.json`
-   - `sprites/` directory
-   - Your HTML file
-   - `map-config.js` (if using)
+2. **Upload files** to your server (see [Files to Deploy](#3-files-to-deploy) above): at minimum `preview.html`, `map.js`, `map-config.js`, `style.json`, `sprites/`, `charts/`, `data/`, dock scripts, and `shared/utils/*.js`.
 
 3. **Configure your server:**
    - Enable CORS headers
@@ -343,6 +371,7 @@ map.on('error', (e) => {
 
 **Map not rendering:**
 - Check `style.json` is accessible
+- Ensure `shared/utils/*.js` exists (run `npm run build:utils` or `npm install` in CI)
 - Verify sprite URLs are correct
 - Check browser console for errors
 
@@ -365,14 +394,16 @@ map.on('error', (e) => {
 
 ### Content Security Policy
 
-If using CSP, allow these domains:
+If using CSP, allow these domains (extend as needed for your CDNs):
 
 ```
-connect-src 'self' https://data.storypath.studio;
-script-src 'self' https://unpkg.com https://data.storypath.studio;
+connect-src 'self' https://data.storypath.studio https://esm.sh;
+script-src 'self' https://unpkg.com https://data.storypath.studio https://esm.sh;
 style-src 'self' https://unpkg.com;
 img-src 'self' data: blob:;
 ```
+
+The preview loads **Chart.js** and **Fuse** from **esm.sh** via the import map in `preview.html`. MapLibre and PMTiles load from **unpkg.com**. Tiles, glyphs, and census JSON use **data.storypath.studio** (and any other hosts in your `style.json` sources).
 
 ### HTTPS
 
@@ -380,12 +411,14 @@ Always serve your map over HTTPS in production.
 
 ## Updating
 
-To update the map:
+To update the map style:
 
 1. Edit `styles/theme.ts`
-2. Build: `npm run build:styles`
+2. Build: `npm run build:styles` (or `npm run build` if you also changed `shared/utils/*.ts`)
 3. Deploy updated files
 4. Browser caches will update based on cache headers
+
+For changes to **places** TypeScript under `shared/utils/`, run `npm run build:utils` (or `npm run build`) and redeploy the updated `.js` files.
 
 ## Rollback
 

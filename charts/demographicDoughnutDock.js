@@ -4,48 +4,9 @@
 import { Chart } from "chart.js";
 import { dockHtmlLegendPlugin } from "./htmlLegendDockPlugin.js";
 import { ensureDoughnutChartComponentsRegistered } from "./doughnutDockRegistry.js";
+import { buildDemographicsShares, formatPercent } from "./chartUtils.js";
 
 let chartInstance = null;
-
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
-
-function buildDataset(attrs) {
-  const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);
-  const pctHispanic = safeNumber(attrs.pct_hispanic);
-  const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
-  const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
-  const otherNonHispanic = Math.max(
-    0,
-    100 -
-      (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian)
-  );
-  return {
-    labels: [
-      "Non-Hispanic White",
-      "Hispanic",
-      "Black",
-      "Asian",
-      "Other Non-Hispanic",
-    ],
-    data: [
-      pctNonhispWhite,
-      pctHispanic,
-      pctNonhispBlack,
-      pctNonhispAsian,
-      otherNonHispanic,
-    ],
-  };
-}
 
 function destroyChart() {
   if (chartInstance) {
@@ -66,7 +27,7 @@ export function setDemographicDoughnutDockChart(canvas, attrs) {
 
   ensureDoughnutChartComponentsRegistered();
 
-  const { labels, data } = buildDataset(attrs);
+  const { labels, data } = buildDemographicsShares(attrs);
 
   if (chartInstance) {
     chartInstance.data.labels = labels;

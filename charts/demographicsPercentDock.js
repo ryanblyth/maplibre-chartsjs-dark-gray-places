@@ -2,57 +2,16 @@
  * Demographics-by-percent horizontal bar chart for the map preview charts dock.
  * Data logic matches chartjs-places createDemographicsPercentChart / updateDemographicsPercentChart.
  */
-import {
-  Chart,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart } from "chart.js";
+import { buildDemographicsShares, ensureBarComponentsRegistered, safeNumber, formatPercent, tickColor } from "./chartUtils.js";
 
-const TICK_COLOR = "#c9d1d9";
-const TICK_COLOR_LIGHT = "#444444";
 const BAR_LABEL_COLOR = "rgba(232, 234, 237, 0.55)";
-
-function tickColor() {
-  const dock = document.getElementById("charts-dock");
-  return dock?.classList.contains("charts-dock-light") ? TICK_COLOR_LIGHT : TICK_COLOR;
-}
 
 let chartInstance = null;
 
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
-
 function buildMetrics(attrs) {
-  const pctNonhispWhite = safeNumber(attrs.pct_nonhisp_white);
-  const pctHispanic = safeNumber(attrs.pct_hispanic);
-  const pctNonhispBlack = safeNumber(attrs.pct_nonhisp_black);
-  const pctNonhispAsian = safeNumber(attrs.pct_nonhisp_asian);
-  const otherNonHispanic = Math.max(
-    0,
-    100 - (pctNonhispWhite + pctHispanic + pctNonhispBlack + pctNonhispAsian)
-  );
-
-  const first5Metrics = [
-    { label: "Non-Hispanic White", value: pctNonhispWhite },
-    { label: "Hispanic", value: pctHispanic },
-    { label: "Black", value: pctNonhispBlack },
-    { label: "Asian", value: pctNonhispAsian },
-    { label: "Other Non-Hispanic", value: otherNonHispanic },
-  ];
+  const { labels, data } = buildDemographicsShares(attrs);
+  const first5Metrics = labels.map((label, i) => ({ label, value: data[i] }));
 
   const remainingMetrics = [
     { label: "Under 18", value: safeNumber(attrs.pct_under18) },
@@ -109,16 +68,8 @@ const dockBarDataLabelsPlugin = {
   },
 };
 
-Chart.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  BarController,
-  Title,
-  Tooltip,
-  Legend,
-  dockBarDataLabelsPlugin
-);
+ensureBarComponentsRegistered();
+Chart.register(dockBarDataLabelsPlugin);
 
 function destroyChart() {
   if (chartInstance) {

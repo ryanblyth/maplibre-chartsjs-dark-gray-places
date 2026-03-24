@@ -3,18 +3,7 @@
  * Pass in chart plugins[] (do not Chart.register globally — avoids double afterUpdate).
  * Options: plugins.dockHtmlLegend.containerID
  */
-
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
+import { safeNumber, formatPercent } from "./chartUtils.js";
 
 export const dockHtmlLegendPlugin = {
   id: "dockHtmlLegend",

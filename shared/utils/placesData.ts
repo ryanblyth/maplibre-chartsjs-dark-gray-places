@@ -5,11 +5,6 @@
  * and update MapLibre feature states for data-driven styling.
  */
 
-// Use global maplibregl object (loaded via script tag in HTML)
-declare const maplibregl: {
-  Map: typeof import("maplibre-gl").Map;
-};
-
 import type { Map as MapLibreMap } from "maplibre-gl";
 
 /**

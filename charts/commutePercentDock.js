@@ -1,51 +1,10 @@
 /**
  * Commute-by-percent horizontal bar for the charts dock.
- * Requires demographicsPercentDock.js loaded first (Chart.register bar components + dockBarDataLabels).
  */
 import { Chart } from "chart.js";
-
-const TICK_COLOR = "#c9d1d9";
-const TICK_COLOR_LIGHT = "#444444";
+import { buildCommuteShares, ensureBarComponentsRegistered, formatPercent, tickColor } from "./chartUtils.js";
 
 let chartInstance = null;
-
-function safeNumber(value) {
-  if (value == null || value === undefined || Number.isNaN(Number(value))) {
-    return 0;
-  }
-  return Number(value);
-}
-
-function formatPercent(num) {
-  if (num == null || num === undefined) return "N/A";
-  return `${Number(num).toFixed(1)}%`;
-}
-
-function tickColor() {
-  const dock = document.getElementById("charts-dock");
-  return dock?.classList.contains("charts-dock-light") ? TICK_COLOR_LIGHT : TICK_COLOR;
-}
-
-function buildCommuteData(attrs) {
-  const pctDriveAlone = safeNumber(attrs.pct_drive_alone);
-  const pctCarpool = safeNumber(attrs.pct_carpool);
-  const pctTransit = safeNumber(attrs.pct_transit);
-  const pctWfh = safeNumber(attrs.pct_wfh);
-  const otherCommuteModes = Math.max(
-    0,
-    100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh)
-  );
-  return {
-    labels: [
-      "Drive Alone",
-      "Carpool",
-      "Transit",
-      "Work From Home",
-      "Other commute modes",
-    ],
-    data: [pctDriveAlone, pctCarpool, pctTransit, pctWfh, otherCommuteModes],
-  };
-}
 
 function destroyChart() {
   if (chartInstance) {
@@ -64,7 +23,8 @@ export function setCommutePercentChart(canvas, attrs) {
     return null;
   }
 
-  const { labels, data } = buildCommuteData(attrs);
+  ensureBarComponentsRegistered();
+  const { labels, data } = buildCommuteShares(attrs);
   const tc = tickColor();
 
   if (chartInstance) {
