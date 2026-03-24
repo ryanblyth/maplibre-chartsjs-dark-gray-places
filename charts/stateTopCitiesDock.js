@@ -1,9 +1,8 @@
 /**
  * Vertical bar chart: top N places in state by population.
- * Relies on demographicsPercentDock for global bar label plugin + bar scale registration.
  */
 import { Chart } from "chart.js";
-import { safeNumber, formatNumber, tickColor } from "./chartUtils.js";
+import { ensureBarComponentsRegistered, safeNumber, formatNumber, tickColor } from "./chartUtils.js";
 
 let chartInstance = null;
 
@@ -25,6 +24,7 @@ export function setStateTopCitiesDockChart(canvas, rows, stateAbbr = "") {
     return null;
   }
 
+  ensureBarComponentsRegistered();
   const labels = rows.map((c) => c.name);
   const populations = rows.map((c) => safeNumber(c.pop_total));
   const state = stateAbbr || rows[0]?.stusps || "";

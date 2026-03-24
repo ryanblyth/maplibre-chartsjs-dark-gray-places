@@ -2,7 +2,7 @@
  * Approximate geographic centers [lng, lat] by two-digit state/territory FIPS.
  * Used to pan the map before querySourceFeatures (PMTiles places need ~z13+).
  */
-export const STATE_FIPS_CENTER_LNGLAT = {
+const STATE_FIPS_CENTER_LNGLAT = {
   "01": [-86.8287, 32.9641],
   "02": [-152.4044, 64.2008],
   "04": [-111.4312, 33.7298],

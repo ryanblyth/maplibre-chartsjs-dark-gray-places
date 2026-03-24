@@ -588,8 +588,8 @@
       <div class="charts-dock-header-row">
         <h2 class="charts-dock-title">Place charts</h2>
         <div class="charts-dock-header-controls">
-          <button type="button" id="charts-dock-values-toggle" class="charts-dock-control-btn">Hide values</button>
-          <button type="button" id="charts-dock-theme-toggle" class="charts-dock-control-btn">Light panel</button>
+          <button type="button" id="charts-dock-values-toggle" class="charts-dock-control-btn" aria-pressed="true">Hide values</button>
+          <button type="button" id="charts-dock-theme-toggle" class="charts-dock-control-btn" aria-pressed="false">Light panel</button>
         </div>
       </div>
       <p id="charts-dock-vintage" class="charts-dock-vintage" hidden></p>
@@ -608,7 +608,7 @@
         <p id="charts-dock-search-error" class="charts-dock-search-error" hidden></p>
       </div>
       <p class="charts-dock-placeholder">Select a place on the map.</p>
-      <div id="charts-dock-selection" class="charts-dock-selection" hidden>
+      <div id="charts-dock-selection" class="charts-dock-selection" hidden aria-live="polite">
         <h3 id="charts-dock-place-name" class="charts-dock-place-name"></h3>
         <p id="charts-dock-geoid" class="charts-dock-geoid"></p>
         <dl id="charts-dock-summary" class="charts-dock-summary"></dl>

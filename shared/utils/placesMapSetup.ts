@@ -4,11 +4,6 @@
  * Provides high-level functions to set up places interactivity on a MapLibre map
  */
 
-// Use global maplibregl object (loaded via script tag in HTML)
-declare const maplibregl: {
-  Map: typeof import("maplibre-gl").Map;
-};
-
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { 
   loadPlacesAttributesByStates, 

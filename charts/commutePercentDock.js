@@ -1,32 +1,10 @@
 /**
  * Commute-by-percent horizontal bar for the charts dock.
- * Requires demographicsPercentDock.js loaded first (Chart.register bar components + dockBarDataLabels).
  */
 import { Chart } from "chart.js";
-import { safeNumber, formatPercent, tickColor } from "./chartUtils.js";
+import { buildCommuteShares, ensureBarComponentsRegistered, formatPercent, tickColor } from "./chartUtils.js";
 
 let chartInstance = null;
-
-function buildCommuteData(attrs) {
-  const pctDriveAlone = safeNumber(attrs.pct_drive_alone);
-  const pctCarpool = safeNumber(attrs.pct_carpool);
-  const pctTransit = safeNumber(attrs.pct_transit);
-  const pctWfh = safeNumber(attrs.pct_wfh);
-  const otherCommuteModes = Math.max(
-    0,
-    100 - (pctDriveAlone + pctCarpool + pctTransit + pctWfh)
-  );
-  return {
-    labels: [
-      "Drive Alone",
-      "Carpool",
-      "Transit",
-      "Work From Home",
-      "Other commute modes",
-    ],
-    data: [pctDriveAlone, pctCarpool, pctTransit, pctWfh, otherCommuteModes],
-  };
-}
 
 function destroyChart() {
   if (chartInstance) {
@@ -45,7 +23,8 @@ export function setCommutePercentChart(canvas, attrs) {
     return null;
   }
 
-  const { labels, data } = buildCommuteData(attrs);
+  ensureBarComponentsRegistered();
+  const { labels, data } = buildCommuteShares(attrs);
   const tc = tickColor();
 
   if (chartInstance) {

@@ -1,4 +1,4 @@
-import { selectPlaceFromSearch } from "./charts-dock-panel.js";
+import { selectPlaceFromSearch, EVENT_NAME } from "./charts-dock-panel.js";
 import {
   ensurePlacesSearchReady,
   searchPlaces,
@@ -130,7 +130,7 @@ async function init() {
     }
   }
 
-  window.addEventListener("place-selected", () => {
+  window.addEventListener(EVENT_NAME, () => {
     clearTimeout(debounceTimer);
     debounceTimer = null;
     if (input) input.value = "";

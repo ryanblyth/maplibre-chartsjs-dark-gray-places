@@ -34,7 +34,7 @@ import {
 import { loadManifest } from "./data/manifestLoader.js";
 import { formatNumber } from "./charts/chartUtils.js";
 
-const EVENT_NAME = "place-selected";
+export const EVENT_NAME = "place-selected";
 
 const placeholder = document.querySelector(".charts-dock-placeholder");
 const selectionEl = document.getElementById("charts-dock-selection");
@@ -190,16 +190,16 @@ window.addEventListener("popstate", () => {
   }
 });
 
+async function loadAttrsForGeoid(geoid) {
+  const statefp = geoid.slice(0, 2);
+  const data = await loadPlacesAttributesByState(statefp);
+  return data[geoid] ?? null;
+}
+
 async function loadFromGeoid(geoid, replaceHistoryState = false) {
   try {
-    const statefp = geoid.slice(0, 2);
-    const data = await loadPlacesAttributesByState(statefp);
-    const attrs = data[geoid] ?? null;
-    render({
-      geoid,
-      attrs,
-      displayName: `Place ${geoid}`,
-    });
+    const attrs = await loadAttrsForGeoid(geoid);
+    render({ geoid, attrs, displayName: `Place ${geoid}` });
     if (replaceHistoryState) {
       try {
         const url = new URL(window.location.href);
@@ -212,11 +212,7 @@ async function loadFromGeoid(geoid, replaceHistoryState = false) {
     }
   } catch (err) {
     console.error("charts-dock-panel: failed to load attrs", err);
-    render({
-      geoid,
-      attrs: null,
-      displayName: `Place ${geoid}`,
-    });
+    render({ geoid, attrs: null, displayName: `Place ${geoid}` });
   }
 }
 
@@ -230,9 +226,7 @@ export async function selectPlaceFromSearch({ geoid, displayName }) {
 
   let attrs = null;
   try {
-    const statefp = geoid.slice(0, 2);
-    const data = await loadPlacesAttributesByState(statefp);
-    attrs = data[geoid] ?? null;
+    attrs = await loadAttrsForGeoid(geoid);
   } catch (err) {
     console.error("charts-dock-panel: selectPlaceFromSearch failed", err);
   }
@@ -257,14 +251,20 @@ function syncValuesButtonLabel() {
   const dock = document.getElementById("charts-dock");
   const hidden = dock?.classList.contains("charts-dock-values-hidden");
   const btn = document.getElementById("charts-dock-values-toggle");
-  if (btn) btn.textContent = hidden ? "Show values" : "Hide values";
+  if (btn) {
+    btn.textContent = hidden ? "Show values" : "Hide values";
+    btn.setAttribute("aria-pressed", hidden ? "false" : "true");
+  }
 }
 
 function syncThemeButtonLabel() {
   const dock = document.getElementById("charts-dock");
   const light = dock?.classList.contains("charts-dock-light");
   const btn = document.getElementById("charts-dock-theme-toggle");
-  if (btn) btn.textContent = light ? "Dark panel" : "Light panel";
+  if (btn) {
+    btn.textContent = light ? "Dark panel" : "Light panel";
+    btn.setAttribute("aria-pressed", light ? "true" : "false");
+  }
 }
 
 function refreshAfterValuesChange() {
@@ -281,7 +281,7 @@ function initDockToggles() {
   const themeBtn = document.getElementById("charts-dock-theme-toggle");
   if (!dock) return;
 
-  const savedValues = localStorage.getItem("dockShowValues");
+  const savedValues = localStorage.getItem("charts-dock-show-values");
   if (savedValues === "false") {
     dock.classList.add("charts-dock-values-hidden");
   }
@@ -290,7 +290,7 @@ function initDockToggles() {
   valuesBtn?.addEventListener("click", () => {
     dock.classList.toggle("charts-dock-values-hidden");
     localStorage.setItem(
-      "dockShowValues",
+      "charts-dock-show-values",
       (!dock.classList.contains("charts-dock-values-hidden")).toString()
     );
     syncValuesButtonLabel();

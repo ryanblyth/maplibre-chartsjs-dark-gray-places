@@ -43,11 +43,3 @@ export function searchPlaces(query, limit = 10) {
   return results.map((r) => r.item);
 }
 
-/**
- * @param {string} geoid
- * @returns {Record<string, unknown> | null}
- */
-export function findPlaceByGeoid(geoid) {
-  if (!geoid || !geoidMap) return null;
-  return geoidMap.get(String(geoid)) ?? null;
-}
