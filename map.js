@@ -157,6 +157,35 @@ map.once("load", mapDebugZoomLog);
 // ============================================================================
 /** Search fly-to always uses this zoom (bounds center + dock offset). */
 const FOCUS_SEARCH_ZOOM = 9;
+/** Incremented on each search focus; stale `idle` handlers must not move the map. */
+let mapFocusOpSeq = 0;
+
+/** Look up [lng, lat] for a GEOID from the static centroids module. */
+function getCachedPlaceCoords(geoid) {
+  const key = normalizeGeoidDigits(geoid);
+  return placeCentroidsByGeoid[key] ?? null;
+}
+
+// #region agent log
+function agentFocusDbg(message, data, hypothesisId) {
+  fetch("http://127.0.0.1:7542/ingest/3f936112-97d1-496a-9023-983de7d6ae11", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Debug-Session-Id": "35c9c0",
+    },
+    body: JSON.stringify({
+      sessionId: "35c9c0",
+      runId: "static-centroids",
+      hypothesisId,
+      location: "map.js:focus",
+      message,
+      data,
+      timestamp: Date.now(),
+    }),
+  }).catch(() => {});
+}
+// #endregion
 
 function mapFocusDebugEnabled() {
   return typeof window !== "undefined" && window.MAP_FOCUS_DEBUG === true;
@@ -263,9 +292,41 @@ function countJsGeoidMatchesInFeatures(features, geoid) {
 function focusMapOnGeoid(geoid) {
   const id = String(geoid);
   const statefp = id.length >= 2 ? id.slice(0, 2) : id.padStart(2, "0");
-  mapFocusLog("focusMapOnGeoid start", { geoid: id, statefp });
+  mapFocusOpSeq += 1;
+  const focusOpId = mapFocusOpSeq;
+  const focusAlive = () => focusOpId === mapFocusOpSeq;
+  try {
+    map.stop();
+  } catch {
+    /* ignore */
+  }
+  mapFocusLog("focusMapOnGeoid start", { geoid: id, statefp, focusOpId });
+  // #region agent log
+  agentFocusDbg(
+    "focusMapOnGeoid_enter",
+    {
+      geoid: id,
+      statefp,
+      focusOpId,
+      preZoom: typeof map.getZoom === "function" ? map.getZoom() : null,
+      preCenter:
+        typeof map.getCenter === "function" ? map.getCenter().toArray() : null,
+    },
+    "H3-H5"
+  );
+  // #endregion
 
   const tryFocus = (phase = "") => {
+    if (!focusAlive()) {
+      // #region agent log
+      agentFocusDbg(
+        "tryFocus_superseded",
+        { phase, focusOpId },
+        "H3"
+      );
+      // #endregion
+      return false;
+    }
     if (!map.getSource("places-source")) {
       mapFocusLog(`tryFocus${phase}: no places-source`);
       return false;
@@ -312,16 +373,50 @@ function focusMapOnGeoid(geoid) {
       }
     }
 
-    if (!filtered.length) return false;
+    if (!filtered.length) {
+      // #region agent log
+      agentFocusDbg(
+        "tryFocus_no_feature",
+        { phase, zoom: map.getZoom() },
+        "H2"
+      );
+      // #endregion
+      return false;
+    }
 
     const feat = filtered[0];
     const bb = geometryBounds(feat.geometry);
     const t = feat.geometry?.type;
     if (bb) {
+      if (!focusAlive()) {
+        // #region agent log
+        agentFocusDbg(
+          "tryFocus_superseded_before_easeTo",
+          { phase, focusOpId },
+          "H3"
+        );
+        // #endregion
+        return false;
+      }
       const cx = (bb[0][0] + bb[1][0]) / 2;
       const cy = (bb[0][1] + bb[1][1]) / 2;
       const dockW = getChartsDockOverlapPx();
       try {
+        // #region agent log
+        agentFocusDbg(
+          "tryFocus_easeTo_polygon",
+          {
+            phase,
+            targetZoom: FOCUS_SEARCH_ZOOM,
+            cx,
+            cy,
+            geomType: t,
+            dockW,
+            mapZoomBefore: map.getZoom(),
+          },
+          "H1-H4"
+        );
+        // #endregion
         map.easeTo({
           center: [cx, cy],
           zoom: FOCUS_SEARCH_ZOOM,
@@ -335,6 +430,14 @@ function focusMapOnGeoid(geoid) {
       } catch (err) {
         console.error("[map focus] easeTo (search focus) failed:", err);
       }
+    } else {
+      // #region agent log
+      agentFocusDbg(
+        "tryFocus_no_bounds",
+        { phase, geomType: feat.geometry?.type },
+        "H1"
+      );
+      // #endregion
     }
     return false;
   };
@@ -376,6 +479,27 @@ function focusMapOnGeoid(geoid) {
 
   /** Fly to place coordinates at FOCUS_SEARCH_ZOOM, then tryFocus the polygon source. */
   const flyToPlaceCoords = (coords) => {
+    if (!focusAlive()) {
+      // #region agent log
+      agentFocusDbg(
+        "flyToPlaceCoords_superseded",
+        { focusOpId },
+        "H3"
+      );
+      // #endregion
+      return;
+    }
+    // #region agent log
+    agentFocusDbg(
+      "flyToPlaceCoords",
+      {
+        coords,
+        targetZoom: FOCUS_SEARCH_ZOOM,
+        mapZoomBefore: map.getZoom(),
+      },
+      "H2-H4"
+    );
+    // #endregion
     try {
       map.easeTo({
         center: coords,
@@ -388,45 +512,153 @@ function focusMapOnGeoid(geoid) {
       return;
     }
     map.once("idle", () => {
+      if (!focusAlive()) {
+        // #region agent log
+        agentFocusDbg(
+          "idle_superseded",
+          { where: "afterFlyToPlaceCoords1", focusOpId },
+          "H3"
+        );
+        // #endregion
+        return;
+      }
       if (tryFocus(" afterWarmupIdle1")) return;
       map.once("idle", () => {
+        if (!focusAlive()) {
+          // #region agent log
+          agentFocusDbg(
+            "idle_superseded",
+            { where: "afterFlyToPlaceCoords2", focusOpId },
+            "H3"
+          );
+          // #endregion
+          return;
+        }
         tryFocus(" afterWarmupIdle2");
       });
     });
   };
 
   const warmupStateThenRetry = () => {
-    // Step 1: try the low-zoom points source for exact coordinates (already loaded tiles)
+    if (!focusAlive()) {
+      // #region agent log
+      agentFocusDbg(
+        "warmupStateThenRetry_superseded",
+        { focusOpId },
+        "H3"
+      );
+      // #endregion
+      return;
+    }
+    // Step 1: try cached coords first, then live tile query
+    const cached = getCachedPlaceCoords(id);
+    if (cached) {
+      // #region agent log
+      agentFocusDbg(
+        "warmup_skip_has_cached_coords",
+        { coords: cached, geoid: id },
+        "H9"
+      );
+      // #endregion
+      flyToPlaceCoords(cached);
+      return;
+    }
     const pointCoords = getPlaceCoordsFromPointSource();
     if (pointCoords) {
+      // #region agent log
+      agentFocusDbg(
+        "warmup_skip_has_point_coords",
+        { pointCoords, geoid: id },
+        "H2"
+      );
+      // #endregion
       flyToPlaceCoords(pointCoords);
       return;
     }
 
-    // Step 2: fly to state center at z6 to load point-source tiles, then re-query
+    // Step 2: fly to state center at FOCUS_SEARCH_ZOOM so tiles for that state load at target zoom
     const stateCenter = getStateApproxCenterLngLat(statefp);
     if (!stateCenter) {
       return;
     }
 
+    // #region agent log
+    agentFocusDbg(
+      "warmup_easeTo_state_z9",
+      {
+        statefp,
+        stateCenter,
+        geoid: id,
+        zoom: FOCUS_SEARCH_ZOOM,
+      },
+      "H6"
+    );
+    // #endregion
+    if (!focusAlive()) return;
     try {
       map.easeTo({
         center: stateCenter,
-        zoom: 6,
-        duration: 600,
+        zoom: FOCUS_SEARCH_ZOOM,
+        duration: 900,
         offset: [-dockW() / 2, 0],
       });
     } catch (err) {
       console.error("[map focus] easeTo (point tile load) failed:", err);
       return;
     }
-    map.once("idle", () => {
+
+    /** MapLibre may not emit `idle` again if the map is already idle when `once("idle")` is registered. */
+    let postStateWarmupSettleRan = false;
+    const runAfterStateWarmupSettled = () => {
+      if (postStateWarmupSettleRan) return;
+      if (!focusAlive()) {
+        // #region agent log
+        agentFocusDbg(
+          "idle_superseded",
+          { where: "afterWarmupStateZ9", focusOpId },
+          "H3"
+        );
+        // #endregion
+        return;
+      }
+      postStateWarmupSettleRan = true;
+      // #region agent log
+      agentFocusDbg(
+        "warmup_post_state_settle",
+        {
+          geoid: id,
+          focusOpId,
+          tilesLoaded:
+            typeof map.areTilesLoaded === "function"
+              ? map.areTilesLoaded()
+              : null,
+          moving:
+            typeof map.isMoving === "function" ? map.isMoving() : null,
+        },
+        "H8"
+      );
+      // #endregion
+      // Try cache first, then live tile query
+      const cachedC = getCachedPlaceCoords(id);
+      if (cachedC) {
+        flyToPlaceCoords(cachedC);
+        return;
+      }
       const coords = getPlaceCoordsFromPointSource();
       if (coords) {
         flyToPlaceCoords(coords);
         return;
       }
+      if (tryFocus(" afterWarmupStateZ9")) return;
       // Step 3: final fallback — state center at FOCUS_SEARCH_ZOOM (best effort)
+      // #region agent log
+      agentFocusDbg(
+        "warmup_state_fallback_z9",
+        { stateCenter, geoid: id },
+        "H2"
+      );
+      // #endregion
+      if (!focusAlive()) return;
       try {
         map.easeTo({
           center: stateCenter,
@@ -438,19 +670,95 @@ function focusMapOnGeoid(geoid) {
         console.error("[map focus] easeTo (state fallback) failed:", err);
         return;
       }
-      map.once("idle", () => {
+      let fallbackSettleRan = false;
+      const runAfterFallbackSettled = () => {
+        if (fallbackSettleRan) return;
+        if (!focusAlive()) {
+          // #region agent log
+          agentFocusDbg(
+            "idle_superseded",
+            { where: "afterStateFallbackZ9_1", focusOpId },
+            "H3"
+          );
+          // #endregion
+          return;
+        }
+        fallbackSettleRan = true;
         if (tryFocus(" afterStateFallbackIdle1")) return;
         map.once("idle", () => {
+          if (!focusAlive()) {
+            // #region agent log
+            agentFocusDbg(
+              "idle_superseded",
+              { where: "afterStateFallbackZ9_2", focusOpId },
+              "H3"
+            );
+            // #endregion
+            return;
+          }
           tryFocus(" afterStateFallbackIdle2");
         });
+      };
+      map.once("idle", runAfterFallbackSettled);
+      map.once("moveend", () => {
+        queueMicrotask(() => {
+          if (!focusAlive() || fallbackSettleRan) return;
+          runAfterFallbackSettled();
+        });
+      });
+    };
+
+    map.once("idle", runAfterStateWarmupSettled);
+    map.once("moveend", () => {
+      queueMicrotask(() => {
+        if (!focusAlive() || postStateWarmupSettleRan) return;
+        runAfterStateWarmupSettled();
       });
     });
   };
+
+  // Best path: use cached place centroid (tile-independent, built at init idle).
+  const cachedCoords = getCachedPlaceCoords(id);
+  if (cachedCoords) {
+    // #region agent log
+    agentFocusDbg(
+      "focus_path_cached_coords",
+      { geoid: id, coords: cachedCoords },
+      "H9"
+    );
+    // #endregion
+    flyToPlaceCoords(cachedCoords);
+    return;
+  }
+
+  // Fallback: try live tile query on point source (available at low zoom).
+  const initialPointCoords = getPlaceCoordsFromPointSource();
+  if (initialPointCoords) {
+    // #region agent log
+    agentFocusDbg(
+      "focus_path_point_first",
+      { geoid: id, coords: initialPointCoords },
+      "H7"
+    );
+    // #endregion
+    flyToPlaceCoords(initialPointCoords);
+    return;
+  }
 
   if (tryFocus(" initial")) return;
 
   let fallbackRan = false;
   const runAfterInitialFailure = () => {
+    if (!focusAlive()) {
+      // #region agent log
+      agentFocusDbg(
+        "runAfterInitialFailure_superseded",
+        { focusOpId },
+        "H3"
+      );
+      // #endregion
+      return;
+    }
     if (fallbackRan) return;
     fallbackRan = true;
     mapFocusLog("idle pass 1");
@@ -468,6 +776,13 @@ if (typeof window !== "undefined") {
   window.addEventListener("charts-dock-focus-place", (e) => {
     const geoid = e.detail?.geoid;
     mapFocusLog("charts-dock-focus-place", { geoid });
+    // #region agent log
+    agentFocusDbg(
+      "event_charts_dock_focus_place",
+      { geoid: geoid ?? null, t: Date.now() },
+      "H3"
+    );
+    // #endregion
     if (geoid) focusMapOnGeoid(geoid);
   });
 }
@@ -476,6 +791,7 @@ if (typeof window !== "undefined") {
 // Places Interactivity: Load data and set up click handlers
 // ============================================================================
 import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
+import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
 import { initializePlacesInteractivity } from './shared/utils/placesMapSetup.js';
 import { defaultPlacePopupAttributeConfig } from './shared/utils/placesPopup.js';
 
