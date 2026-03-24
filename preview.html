@@ -35,8 +35,8 @@
       top: 0; 
       bottom: 0; 
       left: 0;
-      right: var(--charts-panel-width);
-      width: auto;
+      right: 0;
+      width: 100%;
       z-index: 3; 
     }
     #starfield-container { 
@@ -161,8 +161,34 @@
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
+    .charts-dock-resize-handle {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+      z-index: 30;
+      cursor: col-resize;
+      touch-action: none;
+      background: transparent;
+    }
+
+    .charts-dock-resize-handle:hover,
+    #charts-dock.charts-dock--resizing .charts-dock-resize-handle {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    #charts-dock.charts-dock--resizing .charts-dock-resize-handle {
+      background: rgba(52, 152, 219, 0.25);
+    }
+
+    body.charts-dock-resize-active {
+      user-select: none;
+      cursor: col-resize !important;
+    }
+
     .charts-dock-inner {
-      padding: 16px 18px 24px;
+      padding: 16px 18px 24px 20px;
     }
 
     .charts-dock-header-row {
@@ -550,6 +576,14 @@
   <div id="map-container"></div>
 
   <aside id="charts-dock" aria-label="Charts and place details">
+    <div
+      id="charts-dock-resize-handle"
+      class="charts-dock-resize-handle"
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize charts panel"
+      tabindex="0"
+    ></div>
     <div class="charts-dock-inner">
       <div class="charts-dock-header-row">
         <h2 class="charts-dock-title">Place charts</h2>
@@ -629,6 +663,7 @@
   <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
   <script src="https://data.storypath.studio/js/maplibre-gl-starfield.js"></script>
   <script src="./map-config.js"></script>
+  <script type="module" src="./charts-dock-resize.js"></script>
   <script type="module" src="./map.js"></script>
   <script type="module" src="./charts-dock-panel.js"></script>
   <script type="module" src="./charts-dock-search.js"></script>

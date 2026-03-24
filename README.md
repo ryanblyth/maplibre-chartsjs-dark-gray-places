@@ -44,6 +44,7 @@ A custom MapLibre basemap created from the dark-gray template. The development p
 ├── preview.html        # Development preview page (map + charts dock)
 ├── map.js              # Map bootstrap (source — not generated)
 ├── charts-dock-panel.js
+├── charts-dock-resize.js
 ├── charts-dock-search.js
 ├── serve.js           # Development server
 └── package.json       # Dependencies and scripts
@@ -119,7 +120,7 @@ This map is designed to work with Cloudflare Pages or any static hosting.
 ### Using in Production
 
 1. Build for production as needed: `NODE_ENV=production npm run build:styles` (and ensure `shared/utils/*.js` exist — run `npm run build:utils` or rely on `npm install` / CI).
-2. Deploy the static set described in [docs/deploying.md](docs/deploying.md), including at minimum for the full preview: `preview.html`, `map.js`, `map-config.js`, `style.json`, `sprites/`, `charts/`, `data/`, `charts-dock-panel.js`, `charts-dock-search.js`, and `shared/utils/*.js`.
+2. Deploy the static set described in [docs/deploying.md](docs/deploying.md), including at minimum for the full preview: `preview.html`, `map.js`, `map-config.js`, `style.json`, `sprites/`, `charts/`, `data/`, `charts-dock-panel.js`, `charts-dock-resize.js`, `charts-dock-search.js`, and `shared/utils/*.js`.
 
 See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 
