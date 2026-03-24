@@ -64,10 +64,12 @@ const bearing = (typeof window !== 'undefined' && window.mapBearing !== undefine
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
+const mapStyleUrl = `./style.json?v=${Date.now()}`;
+
 // Initialize map
 const map = new maplibregl.Map({
   container: "map-container",
-  style: "./style.json?v=" + Date.now(),
+  style: mapStyleUrl,
   center: center,
   zoom: zoom,
   pitch: pitch,
@@ -112,7 +114,34 @@ map.on('style.load', () => {
   }
 });
 
-map.on("error", (e) => console.error("Map error:", e?.error || e));
+// Tile loads can emit many identical "Failed to fetch" errors (e.g. PMTiles Range + CDN reset).
+// Verbose: set window.MAP_DEBUG_MAP_ERRORS = true before or in DevTools for every event.
+const MAP_ERROR_THROTTLE_MS = 8000;
+const mapErrorLastLog = Object.create(null);
+let mapFetchErrorHintShown = false;
+
+map.on("error", (e) => {
+  const err = e?.error ?? e;
+  const msg = err?.message ?? String(err);
+  if (typeof window !== "undefined" && window.MAP_DEBUG_MAP_ERRORS === true) {
+    console.error("Map error:", err);
+    return;
+  }
+  const throttleKey =
+    msg === "Failed to fetch" || /^Load failed/i.test(msg) ? "__network_tile__" : msg;
+  const now = Date.now();
+  if (now - (mapErrorLastLog[throttleKey] ?? 0) < MAP_ERROR_THROTTLE_MS) {
+    return;
+  }
+  mapErrorLastLog[throttleKey] = now;
+  if (throttleKey === "__network_tile__" && !mapFetchErrorHintShown) {
+    mapFetchErrorHintShown = true;
+    console.warn(
+      "[map] Tile/resource fetch failed (identical errors throttled ~8s). Network often shows ERR_HTTP2_PROTOCOL_ERROR or ERR_CONNECTION_RESET on Range GETs to data.storypath.studio .pmtiles — can hit any archive (e.g. ne-bathy, places), any zoom, especially after fly-to/search when many tiles load. Not an app-code bug; fix CDN/proxy/mirror or retry. MAP_DEBUG_MAP_ERRORS = true logs every error."
+    );
+  }
+  console.error("Map error:", err);
+});
 
 // Log zoom when window.MAP_DEBUG_ZOOM is true (checked on each event so DevTools can toggle without reload).
 function mapDebugZoomLog() {
@@ -126,11 +155,8 @@ map.once("load", mapDebugZoomLog);
 // ============================================================================
 // Charts dock: fly / ease to a place selected from search (GEOID)
 // ============================================================================
-const FOCUS_PADDING_PX = 56;
-const FOCUS_WARMUP_ZOOM = 13;
-/** Second-pass tile load when z13 state center still has no target feature in memory (H3). */
-const FOCUS_WARMUP_ZOOM_BUMP = 15;
-const MIN_FIT_INNER_PX = 80;
+/** Search fly-to always uses this zoom (bounds center + dock offset). */
+const FOCUS_SEARCH_ZOOM = 9;
 
 function mapFocusDebugEnabled() {
   return typeof window !== "undefined" && window.MAP_FOCUS_DEBUG === true;
@@ -144,35 +170,6 @@ function getChartsDockOverlapPx() {
   if (typeof document === "undefined") return 0;
   const dock = document.getElementById("charts-dock");
   return dock ? dock.getBoundingClientRect().width : 0;
-}
-
-function focusPaddingOptions() {
-  const dockW = getChartsDockOverlapPx();
-  const p = FOCUS_PADDING_PX;
-  let top = p;
-  let bottom = p;
-  let left = p;
-  let right = p + dockW;
-  try {
-    const canvas = map.getCanvas();
-    const w = canvas?.clientWidth ?? 0;
-    const h = canvas?.clientHeight ?? 0;
-    if (w > 0 && left + right > w - MIN_FIT_INNER_PX) {
-      const budget = w - MIN_FIT_INNER_PX;
-      const sum = left + right;
-      left = Math.max(8, (left / sum) * budget);
-      right = Math.max(8, (right / sum) * budget);
-    }
-    if (h > 0 && top + bottom > h - MIN_FIT_INNER_PX) {
-      const budget = h - MIN_FIT_INNER_PX;
-      const sum = top + bottom;
-      top = Math.max(8, (top / sum) * budget);
-      bottom = Math.max(8, (bottom / sum) * budget);
-    }
-  } catch {
-    /* keep defaults */
-  }
-  return { top, bottom, left, right };
 }
 
 function forEachCoordInGeometry(geom, fn) {
@@ -263,26 +260,6 @@ function countJsGeoidMatchesInFeatures(features, geoid) {
   return n;
 }
 
-// #region agent log
-function agentDebugLog(message, data, hypothesisId) {
-  fetch("http://127.0.0.1:7542/ingest/3f936112-97d1-496a-9023-983de7d6ae11", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "35c9c0",
-    },
-    body: JSON.stringify({
-      sessionId: "35c9c0",
-      location: "map.js",
-      message,
-      data,
-      timestamp: Date.now(),
-      hypothesisId,
-    }),
-  }).catch(() => {});
-}
-// #endregion
-
 function focusMapOnGeoid(geoid) {
   const id = String(geoid);
   const statefp = id.length >= 2 ? id.slice(0, 2) : id.padStart(2, "0");
@@ -293,8 +270,7 @@ function focusMapOnGeoid(geoid) {
       mapFocusLog(`tryFocus${phase}: no places-source`);
       return false;
     }
-    // PMTiles places maxzoom 12: querySourceFeatures is only reliable once
-    // the map has loaded tiles at high zoom (see placesPopup.ts).
+    // PMTiles places maxzoom 12: querySourceFeatures needs tiles loaded; z9+ is enough in normal cases.
     let filtered = map.querySourceFeatures("places-source", {
       sourceLayer: "places",
       filter: geoidQueryFilter(id),
@@ -306,17 +282,6 @@ function focusMapOnGeoid(geoid) {
         sourceLayer: "places",
       });
       const jsMatchCount = countJsGeoidMatchesInFeatures(allLoaded, id);
-      agentDebugLog(
-        "tryFocus_maplibreFilterZero",
-        {
-          phase,
-          geoid: id,
-          zoom: map.getZoom(),
-          unfilteredCount: allLoaded.length,
-          jsMatchCount,
-        },
-        jsMatchCount === 0 ? "H3" : "H4"
-      );
       if (jsMatchCount > 0) {
         const want = normalizeGeoidDigits(id);
         const jsFeat = allLoaded.find(
@@ -324,11 +289,6 @@ function focusMapOnGeoid(geoid) {
         );
         if (jsFeat) {
           filtered = [jsFeat];
-          agentDebugLog(
-            "tryFocus_jsFallbackUsed",
-            { phase, geoid: id },
-            "H4fallback"
-          );
         }
       }
     }
@@ -355,26 +315,8 @@ function focusMapOnGeoid(geoid) {
     if (!filtered.length) return false;
 
     const feat = filtered[0];
-    agentDebugLog(
-      "tryFocus_resolved",
-      { phase, geoid: id, geomType: feat.geometry?.type },
-      "VERIFY"
-    );
     const bb = geometryBounds(feat.geometry);
     const t = feat.geometry?.type;
-    if (bb && (t === "Polygon" || t === "MultiPolygon")) {
-      try {
-        map.fitBounds(bb, {
-          padding: focusPaddingOptions(),
-          maxZoom: 12,
-          duration: 1100,
-        });
-        mapFocusLog(`tryFocus${phase}: fitBounds ok`, { geomType: t });
-        return true;
-      } catch (err) {
-        console.error("[map focus] fitBounds failed:", err);
-      }
-    }
     if (bb) {
       const cx = (bb[0][0] + bb[1][0]) / 2;
       const cy = (bb[0][1] + bb[1][1]) / 2;
@@ -382,14 +324,16 @@ function focusMapOnGeoid(geoid) {
       try {
         map.easeTo({
           center: [cx, cy],
-          zoom: Math.max(map.getZoom(), 10),
+          zoom: FOCUS_SEARCH_ZOOM,
           duration: 1100,
           offset: [-dockW / 2, 0],
         });
-        mapFocusLog(`tryFocus${phase}: easeTo centroid ok`, { geomType: t });
+        mapFocusLog(`tryFocus${phase}: easeTo fixed z${FOCUS_SEARCH_ZOOM} ok`, {
+          geomType: t,
+        });
         return true;
       } catch (err) {
-        console.error("[map focus] easeTo (centroid) failed:", err);
+        console.error("[map focus] easeTo (search focus) failed:", err);
       }
     }
     return false;
@@ -430,17 +374,12 @@ function focusMapOnGeoid(geoid) {
     return null;
   };
 
-  /** Fly to exact coordinates at z13, then tryFocus the polygon source. */
-  const flyToPlaceCoords = (coords, source) => {
-    agentDebugLog(
-      "warmup_center",
-      { geoid: id, statefp, usedPointSource: true, center: coords, zoom: FOCUS_WARMUP_ZOOM, source },
-      "WARMUP"
-    );
+  /** Fly to place coordinates at FOCUS_SEARCH_ZOOM, then tryFocus the polygon source. */
+  const flyToPlaceCoords = (coords) => {
     try {
       map.easeTo({
         center: coords,
-        zoom: FOCUS_WARMUP_ZOOM,
+        zoom: FOCUS_SEARCH_ZOOM,
         duration: 1000,
         offset: [-dockW() / 2, 0],
       });
@@ -460,26 +399,16 @@ function focusMapOnGeoid(geoid) {
     // Step 1: try the low-zoom points source for exact coordinates (already loaded tiles)
     const pointCoords = getPlaceCoordsFromPointSource();
     if (pointCoords) {
-      flyToPlaceCoords(pointCoords, "pointSourceDirect");
+      flyToPlaceCoords(pointCoords);
       return;
     }
 
     // Step 2: fly to state center at z6 to load point-source tiles, then re-query
     const stateCenter = getStateApproxCenterLngLat(statefp);
     if (!stateCenter) {
-      agentDebugLog(
-        "warmup_center",
-        { geoid: id, statefp, usedPointSource: false, center: null, zoom: null },
-        "WARMUP"
-      );
       return;
     }
 
-    agentDebugLog(
-      "warmup_pointSourceLoad",
-      { geoid: id, statefp, stateCenter, zoom: 6 },
-      "H6"
-    );
     try {
       map.easeTo({
         center: stateCenter,
@@ -494,19 +423,14 @@ function focusMapOnGeoid(geoid) {
     map.once("idle", () => {
       const coords = getPlaceCoordsFromPointSource();
       if (coords) {
-        flyToPlaceCoords(coords, "pointSourceAfterStateZoom");
+        flyToPlaceCoords(coords);
         return;
       }
-      // Step 3: final fallback — go to state center at z13 (best effort)
-      agentDebugLog(
-        "warmup_center",
-        { geoid: id, statefp, usedPointSource: false, center: stateCenter, zoom: FOCUS_WARMUP_ZOOM },
-        "WARMUP"
-      );
+      // Step 3: final fallback — state center at FOCUS_SEARCH_ZOOM (best effort)
       try {
         map.easeTo({
           center: stateCenter,
-          zoom: FOCUS_WARMUP_ZOOM,
+          zoom: FOCUS_SEARCH_ZOOM,
           duration: 800,
           offset: [-dockW() / 2, 0],
         });
@@ -529,14 +453,6 @@ function focusMapOnGeoid(geoid) {
   const runAfterInitialFailure = () => {
     if (fallbackRan) return;
     fallbackRan = true;
-    agentDebugLog(
-      "focus_fallback_idlePass1",
-      {
-        geoid: id,
-        tilesLoaded: map.areTilesLoaded(),
-      },
-      "IDLE"
-    );
     mapFocusLog("idle pass 1");
     if (tryFocus(" afterIdle1")) return;
     warmupStateThenRetry();
@@ -551,7 +467,6 @@ function focusMapOnGeoid(geoid) {
 if (typeof window !== "undefined") {
   window.addEventListener("charts-dock-focus-place", (e) => {
     const geoid = e.detail?.geoid;
-    agentDebugLog("charts_dock_focus_place", { geoid }, "H1");
     mapFocusLog("charts-dock-focus-place", { geoid });
     if (geoid) focusMapOnGeoid(geoid);
   });
@@ -646,19 +561,6 @@ if (typeof window !== 'undefined') {
       filter: geoidQueryFilter(id),
     });
     const jsMatchCount = countJsGeoidMatchesInFeatures(all, id);
-    const probeHypothesis =
-      jsMatchCount === 0 ? "H3" : f.length > 0 ? "H5" : "H4";
-    agentDebugLog(
-      "mapFocusDebugProbe",
-      {
-        geoid: id,
-        zoom: map.getZoom(),
-        unfilteredCount: all.length,
-        maplibreFilteredCount: f.length,
-        jsMatchCount,
-      },
-      probeHypothesis
-    );
     console.log("[mapFocusDebugProbe] filtered count", f.length);
     console.log("[mapFocusDebugProbe] jsMatchCount", jsMatchCount);
     if (jsMatchCount > 0 && !f.length) {
