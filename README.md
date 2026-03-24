@@ -36,10 +36,11 @@ A custom MapLibre basemap created from the dark-gray template. The development p
 ├── sprites/            # Icon sprite sheets
 ├── scripts/            # Build scripts
 │   ├── build-styles.ts # Generate style.json
-│   └── build-shields.ts # Build highway shields
+│   ├── build-shields.ts # Build highway shields
+│   └── extract-place-centroids.js # Generate data/placeCentroids.js from PMTiles
 ├── shared/             # Shared utilities (layers, expressions, places/*.ts)
 ├── charts/             # Chart.js dock modules (preview.html)
-├── data/               # Places index, manifest, search helpers
+├── data/               # Places index, manifest, search helpers, static centroids
 ├── docs/               # Documentation
 ├── preview.html        # Development preview page (map + charts dock)
 ├── map.js              # Map bootstrap (source — not generated)
@@ -137,6 +138,7 @@ See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 - `npm run build:utils` - TypeScript compile for browser utilities only
 - `npm run build:styles` - Build map style from TypeScript source
 - `npm run build:shields` - Rebuild highway shield sprites
+- `node scripts/extract-place-centroids.js` - Regenerate `data/placeCentroids.js` from the places PMTiles point archive (run when place data changes)
 - `npm run build` - `build:utils` then `build:styles`
 - `npm run serve` - Start development server (default port 8080, override with `PORT`)
 - `npm run dev` - Full build then serve
@@ -175,6 +177,11 @@ These are loaded on-demand and cached by the browser.
 
 - Run `npm run build:styles` after editing `theme.ts`
 - Hard refresh browser (Cmd+Shift+R / Ctrl+Shift+R)
+
+**PMTiles errors (`ERR_HTTP2_PROTOCOL_ERROR`) after search fly-to?**
+
+- This is a CDN/HTTP2 issue, not an app bug. Large camera animations trigger many concurrent tile requests that overwhelm the `data.storypath.studio` HTTP/2 connection. See [docs/places-layer.md](docs/places-layer.md#known-issue-pmtiles-tile-loading-errors-during-animation) for details and mitigations.
+- Place centering itself is unaffected — coordinates come from the static `data/placeCentroids.js` module, not from tile queries.
 
 **Missing sprites?**
 
