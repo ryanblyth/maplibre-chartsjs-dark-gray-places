@@ -29,7 +29,7 @@ The map uses a hybrid approach for assets:
 - **Glyphs** (fonts) - `https://data.storypath.studio/glyphs/`
 - **Starfield script** - `https://data.storypath.studio/js/maplibre-gl-starfield.js`
 - **PMTiles data** - Map data URLs in `style.json`
-- **Preview (`preview.html`)** - MapLibre / PMTiles from `unpkg.com`; Chart.js and Fuse from `https://esm.sh/` (see import map in `preview.html`)
+- **Preview (`preview.html` + `style.css`)** - MapLibre / PMTiles from `unpkg.com`; Chart.js and Fuse from `https://esm.sh/` (see import map in `preview.html`); layout and dock UI styles in `style.css`
 - **Census / places data** - Attribute JSON and places index URLs under `https://data.storypath.studio/` (configured in `shared/utils/placesData.js`, `data/dockDataConfig.js`)
 
 ## Deployment Steps
@@ -82,6 +82,7 @@ The repository root is the app root. For the **full preview** (map + charts dock
 ```
 /
 ├── preview.html
+├── style.css                      # Preview page styles (map layout, popups, charts dock)
 ├── map.js                         # Map entry (source, not generated)
 ├── map-config.js
 ├── style.json
@@ -163,7 +164,7 @@ Your map will be available at `https://your-project.pages.dev`
 
 2. **Commit files to publish** (adjust to your policy — some artifacts may already be tracked):
    ```bash
-   git add style.json style.generated.json map-config.js sprites/ shared/utils/*.js preview.html map.js charts/ data/ charts-dock-panel.js charts-dock-resize.js charts-dock-search.js
+   git add style.json style.generated.json map-config.js sprites/ shared/utils/*.js preview.html style.css map.js charts/ data/ charts-dock-panel.js charts-dock-resize.js charts-dock-search.js
    git commit -m "Build for production"
    ```
 
@@ -177,7 +178,7 @@ Your map will be available at `https://your-project.pages.dev`
    NODE_ENV=production npm run build
    ```
 
-2. **Upload files** to your server (see [Files to Deploy](#3-files-to-deploy) above): at minimum `preview.html`, `map.js`, `map-config.js`, `style.json`, `sprites/`, `charts/`, `data/`, dock scripts, and `shared/utils/*.js`.
+2. **Upload files** to your server (see [Files to Deploy](#3-files-to-deploy) above): at minimum `preview.html`, `style.css`, `map.js`, `map-config.js`, `style.json`, `sprites/`, `charts/`, `data/`, dock scripts, and `shared/utils/*.js`.
 
 3. **Configure your server:**
    - Enable CORS headers
