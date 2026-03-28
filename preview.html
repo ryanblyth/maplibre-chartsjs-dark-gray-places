@@ -457,7 +457,6 @@
       font-size: 0.875rem;
       background: #2b3942;
       border: 1px solid #3d4a54;
-      border-radius: 6px;
       color: #e8eaed;
       outline: none;
     }
@@ -469,6 +468,29 @@
     #charts-dock #charts-dock-search-input:disabled {
       opacity: 0.55;
       cursor: not-allowed;
+    }
+
+    /* Flat solid “clear” icon (replaces glossy WebKit default) */
+    #charts-dock #charts-dock-search-input::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 16px;
+      width: 16px;
+      margin-right: 2px;
+      cursor: pointer;
+      background-color: #a8adb4;
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-width='2' stroke-linecap='round' d='M4 4l8 8m0-8L4 12'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-width='2' stroke-linecap='round' d='M4 4l8 8m0-8L4 12'/%3E%3C/svg%3E");
+      -webkit-mask-size: 10px 10px;
+      mask-size: 10px 10px;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+    }
+
+    #charts-dock.charts-dock-light #charts-dock-search-input::-webkit-search-cancel-button {
+      background-color: #6b6b6b;
     }
 
     #charts-dock .charts-dock-search-results {
@@ -487,9 +509,19 @@
     }
 
     #charts-dock .charts-dock-search-result {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
       padding: 10px 12px;
+      font: inherit;
+      text-align: left;
       cursor: pointer;
+      background: transparent;
+      border: none;
       border-bottom: 1px solid #444;
+      -webkit-appearance: none;
+      appearance: none;
       transition: background-color 0.15s;
     }
 
@@ -506,11 +538,13 @@
       font-weight: 500;
       color: #e8eaed;
       font-size: 0.875rem;
+      line-height: 1.4;
     }
 
     #charts-dock .charts-dock-search-result-meta {
       font-size: 0.75rem;
-      color: #b0b0b0;
+      color: #c8ccd0;
+      line-height: 1.4;
       margin-top: 4px;
     }
 
@@ -545,11 +579,11 @@
     }
 
     #charts-dock.charts-dock-light .charts-dock-search-result-name {
-      color: #333;
+      color: #1a1a1a;
     }
 
     #charts-dock.charts-dock-light .charts-dock-search-result-meta {
-      color: #666;
+      color: #5a5a5a;
     }
 
     #charts-dock::-webkit-scrollbar {
