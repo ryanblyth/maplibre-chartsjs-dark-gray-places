@@ -548,6 +548,13 @@ body.charts-dock-resize-active {
   cursor: not-allowed;
 }
 
+@media (max-width: 768px) {
+  /* Prevents iOS Safari auto-zoom on focus (breaks fixed dock + edge tab layout). */
+  #charts-dock-search-input {
+    font-size: 16px;
+  }
+}
+
 /* Flat solid “clear” icon (replaces glossy WebKit default) */
 #charts-dock-search-input::-webkit-search-cancel-button {
   -webkit-appearance: none;
