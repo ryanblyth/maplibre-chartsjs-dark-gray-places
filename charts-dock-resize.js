@@ -1,7 +1,9 @@
 /**
  * Resizable charts dock: updates --charts-panel-width, persists to localStorage.
  */
-const STORAGE_KEY = "charts-dock-panel-width-px";
+import { STORAGE_KEYS } from "./dock-constants.js";
+
+const STORAGE_KEY = STORAGE_KEYS.PANEL_WIDTH;
 const MIN_WIDTH = 280;
 const KEYBOARD_STEP = 16;
 function maxPanelWidth() {
@@ -85,6 +87,9 @@ function initResizeHandle() {
     window.removeEventListener("pointercancel", endDrag);
     const w = dock.getBoundingClientRect().width;
     persistWidth(w);
+    window.dispatchEvent(
+      new CustomEvent("charts-dock-drawer-toggle", { detail: { open: true } })
+    );
     try {
       handle.releasePointerCapture(e.pointerId);
     } catch {

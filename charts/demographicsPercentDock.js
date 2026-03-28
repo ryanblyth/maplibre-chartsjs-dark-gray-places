@@ -3,7 +3,7 @@
  * Data logic matches chartjs-places createDemographicsPercentChart / updateDemographicsPercentChart.
  */
 import { Chart } from "chart.js";
-import { buildDemographicsShares, ensureBarComponentsRegistered, safeNumber, formatPercent, tickColor } from "./chartUtils.js";
+import { buildDemographicsShares, ensureBarComponentsRegistered, safeNumber, formatPercent, tickColor, CHART_COLORS, GRID_COLOR } from "./chartUtils.js";
 
 const BAR_LABEL_COLOR = "rgba(232, 234, 237, 0.55)";
 
@@ -116,8 +116,8 @@ export function setDemographicsPercentChart(canvas, attrs) {
         {
           label: "Percentage",
           data,
-          backgroundColor: "rgba(0, 190, 255, 0.82)",
-          borderColor: "rgba(0, 190, 255, 1)",
+          backgroundColor: CHART_COLORS.cyan.bg,
+          borderColor: CHART_COLORS.cyan.border,
           borderWidth: 1,
         },
       ],
@@ -145,7 +145,7 @@ export function setDemographicsPercentChart(canvas, attrs) {
             color: tc,
             callback: (value) => `${value}%`,
           },
-          grid: { color: "rgba(255,255,255,0.06)" },
+          grid: { color: GRID_COLOR },
         },
         y: {
           ticks: {
@@ -153,7 +153,7 @@ export function setDemographicsPercentChart(canvas, attrs) {
             maxRotation: 45,
             minRotation: 0,
           },
-          grid: { color: "rgba(255,255,255,0.06)" },
+          grid: { color: GRID_COLOR },
         },
       },
     },

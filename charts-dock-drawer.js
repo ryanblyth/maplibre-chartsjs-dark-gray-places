@@ -2,8 +2,10 @@
  * Charts dock slide-in drawer: edge tab toggles panel; compact scrim; localStorage; map resize event.
  * Default: open on wide viewports, closed on compact when no stored preference.
  */
-const STORAGE_KEY = "charts-dock-drawer-open";
-const COMPACT_MQ = window.matchMedia("(max-width: 768px)");
+import { STORAGE_KEYS, COMPACT_BREAKPOINT } from "./dock-constants.js";
+
+const STORAGE_KEY = STORAGE_KEYS.DRAWER_OPEN;
+const COMPACT_MQ = window.matchMedia(`(max-width: ${COMPACT_BREAKPOINT}px)`);
 
 const dock = document.getElementById("charts-dock");
 const slideEl = document.getElementById("charts-dock-slide");
@@ -46,7 +48,6 @@ function updateTabUi(open) {
   if (!tabBtn) return;
   const label = open ? "Hide charts" : "Show charts";
   tabBtn.textContent = label;
-  tabBtn.setAttribute("aria-label", label);
   tabBtn.setAttribute("aria-expanded", open ? "true" : "false");
 }
 

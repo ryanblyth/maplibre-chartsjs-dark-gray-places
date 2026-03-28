@@ -16,7 +16,6 @@ html, body {
   margin: 0; 
   padding: 0;
   overflow: hidden;
-  box-sizing: border-box;
   background-color: #27313f; 
 }
 *, *::before, *::after {
@@ -28,7 +27,6 @@ html, body {
   bottom: 0; 
   left: 0;
   right: 0;
-  width: 100%;
   z-index: 3; 
 }
 #starfield-container { 
@@ -169,7 +167,6 @@ html, body {
   width: 36px;
   margin: 0;
   padding: 16px 0;
-  box-sizing: border-box;
   border: none;
   border-right: 1px solid rgba(255, 255, 255, 0.12);
   font: inherit;
@@ -225,9 +222,6 @@ html, body {
   .charts-dock-scrim:not([hidden]) {
     display: block;
   }
-}
-
-@media (max-width: 768px) {
   .charts-dock-resize-handle {
     display: none;
   }
@@ -440,10 +434,7 @@ body.charts-dock-resize-active {
   width: 100%;
 }
 
-.charts-dock-commute-block {
-  margin-top: 16px;
-}
-
+.charts-dock-commute-block,
 .charts-dock-top-cities-block {
   margin-top: 16px;
 }
@@ -537,7 +528,7 @@ body.charts-dock-resize-active {
   margin: 0 0 12px;
 }
 
-#charts-dock #charts-dock-search-input {
+#charts-dock-search-input {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
@@ -548,17 +539,17 @@ body.charts-dock-resize-active {
   outline: none;
 }
 
-#charts-dock #charts-dock-search-input:focus {
+#charts-dock-search-input:focus {
   border-color: #3498db;
 }
 
-#charts-dock #charts-dock-search-input:disabled {
+#charts-dock-search-input:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
 
 /* Flat solid “clear” icon (replaces glossy WebKit default) */
-#charts-dock #charts-dock-search-input::-webkit-search-cancel-button {
+#charts-dock-search-input::-webkit-search-cancel-button {
   -webkit-appearance: none;
   appearance: none;
   height: 16px;
@@ -645,10 +636,6 @@ body.charts-dock-resize-active {
   background: #fafafa;
   border-color: #ddd;
   color: #1a1a1a;
-}
-
-#charts-dock.charts-dock-light #charts-dock-search-input:focus {
-  border-color: #3498db;
 }
 
 #charts-dock.charts-dock-light .charts-dock-search-results {

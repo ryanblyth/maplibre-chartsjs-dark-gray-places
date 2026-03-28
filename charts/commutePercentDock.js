@@ -2,7 +2,7 @@
  * Commute-by-percent horizontal bar for the charts dock.
  */
 import { Chart } from "chart.js";
-import { buildCommuteShares, ensureBarComponentsRegistered, formatPercent, tickColor } from "./chartUtils.js";
+import { buildCommuteShares, ensureBarComponentsRegistered, formatPercent, tickColor, CHART_COLORS, GRID_COLOR } from "./chartUtils.js";
 
 let chartInstance = null;
 
@@ -44,8 +44,8 @@ export function setCommutePercentChart(canvas, attrs) {
         {
           label: "Percentage",
           data,
-          backgroundColor: "rgba(183, 74, 255, 0.82)",
-          borderColor: "rgba(183, 74, 255, 1)",
+          backgroundColor: CHART_COLORS.purple.bg,
+          borderColor: CHART_COLORS.purple.border,
           borderWidth: 1,
         },
       ],
@@ -72,7 +72,7 @@ export function setCommutePercentChart(canvas, attrs) {
             color: tc,
             callback: (value) => `${value}%`,
           },
-          grid: { color: "rgba(255,255,255,0.06)" },
+          grid: { color: GRID_COLOR },
         },
         y: {
           ticks: {
@@ -80,7 +80,7 @@ export function setCommutePercentChart(canvas, attrs) {
             maxRotation: 45,
             minRotation: 0,
           },
-          grid: { color: "rgba(255,255,255,0.06)" },
+          grid: { color: GRID_COLOR },
         },
       },
     },

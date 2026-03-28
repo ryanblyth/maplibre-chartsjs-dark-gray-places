@@ -2,7 +2,7 @@
  * Vertical bar chart: top N places in state by population.
  */
 import { Chart } from "chart.js";
-import { ensureBarComponentsRegistered, safeNumber, formatNumber, tickColor } from "./chartUtils.js";
+import { ensureBarComponentsRegistered, safeNumber, formatNumber, tickColor, CHART_COLORS, GRID_COLOR } from "./chartUtils.js";
 
 let chartInstance = null;
 
@@ -52,8 +52,8 @@ export function setStateTopCitiesDockChart(canvas, rows, stateAbbr = "") {
         {
           label: "Population",
           data: populations,
-          backgroundColor: "rgba(0, 190, 255, 0.82)",
-          borderColor: "rgba(0, 190, 255, 1)",
+          backgroundColor: CHART_COLORS.cyan.bg,
+          borderColor: CHART_COLORS.cyan.border,
           borderWidth: 1,
         },
       ],
@@ -91,7 +91,7 @@ export function setStateTopCitiesDockChart(canvas, rows, stateAbbr = "") {
               return formatNumber(value);
             },
           },
-          grid: { color: "rgba(255,255,255,0.06)" },
+          grid: { color: GRID_COLOR },
         },
         x: {
           ticks: {
@@ -99,7 +99,7 @@ export function setStateTopCitiesDockChart(canvas, rows, stateAbbr = "") {
             maxRotation: 45,
             minRotation: 0,
           },
-          grid: { color: "rgba(255,255,255,0.06)" },
+          grid: { color: GRID_COLOR },
         },
       },
     },

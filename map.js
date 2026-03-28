@@ -1,4 +1,8 @@
 /* global maplibregl, pmtiles */
+import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
+import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
+import { initializePlacesInteractivity } from "./shared/utils/placesMapSetup.js";
+import { defaultPlacePopupAttributeConfig } from "./shared/utils/placesPopup.js";
 
 /**
  * My Custom Map Fixed Basemap - Map Initialization
@@ -485,10 +489,6 @@ if (typeof window !== "undefined") {
 // ============================================================================
 // Places Interactivity: Load data and set up click handlers
 // ============================================================================
-import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
-import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
-import { initializePlacesInteractivity } from './shared/utils/placesMapSetup.js';
-import { defaultPlacePopupAttributeConfig } from './shared/utils/placesPopup.js';
 
 let placesInitialized = false;
 

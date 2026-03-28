@@ -15,6 +15,18 @@ import {
 const TICK_COLOR_DARK = "#c9d1d9";
 const TICK_COLOR_LIGHT = "#444444";
 
+export const CHART_COLORS = {
+  cyan:   { bg: "rgba(0, 190, 255, 0.82)",   border: "rgba(0, 190, 255, 1)" },
+  purple: { bg: "rgba(183, 74, 255, 0.82)",  border: "rgba(183, 74, 255, 1)" },
+  pink:   { bg: "rgba(255, 45, 120, 0.82)",  border: "rgba(255, 45, 120, 1)" },
+  green:  { bg: "rgba(0, 235, 155, 0.82)",   border: "rgba(0, 235, 155, 1)" },
+  orange: { bg: "rgba(255, 149, 0, 0.82)",   border: "rgba(255, 149, 0, 1)" },
+};
+
+export const DOUGHNUT_BORDER = "rgba(43, 57, 66, 1.00)";
+
+export const GRID_COLOR = "rgba(255,255,255,0.06)";
+
 let barComponentsRegistered = false;
 
 export function ensureBarComponentsRegistered() {
