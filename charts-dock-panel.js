@@ -33,6 +33,7 @@ import {
 } from "./charts/stateTopCitiesDock.js";
 import { loadManifest } from "./data/manifestLoader.js";
 import { formatNumber } from "./charts/chartUtils.js";
+import { STORAGE_KEYS } from "./dock-constants.js";
 
 export const EVENT_NAME = "place-selected";
 
@@ -54,6 +55,7 @@ const commuteCanvas = document.getElementById("dock-commute-percent-chart");
 const demographicDoughnutCanvas = document.getElementById("dock-demographic-doughnut-chart");
 const commuteDoughnutCanvas = document.getElementById("dock-commute-doughnut-chart");
 const stateTopCitiesCanvas = document.getElementById("dock-state-top-cities-chart");
+const dock = document.getElementById("charts-dock");
 
 function destroyAllCharts() {
   destroyDemographicsPercentChart();
@@ -247,23 +249,12 @@ export async function selectPlaceFromSearch({ geoid, displayName }) {
   );
 }
 
-function syncValuesButtonLabel() {
-  const dock = document.getElementById("charts-dock");
-  const hidden = dock?.classList.contains("charts-dock-values-hidden");
-  const btn = document.getElementById("charts-dock-values-toggle");
+function syncToggleButton(btnId, className, labelWhenActive, labelWhenInactive) {
+  const active = dock?.classList.contains(className) ?? false;
+  const btn = document.getElementById(btnId);
   if (btn) {
-    btn.textContent = hidden ? "Show values" : "Hide values";
-    btn.setAttribute("aria-pressed", hidden ? "false" : "true");
-  }
-}
-
-function syncThemeButtonLabel() {
-  const dock = document.getElementById("charts-dock");
-  const light = dock?.classList.contains("charts-dock-light");
-  const btn = document.getElementById("charts-dock-theme-toggle");
-  if (btn) {
-    btn.textContent = light ? "Dark panel" : "Light panel";
-    btn.setAttribute("aria-pressed", light ? "true" : "false");
+    btn.textContent = active ? labelWhenActive : labelWhenInactive;
+    btn.setAttribute("aria-pressed", active ? "true" : "false");
   }
 }
 
@@ -275,40 +266,47 @@ function refreshAfterValuesChange() {
   redrawCommuteDoughnutDockChart();
 }
 
+function syncValues() {
+  syncToggleButton("charts-dock-values-toggle", "charts-dock-values-hidden", "Show values", "Hide values");
+}
+
+function syncTheme() {
+  syncToggleButton("charts-dock-theme-toggle", "charts-dock-light", "Dark panel", "Light panel");
+}
+
 function initDockToggles() {
-  const dock = document.getElementById("charts-dock");
+  if (!dock) return;
   const valuesBtn = document.getElementById("charts-dock-values-toggle");
   const themeBtn = document.getElementById("charts-dock-theme-toggle");
-  if (!dock) return;
 
-  const savedValues = localStorage.getItem("charts-dock-show-values");
+  const savedValues = localStorage.getItem(STORAGE_KEYS.SHOW_VALUES);
   if (savedValues === "false") {
     dock.classList.add("charts-dock-values-hidden");
   }
-  syncValuesButtonLabel();
+  syncValues();
 
   valuesBtn?.addEventListener("click", () => {
     dock.classList.toggle("charts-dock-values-hidden");
     localStorage.setItem(
-      "charts-dock-show-values",
+      STORAGE_KEYS.SHOW_VALUES,
       (!dock.classList.contains("charts-dock-values-hidden")).toString()
     );
-    syncValuesButtonLabel();
+    syncValues();
     refreshAfterValuesChange();
   });
 
-  if (localStorage.getItem("charts-dock-light") === "true") {
+  if (localStorage.getItem(STORAGE_KEYS.LIGHT_THEME) === "true") {
     dock.classList.add("charts-dock-light");
   }
-  syncThemeButtonLabel();
+  syncTheme();
 
   themeBtn?.addEventListener("click", () => {
     dock.classList.toggle("charts-dock-light");
     localStorage.setItem(
-      "charts-dock-light",
+      STORAGE_KEYS.LIGHT_THEME,
       dock.classList.contains("charts-dock-light").toString()
     );
-    syncThemeButtonLabel();
+    syncTheme();
     refreshDemographicsDockTicks();
     refreshCommutePercentDockTicks();
     refreshStateTopCitiesDockTicks();

@@ -4,7 +4,7 @@
 import { Chart } from "chart.js";
 import { dockHtmlLegendPlugin } from "./htmlLegendDockPlugin.js";
 import { ensureDoughnutChartComponentsRegistered } from "./doughnutDockRegistry.js";
-import { buildDemographicsShares, formatPercent } from "./chartUtils.js";
+import { buildDemographicsShares, formatPercent, CHART_COLORS, DOUGHNUT_BORDER } from "./chartUtils.js";
 
 let chartInstance = null;
 
@@ -45,19 +45,13 @@ export function setDemographicDoughnutDockChart(canvas, attrs) {
           label: "Percentage",
           data,
           backgroundColor: [
-            "rgba(0, 190, 255, 0.82)",
-            "rgba(255, 45, 120, 0.82)",
-            "rgba(0, 235, 155, 0.82)",
-            "rgba(255, 149, 0, 0.82)",
-            "rgba(183, 74, 255, 0.82)",
+            CHART_COLORS.cyan.bg,
+            CHART_COLORS.pink.bg,
+            CHART_COLORS.green.bg,
+            CHART_COLORS.orange.bg,
+            CHART_COLORS.purple.bg,
           ],
-          borderColor: [
-            "rgba(43, 57, 66, 1.00)",
-            "rgba(43, 57, 66, 1.00)",
-            "rgba(43, 57, 66, 1.00)",
-            "rgba(43, 57, 66, 1.00)",
-            "rgba(43, 57, 66, 1.00)",
-          ],
+          borderColor: Array(5).fill(DOUGHNUT_BORDER),
           borderWidth: 1,
         },
       ],

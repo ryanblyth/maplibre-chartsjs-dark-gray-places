@@ -1,4 +1,8 @@
 /* global maplibregl, pmtiles */
+import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
+import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
+import { initializePlacesInteractivity } from "./shared/utils/placesMapSetup.js";
+import { defaultPlacePopupAttributeConfig } from "./shared/utils/placesPopup.js";
 
 /**
  * My Custom Map Fixed Basemap - Map Initialization
@@ -174,7 +178,8 @@ function mapFocusLog(...args) {
 function getChartsDockOverlapPx() {
   if (typeof document === "undefined") return 0;
   const dock = document.getElementById("charts-dock");
-  return dock ? dock.getBoundingClientRect().width : 0;
+  if (!dock || dock.classList.contains("charts-dock--closed")) return 0;
+  return dock.getBoundingClientRect().width;
 }
 
 function getDockOffset() {
@@ -475,15 +480,15 @@ if (typeof window !== "undefined") {
     mapFocusLog("charts-dock-focus-place", { geoid });
     if (geoid) focusMapOnGeoid(geoid);
   });
+
+  window.addEventListener("charts-dock-drawer-toggle", () => {
+    if (map && typeof map.resize === "function") map.resize();
+  });
 }
 
 // ============================================================================
 // Places Interactivity: Load data and set up click handlers
 // ============================================================================
-import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
-import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
-import { initializePlacesInteractivity } from './shared/utils/placesMapSetup.js';
-import { defaultPlacePopupAttributeConfig } from './shared/utils/placesPopup.js';
 
 let placesInitialized = false;
 
