@@ -148,7 +148,7 @@ html, body {
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   color: #e0e0e0;
   transform: translateX(0);
-  transition: transform 0.28s ease;
+  transition: transform 0.5s ease;
 }
 
 #charts-dock.charts-dock--closed {
