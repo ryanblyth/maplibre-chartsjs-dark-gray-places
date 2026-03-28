@@ -140,7 +140,7 @@ html, body {
   z-index: 10;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #1e2630;
+  background: rgba(30, 38, 48, 0.98);
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
   color: #e0e0e0;
@@ -227,7 +227,7 @@ body.charts-dock-resize-active {
 }
 
 #charts-dock.charts-dock-light {
-  background: #e8eaed;
+  background: rgba(232, 234, 237, 0.98);
   color: #2d333b;
   border-left-color: rgba(0, 0, 0, 0.12);
 }
