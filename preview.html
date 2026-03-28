@@ -21,15 +21,31 @@
   <div id="map-container"></div>
 
   <aside id="charts-dock" aria-label="Charts and place details">
+    <button
+      type="button"
+      id="charts-dock-drawer-tab"
+      class="charts-dock-drawer-tab"
+      aria-controls="charts-dock-slide"
+      aria-expanded="true"
+      aria-label="Hide charts"
+    >
+      Hide charts
+    </button>
     <div
-      id="charts-dock-resize-handle"
-      class="charts-dock-resize-handle"
-      role="separator"
-      aria-orientation="vertical"
-      aria-label="Resize charts panel"
-      tabindex="0"
-    ></div>
-    <div class="charts-dock-inner">
+      id="charts-dock-slide"
+      class="charts-dock-slide"
+      role="region"
+      aria-label="Place charts panel"
+    >
+      <div
+        id="charts-dock-resize-handle"
+        class="charts-dock-resize-handle"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize charts panel"
+        tabindex="0"
+      ></div>
+      <div class="charts-dock-inner">
       <div class="charts-dock-header-row">
         <h2 class="charts-dock-title">Place charts</h2>
         <div class="charts-dock-header-controls">
@@ -102,7 +118,41 @@
         </section>
       </div>
     </div>
+    </div>
   </aside>
+
+  <div
+    id="charts-dock-scrim"
+    class="charts-dock-scrim"
+    hidden
+    aria-hidden="true"
+  ></div>
+  <script>
+    (function () {
+      try {
+        var KEY = "charts-dock-drawer-open";
+        var raw = localStorage.getItem(KEY);
+        var narrow = window.matchMedia("(max-width: 768px)").matches;
+        var open = raw === null ? !narrow : raw === "true";
+        var dock = document.getElementById("charts-dock");
+        var slide = document.getElementById("charts-dock-slide");
+        var tab = document.getElementById("charts-dock-drawer-tab");
+        if (dock && !open) {
+          dock.classList.add("charts-dock--closed");
+        }
+        if (slide) {
+          slide.setAttribute("aria-hidden", open ? "false" : "true");
+        }
+        if (tab) {
+          tab.textContent = open ? "Hide charts" : "Show charts";
+          tab.setAttribute("aria-label", open ? "Hide charts" : "Show charts");
+          tab.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+      } catch (e) {
+        /* ignore */
+      }
+    })();
+  </script>
 
   <script src="https://unpkg.com/maplibre-gl@5.13.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
@@ -110,6 +160,7 @@
   <script src="./map-config.js"></script>
   <script type="module" src="./charts-dock-resize.js"></script>
   <script type="module" src="./map.js"></script>
+  <script type="module" src="./charts-dock-drawer.js"></script>
   <script type="module" src="./charts-dock-panel.js"></script>
   <script type="module" src="./charts-dock-search.js"></script>
 </body>

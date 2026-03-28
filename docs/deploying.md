@@ -93,6 +93,7 @@ The repository root is the app root. For the **full preview** (map + charts dock
 │   ├── basemap@2x.json
 │   └── basemap@2x.png
 ├── charts-dock-panel.js
+├── charts-dock-drawer.js
 ├── charts-dock-resize.js
 ├── charts-dock-search.js
 ├── charts/                        # Chart.js dock modules
@@ -164,7 +165,7 @@ Your map will be available at `https://your-project.pages.dev`
 
 2. **Commit files to publish** (adjust to your policy — some artifacts may already be tracked):
    ```bash
-   git add style.json style.generated.json map-config.js sprites/ shared/utils/*.js preview.html style.css map.js charts/ data/ charts-dock-panel.js charts-dock-resize.js charts-dock-search.js
+   git add style.json style.generated.json map-config.js sprites/ shared/utils/*.js preview.html style.css map.js charts/ data/ charts-dock-panel.js charts-dock-drawer.js charts-dock-resize.js charts-dock-search.js
    git commit -m "Build for production"
    ```
 

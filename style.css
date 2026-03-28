@@ -4,6 +4,12 @@
   --charts-panel-width: min(420px, 40vw);
 }
 
+@media (max-width: 768px) {
+  :root {
+    --charts-panel-width: min(420px, 90vw);
+  }
+}
+
 html, body { 
   height: 100%; 
   width: 100%;
@@ -130,7 +136,7 @@ html, body {
   background: #666;
 }
 
-/* Charts dock (Phase 1: shell only; content wired in later phases) */
+/* Charts dock: fixed right panel, tab sticks out to the left via absolute positioning */
 #charts-dock {
   position: fixed;
   top: 0;
@@ -138,13 +144,93 @@ html, body {
   bottom: 0;
   width: var(--charts-panel-width);
   z-index: 10;
-  overflow-y: auto;
+  overflow: visible;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #e0e0e0;
+  transform: translateX(0);
+  transition: transform 0.28s ease;
+}
+
+#charts-dock.charts-dock--closed {
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #charts-dock {
+    transition-duration: 0.01ms;
+  }
+}
+
+.charts-dock-drawer-tab {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-100%, -50%);
+  width: 36px;
+  margin: 0;
+  padding: 16px 0;
+  box-sizing: border-box;
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  font: inherit;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  color: #c9d1d9;
+  background: rgba(26, 32, 40, 0.98);
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.charts-dock-drawer-tab:hover {
+  background: rgba(35, 44, 54, 0.98);
+  color: #e8eaed;
+}
+
+.charts-dock-drawer-tab:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: -2px;
+}
+
+.charts-dock-slide {
+  width: 100%;
+  height: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
   background: rgba(30, 38, 48, 0.98);
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.35);
-  color: #e0e0e0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Tap outside to close on compact viewports (shown via JS when panel open) */
+.charts-dock-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .charts-dock-scrim:not([hidden]) {
+    display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-dock-resize-handle {
+    display: none;
+  }
 }
 
 .charts-dock-resize-handle {
@@ -227,9 +313,24 @@ body.charts-dock-resize-active {
 }
 
 #charts-dock.charts-dock-light {
-  background: rgba(232, 234, 237, 0.98);
   color: #2d333b;
+}
+
+#charts-dock.charts-dock-light .charts-dock-slide {
+  background: rgba(232, 234, 237, 0.98);
   border-left-color: rgba(0, 0, 0, 0.12);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.12);
+}
+
+#charts-dock.charts-dock-light .charts-dock-drawer-tab {
+  color: #4b5563;
+  background: rgba(220, 223, 228, 0.98);
+  border-right-color: rgba(0, 0, 0, 0.1);
+}
+
+#charts-dock.charts-dock-light .charts-dock-drawer-tab:hover {
+  color: #1a1a1a;
+  background: rgba(232, 234, 237, 0.98);
 }
 
 #charts-dock.charts-dock-light .charts-dock-title,
@@ -572,19 +673,31 @@ body.charts-dock-resize-active {
   color: #5a5a5a;
 }
 
-#charts-dock::-webkit-scrollbar {
+.charts-dock-slide::-webkit-scrollbar {
   width: 8px;
 }
 
-#charts-dock::-webkit-scrollbar-track {
+.charts-dock-slide::-webkit-scrollbar-track {
   background: #151a22;
 }
 
-#charts-dock::-webkit-scrollbar-thumb {
+.charts-dock-slide::-webkit-scrollbar-thumb {
   background: #444;
   border-radius: 4px;
 }
 
-#charts-dock::-webkit-scrollbar-thumb:hover {
+.charts-dock-slide::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+#charts-dock.charts-dock-light .charts-dock-slide::-webkit-scrollbar-track {
+  background: #d8dce3;
+}
+
+#charts-dock.charts-dock-light .charts-dock-slide::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+}
+
+#charts-dock.charts-dock-light .charts-dock-slide::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }

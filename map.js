@@ -174,7 +174,8 @@ function mapFocusLog(...args) {
 function getChartsDockOverlapPx() {
   if (typeof document === "undefined") return 0;
   const dock = document.getElementById("charts-dock");
-  return dock ? dock.getBoundingClientRect().width : 0;
+  if (!dock || dock.classList.contains("charts-dock--closed")) return 0;
+  return dock.getBoundingClientRect().width;
 }
 
 function getDockOffset() {
@@ -474,6 +475,10 @@ if (typeof window !== "undefined") {
     const geoid = e.detail?.geoid;
     mapFocusLog("charts-dock-focus-place", { geoid });
     if (geoid) focusMapOnGeoid(geoid);
+  });
+
+  window.addEventListener("charts-dock-drawer-toggle", () => {
+    if (map && typeof map.resize === "function") map.resize();
   });
 }
 

@@ -4,9 +4,8 @@
 const STORAGE_KEY = "charts-dock-panel-width-px";
 const MIN_WIDTH = 280;
 const KEYBOARD_STEP = 16;
-
 function maxPanelWidth() {
-  return Math.min(720, Math.floor(window.innerWidth * 0.9));
+  return Math.min(720, Math.max(MIN_WIDTH, Math.floor(window.innerWidth * 0.9)));
 }
 
 function clampWidth(w) {
