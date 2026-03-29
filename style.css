@@ -257,6 +257,12 @@ body.charts-dock-resize-active {
   padding: 16px 18px 24px 20px;
 }
 
+.charts-dock-content-first {
+  padding-bottom: .5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #333333;
+}
+
 .charts-dock-header-row {
   display: flex;
   justify-content: space-between;
@@ -506,7 +512,6 @@ body.charts-dock-resize-active {
 .charts-dock-summary dt {
   margin: 0;
   color: #9a9a9a;
-  text-align: right;
   white-space: nowrap;
 }
 
