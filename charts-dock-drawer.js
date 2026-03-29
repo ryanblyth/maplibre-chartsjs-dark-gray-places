@@ -125,6 +125,149 @@ function init() {
     if (!dock || dock.classList.contains("charts-dock--closed")) return;
     closeDrawer();
   });
+
+  // Swipe-to-close gesture (touch devices)
+  const SWIPE_THRESHOLD_PX = 60;
+  const SWIPE_THRESHOLD_RATIO = 0.3;
+  const SWIPE_VELOCITY_MIN = 0.5; // px/ms
+  const DIRECTION_LOCK_PX = 10;
+  const reducedMotionMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const resizeHandle = document.getElementById("charts-dock-resize-handle");
+
+  let startX = 0;
+  let startY = 0;
+  let startTime = 0;
+  let swiping = false;
+  let directionLocked = false;
+
+  dock.addEventListener("touchstart", (e) => {
+    if (!isDrawerOpen()) return;
+    if (resizeHandle && resizeHandle.contains(e.target)) return;
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    startTime = Date.now();
+    swiping = false;
+    directionLocked = false;
+  }, { passive: true });
+
+  dock.addEventListener("touchmove", (e) => {
+    if (!isDrawerOpen()) return;
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+
+    if (!directionLocked) {
+      if (Math.abs(deltaX) < DIRECTION_LOCK_PX && Math.abs(deltaY) < DIRECTION_LOCK_PX) return;
+      directionLocked = true;
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return; // vertical scroll
+      swiping = true;
+    }
+
+    if (!swiping) return;
+
+    const clamped = Math.max(0, deltaX);
+    if (reducedMotionMQ.matches) return;
+    dock.style.transition = "none";
+    dock.style.transform = `translateX(${clamped}px)`;
+  }, { passive: true });
+
+  dock.addEventListener("touchend", () => {
+    if (!swiping) return;
+    swiping = false;
+    directionLocked = false;
+
+    const elapsed = Date.now() - startTime || 1;
+    const finalDeltaX = (parseFloat(dock.style.transform.replace(/[^0-9.-]/g, "")) || 0);
+    const dockWidth = dock.offsetWidth || 300;
+    const threshold = Math.min(SWIPE_THRESHOLD_PX, dockWidth * SWIPE_THRESHOLD_RATIO);
+    const velocity = finalDeltaX / elapsed;
+
+    dock.style.transition = "";
+    dock.style.transform = "";
+
+    if (finalDeltaX > threshold || velocity > SWIPE_VELOCITY_MIN) {
+      closeDrawer();
+    }
+  }, { passive: true });
+
+  dock.addEventListener("touchcancel", () => {
+    if (!swiping) return;
+    swiping = false;
+    directionLocked = false;
+    dock.style.transition = "";
+    dock.style.transform = "";
+  }, { passive: true });
+
+  // Swipe-to-open gesture on the tab button (touch devices)
+  if (tabBtn) {
+    let openStartX = 0;
+    let openStartY = 0;
+    let openStartTime = 0;
+    let lastOpenDeltaX = 0;
+    let swipingOpen = false;
+    let directionLockedOpen = false;
+
+    tabBtn.addEventListener("touchstart", (e) => {
+      if (isDrawerOpen()) return;
+      const touch = e.touches[0];
+      openStartX = touch.clientX;
+      openStartY = touch.clientY;
+      openStartTime = Date.now();
+      lastOpenDeltaX = 0;
+      swipingOpen = false;
+      directionLockedOpen = false;
+    }, { passive: true });
+
+    tabBtn.addEventListener("touchmove", (e) => {
+      if (isDrawerOpen()) return;
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - openStartX;
+      const deltaY = touch.clientY - openStartY;
+
+      if (!directionLockedOpen) {
+        if (Math.abs(deltaX) < DIRECTION_LOCK_PX && Math.abs(deltaY) < DIRECTION_LOCK_PX) return;
+        directionLockedOpen = true;
+        if (Math.abs(deltaY) > Math.abs(deltaX) || deltaX > 0) return;
+        swipingOpen = true;
+      }
+
+      if (!swipingOpen) return;
+
+      lastOpenDeltaX = Math.min(0, deltaX);
+      if (reducedMotionMQ.matches) return;
+      dock.style.transition = "none";
+      dock.style.transform = `translateX(calc(100% + ${lastOpenDeltaX}px))`;
+    }, { passive: true });
+
+    tabBtn.addEventListener("touchend", () => {
+      if (!swipingOpen) return;
+      swipingOpen = false;
+      directionLockedOpen = false;
+
+      const elapsed = Date.now() - openStartTime || 1;
+      const dragPx = Math.abs(lastOpenDeltaX);
+      const dockWidth = dock.offsetWidth || 300;
+      const threshold = Math.min(SWIPE_THRESHOLD_PX, dockWidth * SWIPE_THRESHOLD_RATIO);
+      const velocity = dragPx / elapsed;
+
+      dock.style.transition = "";
+      dock.style.transform = "";
+
+      if (dragPx > threshold || velocity > SWIPE_VELOCITY_MIN) {
+        openDrawer();
+      }
+    }, { passive: true });
+
+    tabBtn.addEventListener("touchcancel", () => {
+      if (!swipingOpen) return;
+      swipingOpen = false;
+      directionLockedOpen = false;
+      lastOpenDeltaX = 0;
+      dock.style.transition = "";
+      dock.style.transform = "";
+    }, { passive: true });
+  }
 }
 
 init();
