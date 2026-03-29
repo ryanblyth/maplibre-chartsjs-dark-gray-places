@@ -43,52 +43,58 @@
         tabindex="0"
       ></div>
       <div class="charts-dock-inner">
-      <div class="charts-dock-header-row">
-        <h2 class="charts-dock-title">Place charts</h2>
+      
+      <div class="charts-dock-content-first">
+      
+        <div class="charts-dock-header-row">
+        <h1 class="charts-dock-title">Place charts</h1>
         <div class="charts-dock-header-controls">
           <button type="button" id="charts-dock-values-toggle" class="charts-dock-control-btn" aria-pressed="true">Hide values</button>
           <button type="button" id="charts-dock-theme-toggle" class="charts-dock-control-btn" aria-pressed="false">Light panel</button>
         </div>
+        </div>
+        <p id="charts-dock-vintage" class="charts-dock-vintage" hidden></p>
+        <div class="charts-dock-search">
+          <input
+            id="charts-dock-search-input"
+            type="search"
+            placeholder="Search places…"
+            disabled
+            autocomplete="off"
+            aria-autocomplete="list"
+            aria-controls="charts-dock-search-results"
+            aria-expanded="false"
+          />
+          <div id="charts-dock-search-results" class="charts-dock-search-results" role="listbox" hidden></div>
+          <p id="charts-dock-search-error" class="charts-dock-search-error" hidden></p>
+        </div>
+        <p class="charts-dock-placeholder">Select a place on the map.</p>
+        <div id="charts-dock-selection" class="charts-dock-selection" hidden aria-live="polite">
+          <h2 id="charts-dock-place-name" class="charts-dock-place-name"></h2>
+          <p id="charts-dock-geoid" class="charts-dock-geoid"></p>
+          <dl id="charts-dock-summary" class="charts-dock-summary"></dl>
+        </div>
       </div>
-      <p id="charts-dock-vintage" class="charts-dock-vintage" hidden></p>
-      <div class="charts-dock-search">
-        <input
-          id="charts-dock-search-input"
-          type="search"
-          placeholder="Search places…"
-          disabled
-          autocomplete="off"
-          aria-autocomplete="list"
-          aria-controls="charts-dock-search-results"
-          aria-expanded="false"
-        />
-        <div id="charts-dock-search-results" class="charts-dock-search-results" role="listbox" hidden></div>
-        <p id="charts-dock-search-error" class="charts-dock-search-error" hidden></p>
-      </div>
-      <p class="charts-dock-placeholder">Select a place on the map.</p>
-      <div id="charts-dock-selection" class="charts-dock-selection" hidden aria-live="polite">
-        <h3 id="charts-dock-place-name" class="charts-dock-place-name"></h3>
-        <p id="charts-dock-geoid" class="charts-dock-geoid"></p>
-        <dl id="charts-dock-summary" class="charts-dock-summary"></dl>
-      </div>
+
+
       <div id="charts-panel-root">
         <section id="charts-dock-charts-area" class="charts-dock-charts-area" hidden>
           <p id="charts-dock-charts-msg" class="charts-dock-charts-msg" hidden></p>
           <div id="charts-dock-demographics-block" class="charts-dock-demographics-block" hidden>
-            <h4 class="charts-dock-chart-heading">Demographics by percent</h4>
+            <h3 class="charts-dock-chart-heading">Demographics by percent</h3>
             <div class="charts-dock-chart-canvas-wrap">
               <canvas id="dock-demographics-percent-chart" aria-label="Demographics by percent chart"></canvas>
             </div>
           </div>
           <div id="charts-dock-commute-block" class="charts-dock-commute-block" hidden>
-            <h4 class="charts-dock-chart-heading">Commute by percent</h4>
+            <h3 class="charts-dock-chart-heading">Commute by percent</h3>
             <div class="charts-dock-chart-canvas-wrap">
               <canvas id="dock-commute-percent-chart" aria-label="Commute by percent chart"></canvas>
             </div>
           </div>
           <div id="charts-dock-doughnuts-row" class="charts-dock-doughnuts-row" hidden>
             <div class="charts-dock-doughnut-block">
-              <h4 class="charts-dock-chart-heading">Demographics share</h4>
+              <h3 class="charts-dock-chart-heading">Demographics share</h3>
               <div class="charts-dock-doughnut-inner">
                 <div class="charts-dock-doughnut-canvas-wrap">
                   <canvas id="dock-demographic-doughnut-chart" aria-label="Demographics doughnut chart"></canvas>
@@ -97,7 +103,7 @@
               </div>
             </div>
             <div class="charts-dock-doughnut-block">
-              <h4 class="charts-dock-chart-heading">Commute share</h4>
+              <h3 class="charts-dock-chart-heading">Commute share</h3>
               <div class="charts-dock-doughnut-inner">
                 <div class="charts-dock-doughnut-canvas-wrap">
                   <canvas id="dock-commute-doughnut-chart" aria-label="Commute doughnut chart"></canvas>
@@ -107,7 +113,7 @@
             </div>
           </div>
           <div id="charts-dock-top-cities-block" class="charts-dock-top-cities-block" hidden>
-            <h4 class="charts-dock-chart-heading">State population ranking</h4>
+            <h3 class="charts-dock-chart-heading">State population ranking</h3>
             <div class="charts-dock-chart-canvas-wrap">
               <canvas id="dock-state-top-cities-chart" aria-label="Top cities by population chart"></canvas>
             </div>
