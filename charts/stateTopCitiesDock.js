@@ -1,5 +1,5 @@
 /**
- * Vertical bar chart: top N places in state by population.
+ * Horizontal bar chart: top N places in state by population.
  */
 import { Chart } from "chart.js";
 import { ensureBarComponentsRegistered, safeNumber, formatNumber, tickColor, CHART_COLORS, GRID_COLOR } from "./chartUtils.js";
@@ -11,6 +11,61 @@ function destroyChart() {
     chartInstance.destroy();
     chartInstance = null;
   }
+}
+
+function populationTickLabel(value) {
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(1)}M`;
+  }
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(0)}K`;
+  }
+  return formatNumber(value);
+}
+
+/**
+ * @param {string} titleText
+ * @param {string} tc
+ */
+function getTopCitiesChartOptions(titleText, tc) {
+  return {
+    indexAxis: "y",
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: titleText,
+        color: tc,
+      },
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label(ctx) {
+            return `Population: ${formatNumber(ctx.parsed.x)}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          color: tc,
+          callback(value) {
+            return populationTickLabel(value);
+          },
+        },
+        grid: { color: GRID_COLOR },
+      },
+      y: {
+        ticks: {
+          color: tc,
+        },
+        grid: { display: false },
+      },
+    },
+  };
 }
 
 /**
@@ -37,9 +92,7 @@ export function setStateTopCitiesDockChart(canvas, rows, stateAbbr = "") {
   if (chartInstance) {
     chartInstance.data.labels = labels;
     chartInstance.data.datasets[0].data = populations;
-    chartInstance.options.plugins.title.text = titleText;
-    chartInstance.options.scales.x.ticks.color = tc;
-    chartInstance.options.scales.y.ticks.color = tc;
+    Object.assign(chartInstance.options, getTopCitiesChartOptions(titleText, tc));
     chartInstance.update();
     return chartInstance;
   }
@@ -58,51 +111,7 @@ export function setStateTopCitiesDockChart(canvas, rows, stateAbbr = "") {
         },
       ],
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        title: {
-          display: true,
-          text: titleText,
-          color: tc,
-        },
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label(ctx) {
-              return `Population: ${formatNumber(ctx.parsed.y)}`;
-            },
-          },
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            color: tc,
-            callback(value) {
-              if (value >= 1000000) {
-                return `${(value / 1000000).toFixed(1)}M`;
-              }
-              if (value >= 1000) {
-                return `${(value / 1000).toFixed(0)}K`;
-              }
-              return formatNumber(value);
-            },
-          },
-          grid: { color: GRID_COLOR },
-        },
-        x: {
-          ticks: {
-            color: tc,
-            maxRotation: 45,
-            minRotation: 0,
-          },
-          grid: { color: GRID_COLOR },
-        },
-      },
-    },
+    options: getTopCitiesChartOptions(titleText, tc),
   });
 
   return chartInstance;
