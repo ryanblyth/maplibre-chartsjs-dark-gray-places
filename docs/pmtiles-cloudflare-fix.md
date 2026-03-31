@@ -123,13 +123,13 @@ best performance — no external origin needed.
 
 5. **Update app tile source URLs:**
 
-   In your MapLibre style sources, replace the raw PMTiles URLs:
+   In your MapLibre style sources, point at the Worker’s TileJSON URLs (HTTPS `*.json`), not legacy `pmtiles://` archive URLs:
    ```
-   # Before
+   # Before (direct archive)
    pmtiles://https://data.storypath.studio/pmtiles/us_z0-15.pmtiles
 
-   # After
-   pmtiles://https://tiles.storypath.studio/us_z0-15.pmtiles
+   # After (TileJSON on same or Worker host)
+   https://data.storypath.studio/us_z0-15.json
    ```
 
 ### Option B: PMTiles on existing origin (Worker as proxy)
@@ -164,14 +164,17 @@ After deploying the Worker:
 
 ## What This Looks Like in the App Code
 
-The only app-level change is updating the PMTiles source URLs. In this
-project, tile sources are defined in:
+The app-level change is updating MapLibre source `url` values to HTTPS TileJSON
+endpoints (`https://…/*.json`). In this project, tile sources are defined in:
 
 ```
+shared/styles/baseStyle.ts
 shared/styles/layers/sources.ts
 ```
 
-The `pmtiles://` protocol prefix stays the same — only the hostname changes.
+Run `npm run build:styles` to regenerate `style.json`. The browser still uses
+the `pmtiles` MapLibre protocol (see `map.js`) when TileJSON or tiles reference
+`pmtiles://` tile templates internally.
 
 ## Cost Considerations
 

@@ -179,7 +179,7 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
     }
     
     // Airport POIs from AERODROME_LABEL layer
-    // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.pmtiles)
+    // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.json TileJSON)
     // This is the main airport label source with icons and names
     // This layer is created separately after the loop (see below)
     
@@ -888,7 +888,7 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
   } // End of for (const source of sources) loop
   
   // Airport POIs from AERODROME_LABEL layer (us_high only)
-  // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.pmtiles)
+  // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.json TileJSON)
   // This is the main airport label source with icons and names
   // Create this layer separately since it only exists in one source
   if (isPOIEnabled('airport')) {

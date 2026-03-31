@@ -11,8 +11,6 @@ window.mapMinZoom = {
 };
 window.mapCenter = [-98, 39];
 window.mapZoom = 4.25;
-// Console: "[map zoom]" on load and after each zoom. Set false to silence.
-window.MAP_DEBUG_ZOOM = true;
 window.mapPitch = 0;
 window.mapBearing = 0;
 // Starfield configuration

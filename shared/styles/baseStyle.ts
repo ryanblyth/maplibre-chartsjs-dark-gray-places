@@ -23,7 +23,7 @@ export interface BaseStyleConfig {
   spriteBaseUrl: string;
   /** Sprite path relative to spriteBaseUrl (e.g., "basemaps/dark-blue/sprites/basemap"). Defaults to "shared/assets/sprites/basemap" for backward compatibility */
   spritePath?: string;
-  /** Base URL for PMTiles data (e.g., "https://data.storypath.studio") */
+  /** Base URL for tile TileJSON and assets (e.g., "https://data.storypath.studio") */
   dataBaseUrl: string;
 }
 
@@ -41,7 +41,7 @@ export function createGlobalSources(config: BaseStyleConfig): Record<string, Sou
   return {
     world_labels: {
       type: "vector",
-      url: `pmtiles://${config.dataBaseUrl}/pmtiles/world-labels_z0-10.pmtiles`,
+      url: `${config.dataBaseUrl}/world-labels_z0-10.json`,
       minzoom: 0,
       maxzoom: 10,
     },

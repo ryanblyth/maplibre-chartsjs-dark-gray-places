@@ -6,45 +6,45 @@
   "sources": {
     "world_labels": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/world-labels_z0-10.pmtiles",
+      "url": "https://data.storypath.studio/world-labels_z0-10.json",
       "minzoom": 0,
       "maxzoom": 10
     },
-    "world_low": {"type": "vector", "url": "pmtiles://https://data.storypath.studio/pmtiles/world_z0-6.pmtiles", "minzoom": 0},
-    "world_mid": {"type": "vector", "url": "pmtiles://https://data.storypath.studio/pmtiles/world_z6-10.pmtiles", "minzoom": 6},
+    "world_low": {"type": "vector", "url": "https://data.storypath.studio/world_z0-6.json", "minzoom": 0},
+    "world_mid": {"type": "vector", "url": "https://data.storypath.studio/world_z6-10.json", "minzoom": 6},
     "us_high": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/us_z0-15.pmtiles",
+      "url": "https://data.storypath.studio/us_z0-15.json",
       "minzoom": 6,
       "maxzoom": 15
     },
     "poi_us": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/poi_us_z12-15.pmtiles",
+      "url": "https://data.storypath.studio/poi_us_z12-15.json",
       "minzoom": 12,
       "maxzoom": 15
     },
     "ne-bathy": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/ne_bathy_z0-6.pmtiles",
+      "url": "https://data.storypath.studio/ne_bathy_z0-6.json",
       "minzoom": 0,
       "maxzoom": 6
     },
     "world-hillshade": {
       "type": "raster-dem",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/world_mtn_hillshade.pmtiles",
+      "url": "https://data.storypath.studio/world_mtn_hillshade.json",
       "minzoom": 0,
       "maxzoom": 12
     },
     "places-low-source": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/places/places_cb_2024_points_acs5_2024_density_z0.pmtiles",
+      "url": "https://data.storypath.studio/places/places_cb_2024_points_acs5_2024_density_z0.json",
       "minzoom": 0,
       "maxzoom": 7
     },
     "places-source": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/places/places_cb_2024_500k_z5.pmtiles",
+      "url": "https://data.storypath.studio/places/places_cb_2024_500k_z5.json",
       "promoteId": "GEOID",
       "minzoom": 5
     }

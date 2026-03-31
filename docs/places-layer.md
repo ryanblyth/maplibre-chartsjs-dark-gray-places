@@ -59,7 +59,7 @@ See `preview.html` for a complete working example.
 
 ## Data Sources
 
-- **PMTiles**: `https://data.storypath.studio/pmtiles/places/places_cb_2024_500k_z5.pmtiles`
+- **Places polygons (map source, TileJSON)**: `https://data.storypath.studio/places/places_cb_2024_500k_z5.json`
 - **Attributes**: `https://data.storypath.studio/attrs/places/acs5_2024/attrs_by_state/attrs_places_acs5_2024_${statefp}.json`
 - **Manifest**: `https://data.storypath.studio/attrs/places/acs5_2024/manifest.json`
 
@@ -495,7 +495,7 @@ node scripts/extract-place-centroids.js
 The script uses the `pmtiles`, `@mapbox/vector-tile`, and `pbf` packages
 (dev dependencies) to:
 
-1. Open the PMTiles archive at
+1. Open the **binary** PMTiles archive at (TileJSON is not a substitute for this step — the script reads `.pmtiles` bytes):
    `https://data.storypath.studio/pmtiles/places/places_cb_2024_points_acs5_2024_density_z0.pmtiles`
 2. Fetch tiles at z0–z5 (21 tiles total — fast, ~7 seconds)
 3. Decode vector tile features and extract GEOID + coordinates

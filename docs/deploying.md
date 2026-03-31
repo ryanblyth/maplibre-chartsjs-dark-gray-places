@@ -289,16 +289,16 @@ https://data.storypath.studio/js/maplibre-gl-starfield.js
 
 Required for globe projection with starfield effect.
 
-### PMTiles Data
+### Tile data (TileJSON)
 
-Map data sources are referenced in `style.json`:
+Map data sources are referenced in `style.json` as HTTPS TileJSON endpoints (served via Cloudflare Worker or similar); MapLibre loads the JSON then fetches tiles per the spec:
 
 ```json
 {
   "sources": {
     "world_low": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/world.pmtiles"
+      "url": "https://data.storypath.studio/world_z0-6.json"
     }
   }
 }
@@ -356,7 +356,7 @@ Monitor that all assets load correctly:
 - Style JSON
 - Sprites (check Network tab)
 - Glyphs (loaded on-demand)
-- PMTiles data
+- TileJSON / vector tile data
 
 ### Error Tracking
 

@@ -16,6 +16,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_PATH = resolve(__dirname, "../data/placeCentroids.js");
 
+/** Direct .pmtiles archive URL (not the map TileJSON). The PMTiles JS API reads byte ranges from the archive. */
 const PMTILES_URL =
   "https://data.storypath.studio/pmtiles/places/places_cb_2024_points_acs5_2024_density_z0.pmtiles";
 
