@@ -562,8 +562,6 @@ map.on('load', () => { setupPlacesInteractivity(); });
 if (map.loaded() && map.getStyle()) {
   setupPlacesInteractivity();
 }
-map.once('load', prefetchLowZoomTiles);
-
 // ============================================================================
 // Low-zoom tile prefetch: warm Cloudflare edge cache after initial load
 // ============================================================================
@@ -600,6 +598,7 @@ function prefetchLowZoomTiles() {
     // never affect map functionality
   }
 }
+map.once('load', prefetchLowZoomTiles);
 
 // ============================================================================
 // Expose map globally & conditionally load debug utilities

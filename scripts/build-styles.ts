@@ -17,6 +17,12 @@ const projectRoot = join(__dirname, "..");
 /** Default CDN for glyphs, sprites, and related static map assets (CORS must allow your origins). */
 const DEFAULT_ASSETS_BASE = "https://assets.storypath.studio";
 
+/** Standard TileJSON fields to inline from each source's url endpoint. */
+const TILEJSON_FIELDS = [
+  "tiles", "vector_layers", "minzoom", "maxzoom",
+  "attribution", "bounds", "center", "fillzoom", "scheme", "tilejson",
+];
+
 function resolveStyleConfig(): BaseStyleConfig {
   const assetsBase = process.env.ASSETS_BASE_URL || DEFAULT_ASSETS_BASE;
   return {
@@ -110,11 +116,6 @@ window.mapBearing = ${bearing};${starfieldConfigSection}
     console.warn("  ⚠ Could not generate map-config.js:", error instanceof Error ? error.message : error);
   }
 }
-
-const TILEJSON_FIELDS = [
-  "tiles", "vector_layers", "minzoom", "maxzoom",
-  "attribution", "bounds", "center", "fillzoom", "scheme", "tilejson",
-];
 
 async function inlineTileJsonSources(style: Record<string, any>): Promise<void> {
   const sources = style.sources as Record<string, any>;
