@@ -111,6 +111,29 @@ window.mapBearing = ${bearing};${starfieldConfigSection}
   }
 }
 
+const TILEJSON_FIELDS = [
+  "tiles", "vector_layers", "minzoom", "maxzoom",
+  "attribution", "bounds", "center", "fillzoom", "scheme", "tilejson",
+];
+
+async function inlineTileJsonSources(style: Record<string, any>): Promise<void> {
+  const sources = style.sources as Record<string, any>;
+  for (const [name, source] of Object.entries(sources)) {
+    if (typeof source.url !== "string") continue;
+    const url = source.url as string;
+    console.log(`  ↓ Inlining TileJSON for source "${name}": ${url}`);
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`TileJSON fetch failed for source "${name}" (${url}): HTTP ${res.status}`);
+    }
+    const tileJson = await res.json() as Record<string, unknown>;
+    for (const field of TILEJSON_FIELDS) {
+      if (field in tileJson) source[field] = tileJson[field];
+    }
+    delete source.url;
+  }
+}
+
 async function buildStyle(): Promise<void> {
   console.log("Building my-custom-map-fixed style...\n");
   
@@ -121,6 +144,7 @@ async function buildStyle(): Promise<void> {
   
   try {
     const style = createMyCustomMapFixedStyle(config);
+    await inlineTileJsonSources(style);
     const outputPath = join(projectRoot, "style.generated.json");
     const styleJsonPath = join(projectRoot, "style.json");
     

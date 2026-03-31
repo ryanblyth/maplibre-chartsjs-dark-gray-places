@@ -562,6 +562,44 @@ map.on('load', () => { setupPlacesInteractivity(); });
 if (map.loaded() && map.getStyle()) {
   setupPlacesInteractivity();
 }
+map.once('load', prefetchLowZoomTiles);
+
+// ============================================================================
+// Low-zoom tile prefetch: warm Cloudflare edge cache after initial load
+// ============================================================================
+function prefetchLowZoomTiles() {
+  try {
+    const style = map.getStyle();
+    const templates = [
+      style?.sources?.['world_low']?.tiles?.[0],
+      style?.sources?.['world_labels']?.tiles?.[0],
+    ].filter(Boolean);
+    if (!templates.length) return;
+
+    const coords = [];
+    for (let z = 0; z <= 3; z++) {
+      const max = 1 << z; // 2^z
+      for (let x = 0; x < max; x++) {
+        for (let y = 0; y < max; y++) {
+          coords.push([z, x, y]);
+        }
+      }
+    }
+
+    const urls = [];
+    for (const tpl of templates) {
+      for (const [z, x, y] of coords) {
+        urls.push(tpl.replace('{z}', z).replace('{x}', x).replace('{y}', y));
+      }
+    }
+
+    for (const [i, url] of urls.entries()) {
+      setTimeout(() => fetch(url, { priority: 'low' }).catch(() => {}), i * 10);
+    }
+  } catch {
+    // never affect map functionality
+  }
+}
 
 // ============================================================================
 // Expose map globally & conditionally load debug utilities
