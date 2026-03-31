@@ -3,6 +3,7 @@ import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
 import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
 import { initializePlacesInteractivity } from "./shared/utils/placesMapSetup.js";
 import { defaultPlacePopupAttributeConfig } from "./shared/utils/placesPopup.js";
+import { loadPlacesAttributesByState, updateMapFeatureStates } from "./shared/utils/placesData.js";
 
 /**
  * My Custom Map Fixed Basemap - Map Initialization
@@ -481,11 +482,30 @@ function focusMapOnGeoid(geoid) {
   map.once("idle", runAfterInitialFailure);
 }
 
+/**
+ * Load ACS attributes for the place's state if missing from the initial viewport batch,
+ * then apply feature-state styling (fixes gray fill on mobile / narrow viewports).
+ */
+async function ensureAttributesForFocusedGeoid(geoid) {
+  const digits = String(geoid ?? "").replace(/\D/g, "");
+  if (digits.length < 2) return;
+  const statefp = digits.slice(0, 2).padStart(2, "0");
+  try {
+    const stateData = await loadPlacesAttributesByState(statefp);
+    updateMapFeatureStates(map, stateData, "places-source", "places");
+  } catch (err) {
+    console.warn("[map] ensureAttributesForFocusedGeoid failed", statefp, err);
+  }
+}
+
 if (typeof window !== "undefined") {
   window.addEventListener("charts-dock-focus-place", (e) => {
     const geoid = e.detail?.geoid;
     mapFocusLog("charts-dock-focus-place", { geoid });
-    if (geoid) focusMapOnGeoid(geoid);
+    if (geoid) {
+      void ensureAttributesForFocusedGeoid(geoid);
+      focusMapOnGeoid(geoid);
+    }
   });
 
   window.addEventListener("charts-dock-drawer-toggle", () => {

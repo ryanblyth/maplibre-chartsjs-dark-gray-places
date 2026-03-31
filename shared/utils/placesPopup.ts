@@ -13,6 +13,7 @@ declare const maplibregl: {
 
 import type { Map as MapLibreMap, MapGeoJSONFeature } from "maplibre-gl";
 import type { PlaceAttributes, PlacesAttributeData } from "./placesData.js";
+import { getAttributesRowForGeoidFromCache } from "./placesData.js";
 
 /**
  * Configuration for a single popup attribute
@@ -508,9 +509,9 @@ export function setupPlacesClickHandler(
 
     const displayName = getFeatureDisplayName(feature);
     
-    // Get attributes from cache
-    const attrs = attributeData[geoid];
-    
+    const attrs =
+      attributeData[geoid] ?? getAttributesRowForGeoidFromCache(geoid);
+
     if (!attrs) {
       // Show "no data" popup
       new maplibregl.Popup({

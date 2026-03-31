@@ -128,6 +128,28 @@ export function getAttributeForPlace(
 }
 
 /**
+ * Full attribute row for a GEOID from per-state JSON already in `attributeCache`
+ * (e.g. after loadPlacesAttributesByState). Used when the initial viewport
+ * did not load that state but the file was fetched later (e.g. search fly-to).
+ */
+export function getAttributesRowForGeoidFromCache(
+  geoid: string | number
+): PlaceAttributes | undefined {
+  const digits = String(geoid ?? "").replace(/\D/g, "");
+  if (digits.length < 2) return undefined;
+  const statefp = digits.slice(0, 2).padStart(2, "0");
+  const stateData = attributeCache.get(statefp);
+  if (!stateData) return undefined;
+  const padded7 =
+    digits.length >= 7 ? digits.slice(0, 7).padStart(7, "0") : digits.padStart(7, "0");
+  const candidates = [String(geoid).trim(), digits, padded7];
+  for (const k of candidates) {
+    if (k && stateData[k] != null) return stateData[k];
+  }
+  return undefined;
+}
+
+/**
  * Updates MapLibre feature states with attribute data
  * 
  * This enables data-driven styling based on attributes like population.
