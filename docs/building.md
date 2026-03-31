@@ -20,11 +20,14 @@ This runs `scripts/build-styles.ts`, which:
 
 1. Imports the style generator function from `styles/myCustomMapFixedStyle.ts`
 2. Calls it with configuration (CDN URLs, etc.)
-3. Formats the output JSON
-4. Writes three files:
+3. **Inlines TileJSON**: fetches each source's `url` endpoint and replaces it with the full TileJSON content (`tiles`, `vector_layers`, `minzoom`, `maxzoom`, etc.), removing the `url` property. This eliminates 8 network round-trips MapLibre would otherwise make at startup to resolve TileJSON before tiles can load.
+4. Formats the output JSON
+5. Writes three files:
    - `style.generated.json` - Formatted MapLibre style
    - `style.json` - Copy of generated file (for compatibility)
    - `map-config.js` - JavaScript configuration for preview
+
+If any TileJSON fetch fails during the build, the script throws a clear error identifying which URL failed and exits — no broken style is written silently.
 
 ### 2. Build Browser Utilities (`shared/utils`)
 
@@ -149,7 +152,7 @@ See [docs/deploying.md](docs/deploying.md#2-override-cdn-urls-optional) for exam
 The main MapLibre style file. Contains:
 
 - `version`: MapLibre style spec version (8)
-- `sources`: Data sources (PMTiles URLs)
+- `sources`: Data sources with inlined tile URLs — each source has a `tiles` array and `vector_layers` (for vector sources) baked in at build time. There are no `url` properties pointing at TileJSON endpoints; MapLibre reads the `tiles` array directly.
 - `sprite`: Sprite sheet URL
 - `glyphs`: Font glyph URL pattern
 - `layers`: Array of layer definitions
