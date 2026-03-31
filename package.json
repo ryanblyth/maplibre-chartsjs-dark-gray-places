@@ -6,11 +6,13 @@
   "scripts": {
     "prepare": "npm run build:utils",
     "build:styles": "tsx scripts/build-styles.ts",
+    "build:styles:local": "SPRITE_CDN=http://localhost:8080 tsx scripts/build-styles.ts",
+    "verify:tilejson": "node scripts/verify-tilejson.mjs",
     "build:shields": "tsx scripts/build-shields.ts",
     "build:utils": "tsc --project tsconfig.browser.json",
     "build": "npm run build:utils && npm run build:styles",
     "serve": "node serve.js",
-    "dev": "npm run build && npm run serve"
+    "dev": "npm run build:utils && npm run build:styles:local && npm run serve"
   },
   "devDependencies": {
     "@mapbox/vector-tile": "^2.0.4",

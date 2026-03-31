@@ -45,7 +45,25 @@ npm run build
 
 This runs `build:utils` then `build:styles`.
 
-### 3. Build Shields (Optional)
+### 3. Build styles for local `npm run serve` (sprites)
+
+If sprites are not yet on the CDN, run:
+
+```bash
+npm run build:styles:local
+```
+
+This sets `SPRITE_CDN=http://localhost:8080` so MapLibre loads `sprites/basemap*` from the dev server. `npm run dev` runs `build:styles:local` before `serve`. For production, deploy sprites and use `npm run build:styles` (default `sprite` URL).
+
+### 4. Verify TileJSON (CDN / Worker)
+
+```bash
+npm run verify:tilejson
+```
+
+Fetches each TileJSON under `DATA_CDN` (default `https://data.storypath.studio`) and prints status and `vector_layers` when present. Use this to confirm Worker routing matches the vector schema expected by the style.
+
+### 5. Build Shields (Optional)
 
 ```bash
 npm run build:shields
@@ -111,38 +129,18 @@ Shared utilities for building styles:
 
 ## Build Configuration
 
-The build script uses two configurations:
+[scripts/build-styles.ts](scripts/build-styles.ts) calls `resolveStyleConfig()`:
 
-### Development Config (default)
-
-```typescript
-const localConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "http://localhost:8080",
-  dataBaseUrl: "https://data.storypath.studio",
-};
-```
-
-- Sprites served from local dev server
-- Glyphs and data from CDN
-
-### Production Config
+- **Default** `ASSETS_BASE_URL`: `https://assets.storypath.studio` — used for `glyphsBaseUrl` and `spriteBaseUrl` unless overridden
+- **`GLYPHS_CDN`** — glyph PBF base URL
+- **`SPRITE_CDN`** — sprite JSON/PNG base URL (set to `http://localhost:8080` if you only serve `sprites/` locally and do not host them on `assets`)
+- **`DATA_CDN`** — TileJSON / vector tiles (default `https://data.storypath.studio`)
 
 ```bash
-NODE_ENV=production npm run build:styles
+npm run build:styles
 ```
 
-```typescript
-const productionConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "http://localhost:8080",  // Update for production
-  dataBaseUrl: "https://data.storypath.studio",
-};
-```
-
-For production, update `spriteBaseUrl` to your CDN or hosting URL.
+See [docs/deploying.md](docs/deploying.md#2-override-cdn-urls-optional) for examples.
 
 ## Generated Files
 

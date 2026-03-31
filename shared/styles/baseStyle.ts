@@ -15,7 +15,7 @@ import type {
 
 /** Configuration options for base style */
 export interface BaseStyleConfig {
-  /** Base URL for glyph files (e.g., "http://localhost:8080" or "https://data.storypath.studio") */
+  /** Base URL for glyph PBFs (e.g. "http://localhost:8080" or "https://assets.storypath.studio") */
   glyphsBaseUrl: string;
   /** Glyphs path relative to glyphsBaseUrl (e.g., "glyphs" or "shared/assets/glyphs"). Defaults to "shared/assets/glyphs" for local dev */
   glyphsPath?: string;

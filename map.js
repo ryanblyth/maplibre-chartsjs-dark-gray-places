@@ -93,7 +93,7 @@ const attributionControl = new maplibregl.AttributionControl({
 });
 map.addControl(attributionControl);
 
-// Starry background (globe projection only)
+// Starry background (globe projection only; requires maplibre-gl-starfield.js)
 const starfieldConfig = (typeof window !== 'undefined' && window.starfieldConfig)
   ? window.starfieldConfig
   : {
@@ -105,15 +105,22 @@ const starfieldConfig = (typeof window !== 'undefined' && window.starfieldConfig
       }
     };
 
-const starryBg = new MapLibreStarryBackground(starfieldConfig);
+const StarryCtor =
+  typeof globalThis !== "undefined" && typeof globalThis.MapLibreStarryBackground === "function"
+    ? globalThis.MapLibreStarryBackground
+    : null;
+const starryBg = StarryCtor ? new StarryCtor(starfieldConfig) : null;
+if (!StarryCtor && typeof console !== "undefined") {
+  console.warn("[map] MapLibreStarryBackground not loaded — starfield script missing or failed (globe still works without starfield).");
+}
 
-if (starfieldConfig && starfieldConfig.glowColors) {
+if (starryBg && starfieldConfig && starfieldConfig.glowColors) {
   starryBg.config.glowColors = { ...starryBg.config.glowColors, ...starfieldConfig.glowColors };
 }
 
 map.on('style.load', () => {
   map.setProjection({ type: projectionType });
-  if (projectionType === 'globe') {
+  if (projectionType === 'globe' && starryBg) {
     starryBg.attachToMap(map, "starfield-container", "globe-glow");
   }
 });

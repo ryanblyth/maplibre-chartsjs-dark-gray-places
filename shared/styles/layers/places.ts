@@ -288,17 +288,10 @@ export function createPlacesLayers(theme: Theme): LayerSpecification[] {
     13, places.outline.opacity ?? 0.6
   ];
 
-  const pointLayerIds = [
-    { id: "places-points-lowzoom", layerName: "places" },
-    { id: "places-points-lowzoom-alt1", layerName: "points" },
-    { id: "places-points-lowzoom-alt2", layerName: "places_points" },
-  ];
+  // TileJSON vector_layers use `places_points` (see npm run verify:tilejson). Older names (places/points) are not in metadata.
+  const pointLayerIds = [{ id: "places-points-lowzoom", layerName: "places_points" }];
 
-  const clusterLabelLayerIds = [
-    { id: "places-cluster-labels-lowzoom", layerName: "places" },
-    { id: "places-cluster-labels-lowzoom-alt1", layerName: "points" },
-    { id: "places-cluster-labels-lowzoom-alt2", layerName: "places_points" },
-  ];
+  const clusterLabelLayerIds = [{ id: "places-cluster-labels-lowzoom", layerName: "places_points" }];
 
   // Low-zoom point/cluster layers (starfield points) with fallback source-layer names
   if (places.pointsEnabled !== false) {

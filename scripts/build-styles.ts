@@ -14,23 +14,19 @@ import { formatJSON } from "./format-json.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, "..");
 
-/** Configuration for production build */
-const productionConfig: BaseStyleConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "http://localhost:8080",
-  spritePath: "sprites/basemap",
-  dataBaseUrl: "https://data.storypath.studio",
-};
+/** Default CDN for glyphs, sprites, and related static map assets (CORS must allow your origins). */
+const DEFAULT_ASSETS_BASE = "https://assets.storypath.studio";
 
-/** Configuration for local development */
-const localConfig: BaseStyleConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "http://localhost:8080",
-  spritePath: "sprites/basemap",
-  dataBaseUrl: "https://data.storypath.studio",
-};
+function resolveStyleConfig(): BaseStyleConfig {
+  const assetsBase = process.env.ASSETS_BASE_URL || DEFAULT_ASSETS_BASE;
+  return {
+    glyphsBaseUrl: process.env.GLYPHS_CDN || assetsBase,
+    glyphsPath: "glyphs",
+    spriteBaseUrl: process.env.SPRITE_CDN || assetsBase,
+    spritePath: "sprites/basemap",
+    dataBaseUrl: process.env.DATA_CDN || "https://data.storypath.studio",
+  };
+}
 
 function ensureDir(filePath: string): void {
   const dir = dirname(filePath);
@@ -118,8 +114,10 @@ window.mapBearing = ${bearing};${starfieldConfigSection}
 async function buildStyle(): Promise<void> {
   console.log("Building my-custom-map-fixed style...\n");
   
-  const config = process.env.NODE_ENV === "production" ? productionConfig : localConfig;
-  console.log(`Using ${process.env.NODE_ENV === "production" ? "production" : "development"} configuration\n`);
+  const config = resolveStyleConfig();
+  console.log(
+    `Using style URLs (override with ASSETS_BASE_URL, GLYPHS_CDN, SPRITE_CDN, DATA_CDN)\n`
+  );
   
   try {
     const style = createMyCustomMapFixedStyle(config);

@@ -99,7 +99,7 @@ export const myCustomMapFixedSettings: ThemeSettings = {
 /**
  * Per-label-type font configuration.
  * 
- * Available fonts (from CDN at https://data.storypath.studio/glyphs/):
+ * Available fonts (from CDN at https://assets.storypath.studio/glyphs/):
  * 
  * Noto Sans (default):
  *   - "Noto Sans Regular"
@@ -695,7 +695,8 @@ export const myCustomMapFixedIce = {
 
 export const myCustomMapFixedHillshade = {
   /** Whether to show hillshade at all */
-  enabled: true,
+  /** Disabled until `world_mtn_hillshade` TileJSON + raster-dem tiles are deployed on DATA_CDN (avoids 404 + dem dimension mismatch). */
+  enabled: false,
   
   /** Minimum zoom level to show hillshade */
   minZoom: 0,

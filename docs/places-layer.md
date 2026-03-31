@@ -60,8 +60,8 @@ See `preview.html` for a complete working example.
 ## Data Sources
 
 - **Places polygons (map source, TileJSON)**: `https://data.storypath.studio/places/places_cb_2024_500k_z5.json`
-- **Attributes**: `https://data.storypath.studio/attrs/places/acs5_2024/attrs_by_state/attrs_places_acs5_2024_${statefp}.json`
-- **Manifest**: `https://data.storypath.studio/attrs/places/acs5_2024/manifest.json`
+- **Attributes**: `https://assets.storypath.studio/attrs/places/acs5_2024/attrs_by_state/attrs_places_acs5_2024_${statefp}.json`
+- **Manifest**: `https://assets.storypath.studio/attrs/places/acs5_2024/manifest.json`
 
 ## Architecture
 

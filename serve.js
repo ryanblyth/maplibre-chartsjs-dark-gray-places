@@ -31,6 +31,12 @@ function urlToFilePath(url) {
   if (pathname === "/") {
     pathname = "/preview.html";
   }
+  if (pathname === "/favicon.ico") {
+    const svgPath = resolve(ROOT, "favicon.svg");
+    if (existsSync(svgPath)) {
+      return svgPath;
+    }
+  }
   const withoutLead = pathname.replace(/^\/+/, "");
   if (!withoutLead || withoutLead.includes("\0")) {
     return null;
@@ -48,6 +54,7 @@ const MIME_TYPES = {
   ".js": "text/javascript",
   ".css": "text/css",
   ".json": "application/json",
+  ".svg": "image/svg+xml",
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".svg": "image/svg+xml",

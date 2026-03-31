@@ -12,7 +12,7 @@
 /**
  * Available font stacks (shared across all basemaps)
  * 
- * All fonts available from CDN at https://data.storypath.studio/glyphs/
+ * All fonts available from CDN at https://assets.storypath.studio/glyphs/
  * 
  * Noto Sans (default):
  *   - "Noto Sans Regular"

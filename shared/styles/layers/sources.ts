@@ -28,7 +28,8 @@ export function createBasemapSources(config: BaseStyleConfig, theme?: Theme): Re
     us_high: {
       type: "vector",
       url: `${config.dataBaseUrl}/us_z0-15.json`,
-      minzoom: 6,
+      /** z0–15 archive; TileJSON may omit minzoom — filename is source of truth */
+      minzoom: 0,
       maxzoom: 15,
     },
     poi_us: {

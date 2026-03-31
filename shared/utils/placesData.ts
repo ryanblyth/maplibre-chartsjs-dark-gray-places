@@ -31,7 +31,7 @@ const attributeCache = new Map<string, PlacesAttributeData>();
 /**
  * Base URL for attribute data files
  */
-const ATTRS_BASE = "https://data.storypath.studio/attrs/places/acs5_2024";
+const ATTRS_BASE = "https://assets.storypath.studio/attrs/places/acs5_2024";
 
 /**
  * Constructs the URL for a state's attribute file
