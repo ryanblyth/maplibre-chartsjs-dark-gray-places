@@ -57,6 +57,41 @@ const commuteDoughnutCanvas = document.getElementById("dock-commute-doughnut-cha
 const stateTopCitiesCanvas = document.getElementById("dock-state-top-cities-chart");
 const dock = document.getElementById("charts-dock");
 
+function formatDockCurrency(n) {
+  if (n == null || Number.isNaN(Number(n))) return "—";
+  return `$${Number(n).toLocaleString("en-US")}`;
+}
+
+function appendSummaryRows(dl, rows) {
+  for (const [label, val] of rows) {
+    const dt = document.createElement("dt");
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = val;
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+  }
+}
+
+if (selectionEl) {
+  selectionEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".charts-dock-see-more");
+    if (!btn || !selectionEl.contains(btn)) return;
+    const panel = document.getElementById("charts-dock-summary-extra");
+    if (!panel) return;
+    const expanded = btn.getAttribute("aria-expanded") === "true";
+    if (expanded) {
+      panel.hidden = true;
+      btn.setAttribute("aria-expanded", "false");
+      btn.textContent = "See more";
+    } else {
+      panel.hidden = false;
+      btn.setAttribute("aria-expanded", "true");
+      btn.textContent = "See less";
+    }
+  });
+}
+
 function destroyAllCharts() {
   destroyDemographicsPercentChart();
   destroyCommutePercentChart();
@@ -147,20 +182,51 @@ function render(detail) {
     return;
   }
 
-  const rows = [
+  const densityRaw = attrs.pop_density_sqmi;
+  const densityDisplay =
+    densityRaw != null && Number.isFinite(Number(densityRaw))
+      ? formatNumber(Math.round(Number(densityRaw)))
+      : "—";
+
+  const leadRows = [
     ["Population", formatNumber(attrs.pop_total)],
+    ["Pop Density Sq Mile", densityDisplay],
     ["Median household income", formatNumber(attrs.median_hh_income)],
     ["Median age", attrs.median_age != null ? String(attrs.median_age) : "—"],
   ];
 
-  for (const [label, val] of rows) {
-    const dt = document.createElement("dt");
-    dt.textContent = label;
-    const dd = document.createElement("dd");
-    dd.textContent = val;
-    summaryEl.appendChild(dt);
-    summaryEl.appendChild(dd);
-  }
+  const leadDl = document.createElement("dl");
+  leadDl.className = "charts-dock-summary";
+  appendSummaryRows(leadDl, leadRows);
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "charts-dock-see-more";
+  toggleBtn.setAttribute("aria-expanded", "false");
+  toggleBtn.setAttribute("aria-controls", "charts-dock-summary-extra");
+  toggleBtn.textContent = "See more";
+
+  const moreRows = [
+    ["Households", formatNumber(attrs.households)],
+    ["Housing Units", formatNumber(attrs.housing_units)],
+    ["Avg Household Size", formatNumber(attrs.avg_household_size)],
+    ["Median Home Value", formatDockCurrency(attrs.median_home_value)],
+    ["Median Owner Cost Mortgage", formatDockCurrency(attrs.median_owner_cost_mortgage)],
+    ["Median Gross Rent", formatDockCurrency(attrs.median_gross_rent)],
+    ["Per Capita Income", formatDockCurrency(attrs.per_capita_income)],
+  ];
+
+  const extraWrap = document.createElement("div");
+  extraWrap.id = "charts-dock-summary-extra";
+  extraWrap.hidden = true;
+  const restDl = document.createElement("dl");
+  restDl.className = "charts-dock-summary";
+  appendSummaryRows(restDl, moreRows);
+  extraWrap.appendChild(restDl);
+
+  summaryEl.appendChild(leadDl);
+  summaryEl.appendChild(extraWrap);
+  summaryEl.appendChild(toggleBtn);
 
   void updateChartsPanel(attrs, geoid);
 }
