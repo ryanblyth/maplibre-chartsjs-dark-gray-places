@@ -7,7 +7,7 @@
  * - step: interval in degrees ("1", "5", "10", "30")
  * - value: coordinate value
  * 
- * PMTiles URL: pmtiles://{dataBaseUrl}/pmtiles/graticules.pmtiles
+ * TileJSON URL: {dataBaseUrl}/graticules.json
  */
 
 import type { LayerSpecification } from "maplibre-gl";

@@ -68,13 +68,17 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
   
   const layers: LayerSpecification[] = [];
   
-  // Primary POI source (dedicated POI PMTiles) and fallback sources
   const globalMinZoom = poiThemeConfig.minZoom || 12;
-  const sources = [
-    { name: "poi_us", minZoom: globalMinZoom },      // Dedicated POI source (z12-15)
-    { name: "us_high", minZoom: globalMinZoom },     // Fallback: US high detail tiles
-    { name: "world_mid", minZoom: globalMinZoom },   // Fallback: World mid detail tiles
-    { name: "world_low", minZoom: globalMinZoom },   // Fallback: World low detail tiles
+  /** source-layer `poi` exists only on us_z0-15 (us_high) and poi_us_z12-15 */
+  const poiLayerSources = [
+    { name: "poi_us", minZoom: globalMinZoom },
+    { name: "us_high", minZoom: globalMinZoom },
+  ];
+  /** place-based airport/stadium — poi_us has no `place` layer; only basemap sources */
+  const placePoiSources = [
+    { name: "us_high", minZoom: globalMinZoom },
+    { name: "world_mid", minZoom: globalMinZoom },
+    { name: "world_low", minZoom: globalMinZoom },
   ];
   
   // Park sources - only use us_high which has the park layer with national/state parks
@@ -90,7 +94,7 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
     return typeConfig !== undefined && typeof typeConfig === 'object' && typeConfig.enabled !== false;
   };
   
-  for (const source of sources) {
+  for (const source of poiLayerSources) {
     // Airport POIs from POI layer
     if (isPOIEnabled('airport')) {
       const airportMinZoom = poiThemeConfig.airport?.minZoom || source.minZoom;
@@ -148,41 +152,8 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
         paint: poiPaint,
       });
     }
-    
-    // Airport POIs from PLACE layer
-    if (isPOIEnabled('airport')) {
-      const airportMinZoom = poiThemeConfig.airport?.minZoom || source.minZoom;
-      layers.push({
-        id: `place-airport-${source.name}`,
-        type: "symbol",
-        source: source.name,
-        "source-layer": "place",
-        minzoom: airportMinZoom,
-      filter: [
-        "all",
-        ["has", "name"],
-        [
-          "match",
-          ["get", "place"],
-          ["airport", "aerodrome"],
-          true,
-          false,
-        ],
-      ],
-      layout: {
-        ...baseLayout,
-        "icon-image": "airport",
-        "icon-size": 0.9,
-      },
-        paint: poiPaint,
-      });
-    }
-    
-    // Airport POIs from AERODROME_LABEL layer
-    // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.pmtiles)
-    // This is the main airport label source with icons and names
-    // This layer is created separately after the loop (see below)
-    
+    // AERODROME_LABEL layer is added after these loops (us_high only).
+
     // Hospital POIs - Rank 1 (major hospitals only) at zoom 12+
     if (isPOIEnabled('hospital')) {
       const hospitalMinZoom = poiThemeConfig.hospital?.minZoom || source.minZoom;
@@ -570,38 +541,7 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
       });
     }
     
-    // Stadium POIs from PLACE layer
-    if (isPOIEnabled('stadium')) {
-      const stadiumMinZoom = poiThemeConfig.stadium?.minZoom || source.minZoom;
-      layers.push({
-        id: `place-stadium-${source.name}`,
-        type: "symbol",
-        source: source.name,
-        "source-layer": "place",
-        minzoom: stadiumMinZoom,
-      filter: [
-        "all",
-        ["has", "name"],
-        [
-          "match",
-          ["get", "place"],
-          ["stadium", "stadiums"],
-          true,
-          false,
-        ],
-      ],
-      layout: {
-        ...baseLayout,
-        "icon-image": "stadium",
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "icon-optional": false,
-      },
-        paint: poiPaint,
-      });
-    }
-    
+
     // Park POIs from POI layer (if parks are stored as points in POI layer)
     if (isPOIEnabled('park')) {
       const parkMinZoom = poiThemeConfig.park?.minZoom || source.minZoom;
@@ -885,10 +825,70 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
         paint: poiPaint,
       });
     } // End of if (isPOIEnabled('school'))
-  } // End of for (const source of sources) loop
+  } // End of for (const source of poiLayerSources) loop
+
+  for (const source of placePoiSources) {
+    if (isPOIEnabled('airport')) {
+      const airportMinZoom = poiThemeConfig.airport?.minZoom || source.minZoom;
+      layers.push({
+        id: `place-airport-${source.name}`,
+        type: "symbol",
+        source: source.name,
+        "source-layer": "place",
+        minzoom: airportMinZoom,
+        filter: [
+          "all",
+          ["has", "name"],
+          [
+            "match",
+            ["get", "place"],
+            ["airport", "aerodrome"],
+            true,
+            false,
+          ],
+        ],
+        layout: {
+          ...baseLayout,
+          "icon-image": "airport",
+          "icon-size": 0.9,
+        },
+        paint: poiPaint,
+      });
+    }
+    if (isPOIEnabled('stadium')) {
+      const stadiumMinZoom = poiThemeConfig.stadium?.minZoom || source.minZoom;
+      layers.push({
+        id: `place-stadium-${source.name}`,
+        type: "symbol",
+        source: source.name,
+        "source-layer": "place",
+        minzoom: stadiumMinZoom,
+        filter: [
+          "all",
+          ["has", "name"],
+          [
+            "match",
+            ["get", "place"],
+            ["stadium", "stadiums"],
+            true,
+            false,
+          ],
+        ],
+        layout: {
+          ...baseLayout,
+          "icon-image": "stadium",
+          "icon-size": 0.9,
+          "icon-allow-overlap": true,
+          "icon-ignore-placement": true,
+          "icon-optional": false,
+        },
+        paint: poiPaint,
+      });
+    }
+  }
   
   // Airport POIs from AERODROME_LABEL layer (us_high only)
-  // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.pmtiles)
+  // Note: aerodrome_label source-layer only exists in us_high (us_z0-15.json TileJSON)
   // This is the main airport label source with icons and names
   // Create this layer separately since it only exists in one source
   if (isPOIEnabled('airport')) {

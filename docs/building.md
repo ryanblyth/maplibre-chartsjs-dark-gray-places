@@ -20,11 +20,14 @@ This runs `scripts/build-styles.ts`, which:
 
 1. Imports the style generator function from `styles/myCustomMapFixedStyle.ts`
 2. Calls it with configuration (CDN URLs, etc.)
-3. Formats the output JSON
-4. Writes three files:
+3. **Inlines TileJSON**: fetches each source's `url` endpoint and replaces it with the full TileJSON content (`tiles`, `vector_layers`, `minzoom`, `maxzoom`, etc.), removing the `url` property. This eliminates 8 network round-trips MapLibre would otherwise make at startup to resolve TileJSON before tiles can load.
+4. Formats the output JSON
+5. Writes three files:
    - `style.generated.json` - Formatted MapLibre style
    - `style.json` - Copy of generated file (for compatibility)
    - `map-config.js` - JavaScript configuration for preview
+
+If any TileJSON fetch fails during the build, the script throws a clear error identifying which URL failed and exits — no broken style is written silently.
 
 ### 2. Build Browser Utilities (`shared/utils`)
 
@@ -45,7 +48,25 @@ npm run build
 
 This runs `build:utils` then `build:styles`.
 
-### 3. Build Shields (Optional)
+### 3. Build styles for local `npm run serve` (sprites)
+
+If sprites are not yet on the CDN, run:
+
+```bash
+npm run build:styles:local
+```
+
+This sets `SPRITE_CDN=http://localhost:8080` so MapLibre loads `sprites/basemap*` from the dev server. `npm run dev` runs `build:styles:local` before `serve`. For production, deploy sprites and use `npm run build:styles` (default `sprite` URL).
+
+### 4. Verify TileJSON (CDN / Worker)
+
+```bash
+npm run verify:tilejson
+```
+
+Fetches each TileJSON under `DATA_CDN` (default `https://data.storypath.studio`) and prints status and `vector_layers` when present. Use this to confirm Worker routing matches the vector schema expected by the style.
+
+### 5. Build Shields (Optional)
 
 ```bash
 npm run build:shields
@@ -111,38 +132,18 @@ Shared utilities for building styles:
 
 ## Build Configuration
 
-The build script uses two configurations:
+[scripts/build-styles.ts](scripts/build-styles.ts) calls `resolveStyleConfig()`:
 
-### Development Config (default)
-
-```typescript
-const localConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "http://localhost:8080",
-  dataBaseUrl: "https://data.storypath.studio",
-};
-```
-
-- Sprites served from local dev server
-- Glyphs and data from CDN
-
-### Production Config
+- **Default** `ASSETS_BASE_URL`: `https://assets.storypath.studio` — used for `glyphsBaseUrl` and `spriteBaseUrl` unless overridden
+- **`GLYPHS_CDN`** — glyph PBF base URL
+- **`SPRITE_CDN`** — sprite JSON/PNG base URL (set to `http://localhost:8080` if you only serve `sprites/` locally and do not host them on `assets`)
+- **`DATA_CDN`** — TileJSON / vector tiles (default `https://data.storypath.studio`)
 
 ```bash
-NODE_ENV=production npm run build:styles
+npm run build:styles
 ```
 
-```typescript
-const productionConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "http://localhost:8080",  // Update for production
-  dataBaseUrl: "https://data.storypath.studio",
-};
-```
-
-For production, update `spriteBaseUrl` to your CDN or hosting URL.
+See [docs/deploying.md](docs/deploying.md#2-override-cdn-urls-optional) for examples.
 
 ## Generated Files
 
@@ -151,7 +152,7 @@ For production, update `spriteBaseUrl` to your CDN or hosting URL.
 The main MapLibre style file. Contains:
 
 - `version`: MapLibre style spec version (8)
-- `sources`: Data sources (PMTiles URLs)
+- `sources`: Data sources with inlined tile URLs — each source has a `tiles` array and `vector_layers` (for vector sources) baked in at build time. There are no `url` properties pointing at TileJSON endpoints; MapLibre reads the `tiles` array directly.
 - `sprite`: Sprite sheet URL
 - `glyphs`: Font glyph URL pattern
 - `layers`: Array of layer definitions

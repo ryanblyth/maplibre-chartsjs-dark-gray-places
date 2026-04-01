@@ -24,7 +24,7 @@ A custom MapLibre basemap created from the dark-gray template. The development p
 4. **View the preview:**
    Open [http://localhost:8080/preview.html](http://localhost:8080/preview.html) (or the same path on whatever port you set — see Troubleshooting).
 
-**One-shot full build and serve:** `npm run dev` runs `build` (utils + styles) then `serve`.
+**One-shot full build and serve:** `npm run dev` runs `build:utils`, then `build:styles:local` (sprites load from this repo at `http://localhost:8080/sprites/`), then `serve`. For production CDN URLs in `style.json`, use `npm run build:styles` instead of `build:styles:local`.
 
 ## Project Structure
 
@@ -115,9 +115,11 @@ This map is designed to work with Cloudflare Pages or any static hosting.
 
 - **Local files**: Sprites (bundled in `sprites/`), preview HTML/JS modules, charts dock
 - **CDN files**:
-  - Glyphs (fonts): `https://data.storypath.studio/glyphs/`
-  - Starfield script: `https://data.storypath.studio/js/maplibre-gl-starfield.js`
-  - PMTiles data: External URLs in `style.json`
+  - Glyphs (fonts): `https://assets.storypath.studio/glyphs/` (override with `GLYPHS_CDN` / `ASSETS_BASE_URL` when building)
+  - Map sprites (icons): URL in `style.json` `sprite` field (default `https://assets.storypath.studio/sprites/basemap`; override with `SPRITE_CDN` for local `sprites/`)
+  - Starfield script: `https://assets.storypath.studio/js/maplibre-gl-starfield.js`
+  - PMTiles / TileJSON: External URLs in `style.json` (default `https://data.storypath.studio`)
+  - Census places attributes, manifest, search index: `https://assets.storypath.studio/` (see `shared/utils/placesData.ts`, `data/dockDataConfig.js`)
   - Preview import map: Chart.js and Fuse load from `https://esm.sh/` (see [preview.html](preview.html))
 
 ### Using in Production
@@ -138,12 +140,14 @@ See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 
 - `prepare` (runs on `npm install`) - `npm run build:utils` — compile `shared/utils/*.ts` to `.js`
 - `npm run build:utils` - TypeScript compile for browser utilities only
-- `npm run build:styles` - Build map style from TypeScript source
+- `npm run build:styles` - Build map style from TypeScript source (production CDN defaults for sprites)
+- `npm run build:styles:local` - Same, with `SPRITE_CDN=http://localhost:8080` for local `sprites/`
+- `npm run verify:tilejson` - Fetch TileJSONs from `DATA_CDN` and print `vector_layers` (CDN / Worker check)
 - `npm run build:shields` - Rebuild highway shield sprites
 - `node scripts/extract-place-centroids.js` - Regenerate `data/placeCentroids.js` from the places PMTiles point archive (run when place data changes)
 - `npm run build` - `build:utils` then `build:styles`
 - `npm run serve` - Start development server (default port 8080, override with `PORT`)
-- `npm run dev` - Full build then serve
+- `npm run dev` - `build:utils` + `build:styles:local` + `serve`
 
 ## Requirements
 
@@ -154,10 +158,11 @@ See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 
 This map uses external CDN assets to reduce bundle size:
 
-- **Glyphs** (fonts): Loaded from `https://data.storypath.studio/glyphs/`
-- **Starfield**: Loaded from `https://data.storypath.studio/js/maplibre-gl-starfield.js`
-- **PMTiles data**: Map data loaded from external URLs
-- **Preview**: MapLibre, PMTiles, and starfield from `unpkg.com` / `data.storypath.studio`; Chart.js and Fuse from `esm.sh` per `preview.html` import map
+- **Glyphs** (fonts): Loaded from `https://assets.storypath.studio/glyphs/` (see `style.json`)
+- **Sprites** (icons): Loaded from the `sprite` URL in `style.json`
+- **Starfield**: Preview loads [`vendor/maplibre-gl-starfield.js`](vendor/maplibre-gl-starfield.js) (vendored; exposes `globalThis.MapLibreStarryBackground` for ES modules)
+- **PMTiles / TileJSON**: Map data from URLs in `style.json` (default host `data.storypath.studio`)
+- **Preview**: MapLibre and PMTiles from `unpkg.com`; glyphs and census JSON from `assets.storypath.studio`; sprites from `style.json` (localhost when using `build:styles:local`); Chart.js and Fuse from `esm.sh` per `preview.html` import map
 
 These are loaded on-demand and cached by the browser.
 

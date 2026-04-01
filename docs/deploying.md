@@ -17,20 +17,23 @@ This map is designed to work with static hosting platforms like:
 
 The map uses a hybrid approach for assets:
 
-### Local Assets (bundle with your app)
+### Local Assets (optional when using CDN sprites)
+
+The built `style.json` defaults to **glyphs, sprites, and sprite JSON** on `https://assets.storypath.studio/` (same paths as the old `data` host). If you override `SPRITE_CDN` to your app origin, bundle:
 
 - **Sprites** - `sprites/` directory
   - `basemap.png` and `basemap.json`
   - `basemap@2x.png` and `basemap@2x.json`
-  - These must be served from your domain
+  - Served from the URL given by `sprite` in `style.json`
 
 ### External Assets (loaded from CDN)
 
-- **Glyphs** (fonts) - `https://data.storypath.studio/glyphs/`
-- **Starfield script** - `https://data.storypath.studio/js/maplibre-gl-starfield.js`
+- **Glyphs** (fonts) - `https://assets.storypath.studio/glyphs/`
+- **Sprites** (icons) - URL prefix in `style.json` `sprite` field (default `https://assets.storypath.studio/sprites/basemap`)
+- **Starfield script** - Preview uses the vendored `vendor/maplibre-gl-starfield.js` (assigns `globalThis.MapLibreStarryBackground`). Production pages can load the same file or the CDN copy if it assigns the global.
 - **PMTiles data** - Map data URLs in `style.json`
 - **Preview (`preview.html` + `style.css`)** - MapLibre / PMTiles from `unpkg.com`; Chart.js and Fuse from `https://esm.sh/` (see import map in `preview.html`); layout and dock UI styles in `style.css`
-- **Census / places data** - Attribute JSON and places index URLs under `https://data.storypath.studio/` (configured in `shared/utils/placesData.js`, `data/dockDataConfig.js`)
+- **Census / places data** - Attribute JSON, manifest, and places search index under `https://assets.storypath.studio/` (configured in `shared/utils/placesData.ts` / `placesData.js`, `data/dockDataConfig.js`)
 
 ## Deployment Steps
 
@@ -56,24 +59,22 @@ NODE_ENV=production npm run build
 - `style.json` - MapLibre style definition
 - `map-config.js` - Map initialization config
 
-### 2. Update Sprite URLs (if needed)
+### 2. Override CDN URLs (optional)
 
-If you're hosting sprites on a CDN, update the sprite URL in `scripts/build-styles.ts`:
+[scripts/build-styles.ts](scripts/build-styles.ts) resolves URLs via `resolveStyleConfig()`:
 
-```typescript
-const productionConfig = {
-  glyphsBaseUrl: "https://data.storypath.studio",
-  glyphsPath: "glyphs",
-  spriteBaseUrl: "https://your-cdn.com",  // Your CDN URL
-  dataBaseUrl: "https://data.storypath.studio",
-};
-```
+- Default asset host: `https://assets.storypath.studio` (glyphs + sprites), overridable with `ASSETS_BASE_URL`
+- `GLYPHS_CDN` — glyph PBF base URL
+- `SPRITE_CDN` — sprite PNG/JSON base URL (use `http://localhost:8080` for local `npm run serve` if you do not host sprites on `assets`)
+- `DATA_CDN` — TileJSON / vector tile base (default `https://data.storypath.studio`)
 
-Then rebuild:
+Example:
 
 ```bash
-NODE_ENV=production npm run build:styles
+SPRITE_CDN=http://localhost:8080 npm run build:styles
 ```
+
+**CORS:** `assets.storypath.studio` must send `Access-Control-Allow-Origin` for cross-origin requests to `/glyphs/*.pbf` and other static fetches from your app origin.
 
 ### 3. Files to Deploy
 
@@ -234,7 +235,7 @@ Enable gzip compression for:
   
   <script src="https://unpkg.com/maplibre-gl@5.13.0/dist/maplibre-gl.js"></script>
   <script src="https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js"></script>
-  <script src="https://data.storypath.studio/js/maplibre-gl-starfield.js"></script>
+  <script src="https://assets.storypath.studio/js/maplibre-gl-starfield.js"></script>
   <script src="./map-config.js"></script>
   <script>
     const protocol = new pmtiles.Protocol();
@@ -276,7 +277,7 @@ The map loads these assets from CDN:
 ### Glyphs (Fonts)
 
 ```
-https://data.storypath.studio/glyphs/{fontstack}/{range}.pbf
+https://assets.storypath.studio/glyphs/{fontstack}/{range}.pbf
 ```
 
 These are loaded on-demand as the map needs different character ranges.
@@ -284,21 +285,21 @@ These are loaded on-demand as the map needs different character ranges.
 ### Starfield Script
 
 ```
-https://data.storypath.studio/js/maplibre-gl-starfield.js
+https://assets.storypath.studio/js/maplibre-gl-starfield.js
 ```
 
 Required for globe projection with starfield effect.
 
-### PMTiles Data
+### Tile data (TileJSON)
 
-Map data sources are referenced in `style.json`:
+Map data sources are referenced in `style.json` as HTTPS TileJSON endpoints (served via Cloudflare Worker or similar); MapLibre loads the JSON then fetches tiles per the spec:
 
 ```json
 {
   "sources": {
     "world_low": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/world.pmtiles"
+      "url": "https://data.storypath.studio/world_z0-6.json"
     }
   }
 }
@@ -333,19 +334,12 @@ If the map isn't immediately visible, lazy load MapLibre and PMTiles libraries.
 
 For different environments, you can use environment variables:
 
-```typescript
-// scripts/build-styles.ts
-const productionConfig = {
-  glyphsBaseUrl: process.env.GLYPHS_CDN || "https://data.storypath.studio",
-  spriteBaseUrl: process.env.SPRITE_CDN || "http://localhost:8080",
-  // ...
-};
-```
-
-Then build with:
+Defaults use `https://assets.storypath.studio` for glyphs and sprites. Override when building:
 
 ```bash
-GLYPHS_CDN=https://my-cdn.com SPRITE_CDN=https://my-cdn.com npm run build:styles
+ASSETS_BASE_URL=https://cdn.example.com npm run build:styles
+# or
+GLYPHS_CDN=https://cdn.example.com SPRITE_CDN=http://localhost:8080 DATA_CDN=https://data.storypath.studio npm run build:styles
 ```
 
 ## Monitoring
@@ -356,7 +350,7 @@ Monitor that all assets load correctly:
 - Style JSON
 - Sprites (check Network tab)
 - Glyphs (loaded on-demand)
-- PMTiles data
+- TileJSON / vector tile data
 
 ### Error Tracking
 
@@ -392,6 +386,13 @@ map.on('error', (e) => {
 - Use CDN for assets
 - Check PMTiles URLs are reachable
 
+**Console: `Source layer "…" does not exist on source "…"`:**
+- Not a glyph/sprite URL issue. MapLibre is validating the style against vector tile contents. Check that each TileJSON URL returns 200, tiles load, and the archive behind the Worker matches the expected `source-layer` names (see layer definitions under `shared/styles/layers/`). Wrong or empty tiles often produce this after a hostname or Worker change.
+- From the repo, run `npm run verify:tilejson` (optional: `DATA_CDN=https://data.storypath.studio`) to print HTTP status and `vector_layers` for each TileJSON used by the style.
+
+**Local dev: sprites 404 on `assets.storypath.studio`:**
+- Run `npm run build:styles:local` before `npm run serve` so `sprite` points at `http://localhost:8080/sprites/basemap` (files in this repo). The `npm run dev` script runs `build:styles:local` automatically. For production builds, upload `sprites/basemap*` to your CDN and run `npm run build:styles` without `SPRITE_CDN`.
+
 ## Security
 
 ### Content Security Policy
@@ -399,13 +400,13 @@ map.on('error', (e) => {
 If using CSP, allow these domains (extend as needed for your CDNs):
 
 ```
-connect-src 'self' https://data.storypath.studio https://esm.sh;
-script-src 'self' https://unpkg.com https://data.storypath.studio https://esm.sh;
+connect-src 'self' https://data.storypath.studio https://assets.storypath.studio https://esm.sh;
+script-src 'self' https://unpkg.com https://data.storypath.studio https://assets.storypath.studio https://esm.sh;
 style-src 'self' https://unpkg.com;
 img-src 'self' data: blob:;
 ```
 
-The preview loads **Chart.js** and **Fuse** from **esm.sh** via the import map in `preview.html`. MapLibre and PMTiles load from **unpkg.com**. Tiles, glyphs, and census JSON use **data.storypath.studio** (and any other hosts in your `style.json` sources).
+The preview loads **Chart.js** and **Fuse** from **esm.sh** via the import map in `preview.html`. MapLibre and PMTiles load from **unpkg.com**. TileJSON and vector tiles use **data.storypath.studio** (unless overridden). Glyphs, sprites, starfield script, and census JSON use **assets.storypath.studio** (see `style.json` and `preview.html` for exact URLs).
 
 ### HTTPS
 

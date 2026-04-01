@@ -3,6 +3,7 @@ import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
 import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
 import { initializePlacesInteractivity } from "./shared/utils/placesMapSetup.js";
 import { defaultPlacePopupAttributeConfig } from "./shared/utils/placesPopup.js";
+import { loadPlacesAttributesByState, updateMapFeatureStates } from "./shared/utils/placesData.js";
 
 /**
  * My Custom Map Fixed Basemap - Map Initialization
@@ -93,7 +94,7 @@ const attributionControl = new maplibregl.AttributionControl({
 });
 map.addControl(attributionControl);
 
-// Starry background (globe projection only)
+// Starry background (globe projection only; requires maplibre-gl-starfield.js)
 const starfieldConfig = (typeof window !== 'undefined' && window.starfieldConfig)
   ? window.starfieldConfig
   : {
@@ -105,15 +106,22 @@ const starfieldConfig = (typeof window !== 'undefined' && window.starfieldConfig
       }
     };
 
-const starryBg = new MapLibreStarryBackground(starfieldConfig);
+const StarryCtor =
+  typeof globalThis !== "undefined" && typeof globalThis.MapLibreStarryBackground === "function"
+    ? globalThis.MapLibreStarryBackground
+    : null;
+const starryBg = StarryCtor ? new StarryCtor(starfieldConfig) : null;
+if (!StarryCtor && typeof console !== "undefined") {
+  console.warn("[map] MapLibreStarryBackground not loaded — starfield script missing or failed (globe still works without starfield).");
+}
 
-if (starfieldConfig && starfieldConfig.glowColors) {
+if (starryBg && starfieldConfig && starfieldConfig.glowColors) {
   starryBg.config.glowColors = { ...starryBg.config.glowColors, ...starfieldConfig.glowColors };
 }
 
 map.on('style.load', () => {
   map.setProjection({ type: projectionType });
-  if (projectionType === 'globe') {
+  if (projectionType === 'globe' && starryBg) {
     starryBg.attachToMap(map, "starfield-container", "globe-glow");
   }
 });
@@ -474,11 +482,30 @@ function focusMapOnGeoid(geoid) {
   map.once("idle", runAfterInitialFailure);
 }
 
+/**
+ * Load ACS attributes for the place's state if missing from the initial viewport batch,
+ * then apply feature-state styling (fixes gray fill on mobile / narrow viewports).
+ */
+async function ensureAttributesForFocusedGeoid(geoid) {
+  const digits = String(geoid ?? "").replace(/\D/g, "");
+  if (digits.length < 2) return;
+  const statefp = digits.slice(0, 2).padStart(2, "0");
+  try {
+    const stateData = await loadPlacesAttributesByState(statefp);
+    updateMapFeatureStates(map, stateData, "places-source", "places");
+  } catch (err) {
+    console.warn("[map] ensureAttributesForFocusedGeoid failed", statefp, err);
+  }
+}
+
 if (typeof window !== "undefined") {
   window.addEventListener("charts-dock-focus-place", (e) => {
     const geoid = e.detail?.geoid;
     mapFocusLog("charts-dock-focus-place", { geoid });
-    if (geoid) focusMapOnGeoid(geoid);
+    if (geoid) {
+      void ensureAttributesForFocusedGeoid(geoid);
+      focusMapOnGeoid(geoid);
+    }
   });
 
   window.addEventListener("charts-dock-drawer-toggle", () => {
@@ -535,6 +562,43 @@ map.on('load', () => { setupPlacesInteractivity(); });
 if (map.loaded() && map.getStyle()) {
   setupPlacesInteractivity();
 }
+// ============================================================================
+// Low-zoom tile prefetch: warm Cloudflare edge cache after initial load
+// ============================================================================
+function prefetchLowZoomTiles() {
+  try {
+    const style = map.getStyle();
+    const templates = [
+      style?.sources?.['world_low']?.tiles?.[0],
+      style?.sources?.['world_labels']?.tiles?.[0],
+    ].filter(Boolean);
+    if (!templates.length) return;
+
+    const coords = [];
+    for (let z = 0; z <= 3; z++) {
+      const max = 1 << z; // 2^z
+      for (let x = 0; x < max; x++) {
+        for (let y = 0; y < max; y++) {
+          coords.push([z, x, y]);
+        }
+      }
+    }
+
+    const urls = [];
+    for (const tpl of templates) {
+      for (const [z, x, y] of coords) {
+        urls.push(tpl.replace('{z}', z).replace('{x}', x).replace('{y}', y));
+      }
+    }
+
+    for (const [i, url] of urls.entries()) {
+      setTimeout(() => fetch(url, { priority: 'low' }).catch(() => {}), i * 10);
+    }
+  } catch {
+    // never affect map functionality
+  }
+}
+map.once('load', prefetchLowZoomTiles);
 
 // ============================================================================
 // Expose map globally & conditionally load debug utilities

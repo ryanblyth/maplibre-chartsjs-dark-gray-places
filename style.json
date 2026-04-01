@@ -1,52 +1,1580 @@
 {
   "version": 8,
   "name": "My Custom Map Fixed Basemap",
-  "glyphs": "https://data.storypath.studio/glyphs/{fontstack}/{range}.pbf",
-  "sprite": "http://localhost:8080/sprites/basemap",
+  "glyphs": "https://assets.storypath.studio/glyphs/{fontstack}/{range}.pbf",
+  "sprite": "https://assets.storypath.studio/sprites/basemap",
   "sources": {
     "world_labels": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/world-labels_z0-10.pmtiles",
       "minzoom": 0,
-      "maxzoom": 10
+      "maxzoom": 12,
+      "tiles": ["https://data.storypath.studio/world-labels_z0-10/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "id": "place",
+          "fields": {
+            "capital": "Number",
+            "class": "String",
+            "iso_a2": "String",
+            "name": "String",
+            "name:en": "String",
+            "name:latin": "String",
+            "name:nonlatin": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number"
+          },
+          "minzoom": 0,
+          "maxzoom": 12
+        },
+        {
+          "id": "water_name",
+          "fields": {
+            "class": "String",
+            "intermittent": "Number",
+            "name": "String",
+            "name:en": "String",
+            "name:latin": "String",
+            "name:nonlatin": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 0,
+          "maxzoom": 12
+        }
+      ],
+      "attribution": "<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+      "bounds": [-180, -90, 180, 90],
+      "center": [0, 0, 0],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
     },
-    "world_low": {"type": "vector", "url": "pmtiles://https://data.storypath.studio/pmtiles/world_z0-6.pmtiles", "minzoom": 0},
-    "world_mid": {"type": "vector", "url": "pmtiles://https://data.storypath.studio/pmtiles/world_z6-10.pmtiles", "minzoom": 6},
+    "world_low": {
+      "type": "vector",
+      "minzoom": 0,
+      "tiles": ["https://data.storypath.studio/world_z0-6/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "id": "boundary",
+          "fields": {
+            "adm0_l": "String",
+            "adm0_r": "String",
+            "admin_level": "Number",
+            "claimed_by": "String",
+            "class": "String",
+            "disputed": "Number",
+            "disputed_name": "String",
+            "maritime": "Number",
+            "name": "String",
+            "name:az": "String",
+            "name:br": "String",
+            "name:de": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:fr": "String",
+            "name:it": "String",
+            "name:ko": "String",
+            "name:latin": "String",
+            "name:nonlatin": "String",
+            "name:pt": "String",
+            "name:uk": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 0,
+          "maxzoom": 6
+        },
+        {
+          "id": "landcover",
+          "fields": {"class": "String", "subclass": "String"},
+          "minzoom": 0,
+          "maxzoom": 6
+        },
+        {
+          "id": "landuse",
+          "fields": {
+            "class": "String"
+          },
+          "minzoom": 4,
+          "maxzoom": 6
+        },
+        {
+          "id": "place",
+          "fields": {
+            "capital": "Number",
+            "class": "String",
+            "iso_a2": "String",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ja_kana": "String",
+            "name:ja_rm": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number"
+          },
+          "minzoom": 0,
+          "maxzoom": 6
+        },
+        {
+          "id": "transportation",
+          "fields": {
+            "brunnel": "String",
+            "class": "String",
+            "layer": "Number",
+            "network": "String"
+          },
+          "minzoom": 4,
+          "maxzoom": 6
+        },
+        {
+          "id": "water",
+          "fields": {"class": "String", "id": "Number", "intermittent": "Number"},
+          "minzoom": 0,
+          "maxzoom": 6
+        },
+        {
+          "id": "waterway",
+          "fields": {
+            "class": "String",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 3,
+          "maxzoom": 6
+        }
+      ],
+      "maxzoom": 6,
+      "attribution": "<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+      "bounds": [-180, -90, 180, 90],
+      "center": [0, 0, 0],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
+    },
+    "world_mid": {
+      "type": "vector",
+      "minzoom": 6,
+      "tiles": ["https://data.storypath.studio/world_z6-10/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "id": "boundary",
+          "fields": {
+            "adm0_l": "String",
+            "adm0_r": "String",
+            "admin_level": "Number",
+            "claimed_by": "String",
+            "class": "String",
+            "disputed": "Number",
+            "disputed_name": "String",
+            "maritime": "Number",
+            "name": "String",
+            "name:az": "String",
+            "name:br": "String",
+            "name:de": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:fr": "String",
+            "name:it": "String",
+            "name:ko": "String",
+            "name:latin": "String",
+            "name:nonlatin": "String",
+            "name:pt": "String",
+            "name:uk": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 6,
+          "maxzoom": 10
+        },
+        {
+          "id": "landcover",
+          "fields": {"class": "String", "subclass": "String"},
+          "minzoom": 6,
+          "maxzoom": 10
+        },
+        {
+          "id": "landuse",
+          "fields": {
+            "class": "String"
+          },
+          "minzoom": 6,
+          "maxzoom": 10
+        },
+        {
+          "id": "place",
+          "fields": {
+            "capital": "Number",
+            "class": "String",
+            "iso_a2": "String",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ja_kana": "String",
+            "name:ja_rm": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number"
+          },
+          "minzoom": 6,
+          "maxzoom": 10
+        },
+        {
+          "id": "transportation",
+          "fields": {
+            "access": "String",
+            "bicycle": "String",
+            "brunnel": "String",
+            "class": "String",
+            "expressway": "Number",
+            "foot": "String",
+            "horse": "String",
+            "layer": "Number",
+            "mtb_scale": "String",
+            "network": "String",
+            "ramp": "Number",
+            "subclass": "String",
+            "toll": "Number"
+          },
+          "minzoom": 6,
+          "maxzoom": 10
+        },
+        {
+          "id": "water",
+          "fields": {"class": "String", "id": "Number", "intermittent": "Number"},
+          "minzoom": 6,
+          "maxzoom": 10
+        },
+        {
+          "id": "waterway",
+          "fields": {
+            "class": "String",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ja_kana": "String",
+            "name:ja_rm": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 6,
+          "maxzoom": 10
+        }
+      ],
+      "maxzoom": 10,
+      "attribution": "<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+      "bounds": [-180, -90, 180, 90],
+      "center": [0, 0, 0],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
+    },
     "us_high": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/us_z0-15.pmtiles",
-      "minzoom": 6,
-      "maxzoom": 15
+      "minzoom": 0,
+      "maxzoom": 15,
+      "tiles": ["https://data.storypath.studio/us_z0-15/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "id": "aerodrome_label",
+          "fields": {
+            "class": "String",
+            "ele": "Number",
+            "ele_ft": "Number",
+            "iata": "String",
+            "icao": "String",
+            "name": "String",
+            "name:ar": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:br": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:id": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Latn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pl": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 8,
+          "maxzoom": 15
+        },
+        {
+          "id": "aeroway",
+          "fields": {"class": "String", "ref": "String"},
+          "minzoom": 10,
+          "maxzoom": 15
+        },
+        {
+          "id": "boundary",
+          "fields": {
+            "adm0_l": "String",
+            "adm0_r": "String",
+            "admin_level": "Number",
+            "claimed_by": "String",
+            "class": "String",
+            "disputed": "Number",
+            "disputed_name": "String",
+            "maritime": "Number",
+            "name": "String",
+            "name:az": "String",
+            "name:br": "String",
+            "name:de": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:fr": "String",
+            "name:ko": "String",
+            "name:latin": "String",
+            "name:nonlatin": "String",
+            "name:pt": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 0,
+          "maxzoom": 15
+        },
+        {
+          "id": "building",
+          "fields": {
+            "colour": "String",
+            "hide_3d": "Boolean",
+            "render_height": "Number",
+            "render_min_height": "Number"
+          },
+          "minzoom": 13,
+          "maxzoom": 15
+        },
+        {
+          "id": "housenumber",
+          "fields": {
+            "housenumber": "String"
+          },
+          "minzoom": 14,
+          "maxzoom": 15
+        },
+        {
+          "id": "landcover",
+          "fields": {"class": "String", "subclass": "String"},
+          "minzoom": 0,
+          "maxzoom": 15
+        },
+        {
+          "id": "landuse",
+          "fields": {
+            "class": "String"
+          },
+          "minzoom": 4,
+          "maxzoom": 15
+        },
+        {
+          "id": "mountain_peak",
+          "fields": {
+            "class": "String",
+            "customary_ft": "Number",
+            "ele": "Number",
+            "ele_ft": "Number",
+            "name": "String",
+            "name:br": "String",
+            "name:cy": "String",
+            "name:de": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:fr": "String",
+            "name:he": "String",
+            "name:hu": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lt": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pt": "String",
+            "name:ru": "String",
+            "name:sr": "String",
+            "name:uk": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number"
+          },
+          "minzoom": 7,
+          "maxzoom": 15
+        },
+        {
+          "id": "park",
+          "fields": {
+            "class": "String",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pt": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number"
+          },
+          "minzoom": 4,
+          "maxzoom": 15
+        },
+        {
+          "id": "place",
+          "fields": {
+            "capital": "Number",
+            "class": "String",
+            "iso_a2": "String",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number"
+          },
+          "minzoom": 0,
+          "maxzoom": 15
+        },
+        {
+          "id": "poi",
+          "fields": {
+            "agg_stop": "Number",
+            "class": "String",
+            "indoor": "Number",
+            "layer": "Number",
+            "level": "Number",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ja_rm": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number",
+            "subclass": "String"
+          },
+          "minzoom": 11,
+          "maxzoom": 15
+        },
+        {
+          "id": "transportation",
+          "fields": {
+            "access": "String",
+            "bicycle": "String",
+            "brunnel": "String",
+            "class": "String",
+            "expressway": "Number",
+            "foot": "String",
+            "horse": "String",
+            "indoor": "Number",
+            "layer": "Number",
+            "level": "Number",
+            "mtb_scale": "String",
+            "network": "String",
+            "oneway": "Number",
+            "ramp": "Number",
+            "service": "String",
+            "subclass": "String",
+            "surface": "String",
+            "toll": "Number"
+          },
+          "minzoom": 4,
+          "maxzoom": 15
+        },
+        {
+          "id": "transportation_name",
+          "fields": {
+            "class": "String",
+            "indoor": "Number",
+            "layer": "Number",
+            "level": "Number",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Hira": "String",
+            "name:ja-Latn": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "network": "String",
+            "ref": "String",
+            "ref_length": "Number",
+            "route_10_name": "String",
+            "route_10_network": "String",
+            "route_1_colour": "String",
+            "route_1_name": "String",
+            "route_1_network": "String",
+            "route_1_ref": "String",
+            "route_2_colour": "String",
+            "route_2_name": "String",
+            "route_2_network": "String",
+            "route_2_ref": "String",
+            "route_3_colour": "String",
+            "route_3_name": "String",
+            "route_3_network": "String",
+            "route_3_ref": "String",
+            "route_4_colour": "String",
+            "route_4_name": "String",
+            "route_4_network": "String",
+            "route_4_ref": "String",
+            "route_5_colour": "String",
+            "route_5_name": "String",
+            "route_5_network": "String",
+            "route_5_ref": "String",
+            "route_6_colour": "String",
+            "route_6_name": "String",
+            "route_6_network": "String",
+            "route_6_ref": "String",
+            "route_7_name": "String",
+            "route_7_network": "String",
+            "route_7_ref": "String",
+            "route_8_name": "String",
+            "route_8_network": "String",
+            "route_8_ref": "String",
+            "route_9_name": "String",
+            "route_9_network": "String",
+            "subclass": "String"
+          },
+          "minzoom": 6,
+          "maxzoom": 15
+        },
+        {
+          "id": "water",
+          "fields": {
+            "brunnel": "String",
+            "class": "String",
+            "id": "Number",
+            "intermittent": "Number"
+          },
+          "minzoom": 0,
+          "maxzoom": 15
+        },
+        {
+          "id": "water_name",
+          "fields": {
+            "class": "String",
+            "intermittent": "Number",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bg": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:bs": "String",
+            "name:ca": "String",
+            "name:co": "String",
+            "name:cs": "String",
+            "name:cy": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:eo": "String",
+            "name:es": "String",
+            "name:et": "String",
+            "name:eu": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:fy": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hr": "String",
+            "name:hu": "String",
+            "name:hy": "String",
+            "name:id": "String",
+            "name:is": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ja-Latn": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ko-Latn": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lb": "String",
+            "name:lt": "String",
+            "name:lv": "String",
+            "name:mk": "String",
+            "name:ml": "String",
+            "name:mt": "String",
+            "name:nl": "String",
+            "name:no": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:rm": "String",
+            "name:ro": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sl": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sr-Latn": "String",
+            "name:sv": "String",
+            "name:ta": "String",
+            "name:te": "String",
+            "name:th": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 0,
+          "maxzoom": 15
+        },
+        {
+          "id": "waterway",
+          "fields": {
+            "brunnel": "String",
+            "class": "String",
+            "intermittent": "Number",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:az": "String",
+            "name:be": "String",
+            "name:bn": "String",
+            "name:br": "String",
+            "name:ca": "String",
+            "name:cy": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:fa": "String",
+            "name:fi": "String",
+            "name:fr": "String",
+            "name:ga": "String",
+            "name:gd": "String",
+            "name:he": "String",
+            "name:hi": "String",
+            "name:hy": "String",
+            "name:it": "String",
+            "name:ja": "String",
+            "name:ka": "String",
+            "name:kk": "String",
+            "name:kn": "String",
+            "name:ko": "String",
+            "name:ku": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lt": "String",
+            "name:mk": "String",
+            "name:nl": "String",
+            "name:nonlatin": "String",
+            "name:oc": "String",
+            "name:pa": "String",
+            "name:pl": "String",
+            "name:pnb": "String",
+            "name:pt": "String",
+            "name:ru": "String",
+            "name:sk": "String",
+            "name:sq": "String",
+            "name:sr": "String",
+            "name:sv": "String",
+            "name:tr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String"
+          },
+          "minzoom": 3,
+          "maxzoom": 15
+        }
+      ],
+      "attribution": "<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+      "bounds": [-180, 15.92097, 180, 72.98845],
+      "center": [0, 44.45471, 0],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
     },
     "poi_us": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/poi_us_z12-15.pmtiles",
       "minzoom": 12,
-      "maxzoom": 15
+      "maxzoom": 15,
+      "tiles": ["https://data.storypath.studio/poi_us_z12-15/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "id": "poi",
+          "fields": {
+            "class": "String",
+            "indoor": "Number",
+            "layer": "Number",
+            "level": "Number",
+            "name": "String",
+            "name:am": "String",
+            "name:ar": "String",
+            "name:be": "String",
+            "name:br": "String",
+            "name:ca": "String",
+            "name:da": "String",
+            "name:de": "String",
+            "name:el": "String",
+            "name:en": "String",
+            "name:es": "String",
+            "name:fa": "String",
+            "name:fr": "String",
+            "name:he": "String",
+            "name:hy": "String",
+            "name:ja": "String",
+            "name:ko": "String",
+            "name:la": "String",
+            "name:latin": "String",
+            "name:lt": "String",
+            "name:nl": "String",
+            "name:nonlatin": "String",
+            "name:pl": "String",
+            "name:pt": "String",
+            "name:ru": "String",
+            "name:sr": "String",
+            "name:uk": "String",
+            "name:ur": "String",
+            "name:vi": "String",
+            "name:zh": "String",
+            "name:zh-Hans": "String",
+            "name:zh-Hant": "String",
+            "name_de": "String",
+            "name_en": "String",
+            "name_int": "String",
+            "rank": "Number",
+            "subclass": "String"
+          },
+          "minzoom": 12,
+          "maxzoom": 15
+        }
+      ],
+      "attribution": "<a href=\"https://www.openmaptiles.org/\" target=\"_blank\">&copy; OpenMapTiles</a> <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\">&copy; OpenStreetMap contributors</a>",
+      "bounds": [-180, 15.92097, 180, 72.98845],
+      "center": [0, 44.45471, 0],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
     },
     "ne-bathy": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/ne_bathy_z0-6.pmtiles",
       "minzoom": 0,
-      "maxzoom": 6
-    },
-    "world-hillshade": {
-      "type": "raster-dem",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/world_mtn_hillshade.pmtiles",
-      "minzoom": 0,
-      "maxzoom": 12
+      "maxzoom": 6,
+      "tiles": ["https://data.storypath.studio/ne_bathy_z0-6/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_A_10000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_B_9000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_C_8000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_D_7000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_E_6000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_F_5000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_G_4000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_H_3000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_I_2000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_J_1000",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_K_200",
+          "maxzoom": 6,
+          "minzoom": 0
+        },
+        {
+          "description": "",
+          "fields": {"depth": "Number", "featurecla": "String", "scalerank": "Number"},
+          "id": "ne_10m_bathymetry_L_0",
+          "maxzoom": 6,
+          "minzoom": 0
+        }
+      ],
+      "bounds": [-180, -85.051129, 180, 85.051129],
+      "center": [25.3125, 38.788894, 6],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
     },
     "places-low-source": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/places/places_cb_2024_points_acs5_2024_density_z0.pmtiles",
       "minzoom": 0,
-      "maxzoom": 7
+      "maxzoom": 9,
+      "tiles": ["https://data.storypath.studio/places/places_cb_2024_points_acs5_2024_density_z0/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "description": "",
+          "fields": {
+            "ALAND": "Number",
+            "AWATER": "Number",
+            "GEOID": "String",
+            "NAME": "String",
+            "PLACEFP": "String",
+            "STATEFP": "String",
+            "clustered": "Boolean",
+            "point_count": "Number",
+            "point_count_abbreviated": "String",
+            "pop_density_sqmi": "Number",
+            "pop_total": "Number",
+            "sqrt_point_count": "Number",
+            "tippecanoe_feature_density": "Number"
+          },
+          "id": "places_points",
+          "maxzoom": 9,
+          "minzoom": 0
+        }
+      ],
+      "bounds": [-176.6551629, -14.356589, 174.105782, 71.285444],
+      "center": [-73.476563, 40.713423, 9],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
     },
     "places-source": {
       "type": "vector",
-      "url": "pmtiles://https://data.storypath.studio/pmtiles/places/places_cb_2024_500k_z5.pmtiles",
       "promoteId": "GEOID",
-      "minzoom": 5
+      "minzoom": 5,
+      "tiles": ["https://data.storypath.studio/places/places_cb_2024_500k_z5/{z}/{x}/{y}.mvt"],
+      "vector_layers": [
+        {
+          "description": "",
+          "fields": {
+            "ALAND": "Number",
+            "AWATER": "Number",
+            "GEOID": "String",
+            "NAME": "String",
+            "PLACEFP": "String",
+            "STATEFP": "String"
+          },
+          "id": "places",
+          "maxzoom": 12,
+          "minzoom": 5
+        }
+      ],
+      "maxzoom": 12,
+      "bounds": [-176.696676, -14.37374, 174.1553099, 71.33971],
+      "center": [-79.9365229, 32.731833, 12],
+      "scheme": "xyz",
+      "tilejson": "3.0.0"
     }
   },
   "layers": [
@@ -55,28 +1583,6 @@
       "type": "background",
       "paint": {
         "background-color": "#303030"
-      }
-    },
-    {
-      "id": "hillshade",
-      "type": "hillshade",
-      "source": "world-hillshade",
-      "minzoom": 0,
-      "maxzoom": 13,
-      "paint": {
-        "hillshade-illumination-direction": 335,
-        "hillshade-illumination-anchor": "viewport",
-        "hillshade-exaggeration": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0, 0.0625,
-          12, 0.0625,
-          13, 0
-        ],
-        "hillshade-shadow-color": "#252525",
-        "hillshade-highlight-color": "#303030",
-        "hillshade-accent-color": "#252525"
       }
     },
     {
@@ -1914,7 +3420,7 @@
     {
       "id": "water-label-world-labels-watername-ocean",
       "type": "symbol",
-      "source": "world_labels",
+      "source": "us_high",
       "source-layer": "water_name",
       "minzoom": 1,
       "maxzoom": 10,
@@ -1954,7 +3460,7 @@
     {
       "id": "water-label-world-labels-watername",
       "type": "symbol",
-      "source": "world_labels",
+      "source": "us_high",
       "source-layer": "water_name",
       "minzoom": 4,
       "maxzoom": 10,
@@ -2120,103 +3626,6 @@
       }
     },
     {
-      "id": "marine-label-world-watername-ocean",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "water_name_ocean",
-      "minzoom": 1,
-      "maxzoom": 6.5,
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"], ["get", "name_int"], ""],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          1, 14,
-          3, 18,
-          6, 24
-        ],
-        "symbol-placement": "point",
-        "text-padding": 10
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 2,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "marine-label-world-all-watername",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "water_name",
-      "minzoom": 1,
-      "maxzoom": 6.5,
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"], ["get", "name_int"], ""],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          1, 14,
-          3, 18,
-          6, 24
-        ],
-        "symbol-placement": "point",
-        "text-padding": 10
-      },
-      "paint": {
-        "text-color": "#ff00ff",
-        "text-halo-color": "#ffffff",
-        "text-halo-width": 2,
-        "text-halo-blur": 1,
-        "text-opacity": 1
-      }
-    },
-    {
-      "id": "marine-label-world-watername",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "water_name",
-      "minzoom": 1,
-      "maxzoom": 6.5,
-      "filter": [
-        "all",
-        ["any", ["has", "name"], ["has", "name:en"]],
-          [
-            "case",
-            ["has", "class"],
-            ["match", ["get", "class"], ["ocean", "sea", "gulf", "bay"], true, false],
-            true
-          ]
-      ],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          1, 14,
-          3, 18,
-          6, 24
-        ],
-        "symbol-placement": "point",
-        "text-padding": 10
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 2,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
       "id": "marine-label-world",
       "type": "symbol",
       "source": "world_low",
@@ -2238,141 +3647,6 @@
           1, 14,
           3, 18,
           6, 24
-        ],
-        "symbol-placement": "point",
-        "text-padding": 10
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 2,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "water-label-world-major",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "water_name",
-      "minzoom": 2,
-      "maxzoom": 6.5,
-      "filter": ["all", ["any", ["has", "name"], ["has", "name:en"]]],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          2, 12,
-          4, 14,
-          6, 18
-        ],
-        "symbol-placement": "point",
-        "text-padding": 8
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "water-label-world",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "water_name",
-      "minzoom": 4,
-      "maxzoom": 6.5,
-      "filter": [
-        "all",
-        ["any", ["has", "name"], ["has", "name:en"]],
-          [
-            "case",
-            ["has", "rank"],
-            [">", ["get", "rank"], 2],
-            false
-          ]
-      ],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          4, 10,
-          6, 14
-        ],
-        "symbol-placement": "point",
-        "text-padding": 8
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "marine-label-world-mid-watername-ocean",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "water_name_ocean",
-      "minzoom": 6,
-      "filter": ["all", ["any", ["has", "name"], ["has", "name:en"]]],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          6, 20,
-          8, 24,
-          10, 28
-        ],
-        "symbol-placement": "point",
-        "text-padding": 10
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 2,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "marine-label-world-mid-watername",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "water_name",
-      "minzoom": 6,
-      "filter": [
-        "all",
-        ["any", ["has", "name"], ["has", "name:en"]],
-          [
-            "case",
-            ["has", "class"],
-            ["match", ["get", "class"], ["ocean", "sea", "gulf", "bay"], true, false],
-            true
-          ]
-      ],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          6, 20,
-          8, 24,
-          10, 28
         ],
         "symbol-placement": "point",
         "text-padding": 10
@@ -2419,107 +3693,11 @@
       }
     },
     {
-      "id": "water-label-world-mid-major",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "water_name",
-      "minzoom": 6,
-      "filter": ["all", ["any", ["has", "name"], ["has", "name:en"]]],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          6, 16,
-          8, 18,
-          10, 22
-        ],
-        "symbol-placement": "point",
-        "text-padding": 8
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "water-label-world-mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "water_name",
-      "minzoom": 7,
-      "filter": [
-        "all",
-        ["has", "name"],
-          [
-            "case",
-            ["has", "rank"],
-            [">", ["get", "rank"], 3],
-            false
-          ]
-      ],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          7, 12,
-          10, 16
-        ],
-        "symbol-placement": "point",
-        "text-padding": 8
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
-      "id": "marine-label-us-watername-ocean",
-      "type": "symbol",
-      "source": "us_high",
-      "source-layer": "water_name_ocean",
-      "minzoom": 4,
-      "filter": ["all", ["any", ["has", "name"], ["has", "name:en"]]],
-      "layout": {
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Italic"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          4, 16,
-          8, 20,
-          12, 26,
-          15, 32
-        ],
-        "symbol-placement": "point",
-        "text-padding": 10
-      },
-      "paint": {
-        "text-color": "#c1c1c1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 2,
-        "text-halo-blur": 1,
-        "text-opacity": 0.9
-      }
-    },
-    {
       "id": "marine-label-us-watername",
       "type": "symbol",
       "source": "us_high",
       "source-layer": "water_name",
-      "minzoom": 4,
+      "minzoom": 1,
       "filter": [
         "all",
         ["any", ["has", "name"], ["has", "name:en"]],
@@ -2537,8 +3715,11 @@
           "interpolate",
           ["linear"],
           ["zoom"],
-          4, 16,
+          1, 14,
+          3, 18,
+          6, 24,
           8, 20,
+          10, 26,
           12, 26,
           15, 32
         ],
@@ -2617,7 +3798,7 @@
       "type": "symbol",
       "source": "us_high",
       "source-layer": "water_name",
-      "minzoom": 6,
+      "minzoom": 4,
       "filter": [
         "all",
         ["any", ["has", "name"], ["has", "name:en"]],
@@ -2635,6 +3816,51 @@
           "interpolate",
           ["linear"],
           ["zoom"],
+          4,
+          [
+            "let",
+            "name",
+            ["coalesce", ["get", "name:en"], ["get", "name"], ""],
+            [
+              "case",
+              ["in", "Pond", ["var", "name"]],
+              6,
+              ["in", "pond", ["var", "name"]],
+              6,
+              ["in", "Pool", ["var", "name"]],
+              6,
+              ["in", "pool", ["var", "name"]],
+              6,
+              ["in", "Puddle", ["var", "name"]],
+              5,
+              ["in", "puddle", ["var", "name"]],
+              5,
+              [
+                "case",
+                ["has", "rank"],
+                [
+                  "case",
+                  ["<=", ["get", "rank"], 1],
+                  16,
+                  ["<=", ["get", "rank"], 2],
+                  14,
+                  ["<=", ["get", "rank"], 3],
+                  12,
+                  ["<=", ["get", "rank"], 4],
+                  10,
+                  8
+                ],
+                [
+                  "case",
+                  ["in", "Reservoir", ["var", "name"]],
+                  11,
+                  ["in", "reservoir", ["var", "name"]],
+                  11,
+                  10
+                ]
+              ]
+            ]
+          ],
           6,
           [
             "let",
@@ -2961,230 +4187,6 @@
       "id": "places-points-lowzoom",
       "type": "circle",
       "source": "places-low-source",
-      "source-layer": "places",
-      "minzoom": 0,
-      "maxzoom": 6.6,
-      "paint": {
-        "circle-color": [
-          "step",
-          [
-            "coalesce",
-          [
-            "case",
-            [">", ["coalesce", ["get", "ALAND"], 0], 0],
-            ["/", ["coalesce", ["get", "pop_total"], 0], ["/", ["max", ["coalesce", ["get", "ALAND"], 0.000001], 0.000001], 2589988.110336]],
-            0
-          ],
-            0
-          ],
-          "#ecda9a",
-          100,
-          "#f6e6b8",
-          300,
-          "#f3d28f",
-          1000,
-          "#f0bd6b",
-          2000,
-          "#f2a14a",
-          3000,
-          "#f08a2a",
-          4000,
-          "#ef6800",
-          5000,
-          "#f04f1a",
-          7500,
-          "#f03a34",
-          10000,
-          "#ee2b4e",
-          15000,
-          "#e21f64",
-          25000,
-          "#c81b78"
-        ],
-        "circle-radius": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0,
-          [
-            "case",
-            ["==", ["coalesce", ["get", "cluster"], false], true],
-            [
-              "interpolate",
-              ["linear"],
-              ["sqrt", ["coalesce", ["get", "point_count"], 1]],
-              1, 4,
-              5, 8,
-              25, 14,
-              100, 22
-            ],
-            0.25
-          ],
-          3,
-          [
-            "case",
-            ["==", ["coalesce", ["get", "cluster"], false], true],
-            [
-              "interpolate",
-              ["linear"],
-              ["sqrt", ["coalesce", ["get", "point_count"], 1]],
-              1, 4,
-              5, 8,
-              25, 14,
-              100, 22
-            ],
-            1
-          ],
-          6.5,
-          [
-            "case",
-            ["==", ["coalesce", ["get", "cluster"], false], true],
-            [
-              "interpolate",
-              ["linear"],
-              ["sqrt", ["coalesce", ["get", "point_count"], 1]],
-              1, 4,
-              5, 8,
-              25, 14,
-              100, 22
-            ],
-            3
-          ]
-        ],
-        "circle-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0, 1,
-          5, 1,
-          6.5, 0
-        ],
-        "circle-stroke-width": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0, 0,
-          6.5, 0
-        ],
-        "circle-stroke-color": "#111822"
-      }
-    },
-    {
-      "id": "places-points-lowzoom-alt1",
-      "type": "circle",
-      "source": "places-low-source",
-      "source-layer": "points",
-      "minzoom": 0,
-      "maxzoom": 6.6,
-      "paint": {
-        "circle-color": [
-          "step",
-          [
-            "coalesce",
-          [
-            "case",
-            [">", ["coalesce", ["get", "ALAND"], 0], 0],
-            ["/", ["coalesce", ["get", "pop_total"], 0], ["/", ["max", ["coalesce", ["get", "ALAND"], 0.000001], 0.000001], 2589988.110336]],
-            0
-          ],
-            0
-          ],
-          "#ecda9a",
-          100,
-          "#f6e6b8",
-          300,
-          "#f3d28f",
-          1000,
-          "#f0bd6b",
-          2000,
-          "#f2a14a",
-          3000,
-          "#f08a2a",
-          4000,
-          "#ef6800",
-          5000,
-          "#f04f1a",
-          7500,
-          "#f03a34",
-          10000,
-          "#ee2b4e",
-          15000,
-          "#e21f64",
-          25000,
-          "#c81b78"
-        ],
-        "circle-radius": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0,
-          [
-            "case",
-            ["==", ["coalesce", ["get", "cluster"], false], true],
-            [
-              "interpolate",
-              ["linear"],
-              ["sqrt", ["coalesce", ["get", "point_count"], 1]],
-              1, 4,
-              5, 8,
-              25, 14,
-              100, 22
-            ],
-            0.25
-          ],
-          3,
-          [
-            "case",
-            ["==", ["coalesce", ["get", "cluster"], false], true],
-            [
-              "interpolate",
-              ["linear"],
-              ["sqrt", ["coalesce", ["get", "point_count"], 1]],
-              1, 4,
-              5, 8,
-              25, 14,
-              100, 22
-            ],
-            1
-          ],
-          6.5,
-          [
-            "case",
-            ["==", ["coalesce", ["get", "cluster"], false], true],
-            [
-              "interpolate",
-              ["linear"],
-              ["sqrt", ["coalesce", ["get", "point_count"], 1]],
-              1, 4,
-              5, 8,
-              25, 14,
-              100, 22
-            ],
-            3
-          ]
-        ],
-        "circle-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0, 1,
-          5, 1,
-          6.5, 0
-        ],
-        "circle-stroke-width": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          0, 0,
-          6.5, 0
-        ],
-        "circle-stroke-color": "#111822"
-      }
-    },
-    {
-      "id": "places-points-lowzoom-alt2",
-      "type": "circle",
-      "source": "places-low-source",
       "source-layer": "places_points",
       "minzoom": 0,
       "maxzoom": 6.6,
@@ -3295,70 +4297,6 @@
     },
     {
       "id": "places-cluster-labels-lowzoom",
-      "type": "symbol",
-      "source": "places-low-source",
-      "source-layer": "places",
-      "minzoom": 2.5,
-      "maxzoom": 5.5,
-      "filter": ["==", ["coalesce", ["get", "cluster"], false], true],
-      "layout": {
-        "text-field": ["get", "point_count_abbreviated"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          2.5, 10,
-          5.5, 14
-        ],
-        "text-font": ["Noto Sans Regular"]
-      },
-      "paint": {
-        "text-color": "#f7eddf",
-        "text-halo-color": "#1a1020",
-        "text-halo-width": 1.5,
-        "text-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          2.5, 0.9,
-          5.5, 0
-        ]
-      }
-    },
-    {
-      "id": "places-cluster-labels-lowzoom-alt1",
-      "type": "symbol",
-      "source": "places-low-source",
-      "source-layer": "points",
-      "minzoom": 2.5,
-      "maxzoom": 5.5,
-      "filter": ["==", ["coalesce", ["get", "cluster"], false], true],
-      "layout": {
-        "text-field": ["get", "point_count_abbreviated"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          2.5, 10,
-          5.5, 14
-        ],
-        "text-font": ["Noto Sans Regular"]
-      },
-      "paint": {
-        "text-color": "#f7eddf",
-        "text-halo-color": "#1a1020",
-        "text-halo-width": 1.5,
-        "text-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          2.5, 0.9,
-          5.5, 0
-        ]
-      }
-    },
-    {
-      "id": "places-cluster-labels-lowzoom-alt2",
       "type": "symbol",
       "source": "places-low-source",
       "source-layer": "places_points",
@@ -4584,43 +5522,6 @@
       }
     },
     {
-      "id": "place-airport-poi_us",
-      "type": "symbol",
-      "source": "poi_us",
-      "source-layer": "place",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["match", ["get", "place"], ["airport", "aerodrome"], true, false]],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "airport"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
       "id": "poi-hospital-rank1-poi_us",
       "type": "symbol",
       "source": "poi_us",
@@ -4996,44 +5897,6 @@
           ["all", ["==", ["get", "class"], "amenity"], ["==", ["get", "subclass"], "stadium"]]
         ]
       ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "stadium",
-        "icon-optional": false
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "place-stadium-poi_us",
-      "type": "symbol",
-      "source": "poi_us",
-      "source-layer": "place",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["match", ["get", "place"], ["stadium", "stadiums"], true, false]],
       "layout": {
         "icon-size": 0.9,
         "icon-allow-overlap": true,
@@ -5478,43 +6341,6 @@
       }
     },
     {
-      "id": "place-airport-us_high",
-      "type": "symbol",
-      "source": "us_high",
-      "source-layer": "place",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["match", ["get", "place"], ["airport", "aerodrome"], true, false]],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "airport"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
       "id": "poi-hospital-rank1-us_high",
       "type": "symbol",
       "source": "us_high",
@@ -5922,44 +6748,6 @@
       }
     },
     {
-      "id": "place-stadium-us_high",
-      "type": "symbol",
-      "source": "us_high",
-      "source-layer": "place",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["match", ["get", "place"], ["stadium", "stadiums"], true, false]],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "stadium",
-        "icon-optional": false
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
       "id": "poi-park-us_high",
       "type": "symbol",
       "source": "us_high",
@@ -6290,20 +7078,12 @@
       }
     },
     {
-      "id": "poi-airport-world_mid",
+      "id": "place-airport-us_high",
       "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
+      "source": "us_high",
+      "source-layer": "place",
       "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["match", ["get", "class"], ["transport"], true, false], ["==", ["get", "subclass"], "airport"]],
-          ["==", ["get", "class"], "airport"]
-        ]
-      ],
+      "filter": ["all", ["has", "name"], ["match", ["get", "place"], ["airport", "aerodrome"], true, false]],
       "layout": {
         "icon-size": 0.9,
         "icon-allow-overlap": false,
@@ -6335,16 +7115,16 @@
       }
     },
     {
-      "id": "poi-airfield-world_mid",
+      "id": "place-stadium-us_high",
       "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
+      "source": "us_high",
+      "source-layer": "place",
       "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["all", ["match", ["get", "class"], ["transport"], true, false], ["==", ["get", "subclass"], "airfield"]]],
+      "filter": ["all", ["has", "name"], ["match", ["get", "place"], ["stadium", "stadiums"], true, false]],
       "layout": {
         "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
+        "icon-allow-overlap": true,
+        "icon-ignore-placement": true,
         "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
         "text-font": ["Noto Sans Regular"],
         "text-size": [
@@ -6360,7 +7140,8 @@
         "text-optional": true,
         "text-allow-overlap": false,
         "symbol-placement": "point",
-        "icon-image": "airfield"
+        "icon-image": "stadium",
+        "icon-optional": false
       },
       "paint": {
         "icon-color": "#a1a1a1",
@@ -6398,413 +7179,6 @@
         "text-allow-overlap": false,
         "symbol-placement": "point",
         "icon-image": "airport"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-hospital-rank1-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["healthcare"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ],
-          [
-            "all",
-            ["==", ["get", "class"], "hospital"],
-            ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "hospital"]],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ],
-          [
-            "all",
-            ["match", ["get", "class"], ["amenity"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "hospital"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-hospital-rank2-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["match", ["get", "class"], ["healthcare"], true, false], ["==", ["get", "subclass"], "hospital"], ["==", ["get", "rank"], 2]],
-          [
-            "all",
-            ["==", ["get", "class"], "hospital"],
-            ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "hospital"]],
-            ["==", ["get", "rank"], 2]
-          ],
-          ["all", ["match", ["get", "class"], ["amenity"], true, false], ["==", ["get", "subclass"], "hospital"], ["==", ["get", "rank"], 2]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.85,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "hospital"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-hospital-rank3plus-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["healthcare"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ],
-          [
-            "all",
-            ["==", ["get", "class"], "hospital"],
-            ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "hospital"]],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ],
-          [
-            "all",
-            ["match", ["get", "class"], ["amenity"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.75,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "hospital"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-museum-rank1-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 14,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["entertainment", "tourism"], true, false],
-            ["match", ["get", "subclass"], ["museum", "gallery"], true, false],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ],
-          ["all", ["==", ["get", "class"], "museum"], ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "museum"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-museum-rank2-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["entertainment", "tourism"], true, false],
-            ["match", ["get", "subclass"], ["museum", "gallery"], true, false],
-            ["==", ["get", "rank"], 2]
-          ],
-          ["all", ["==", ["get", "class"], "museum"], ["==", ["get", "rank"], 2]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.85,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "museum"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-museum-rank3plus-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["entertainment", "tourism"], true, false],
-            ["match", ["get", "subclass"], ["museum", "gallery"], true, false],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ],
-          ["all", ["==", ["get", "class"], "museum"], ["all", ["has", "rank"], [">", ["get", "rank"], 2]]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.75,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "museum"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-zoo-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["==", ["get", "class"], "zoo"], ["==", ["get", "subclass"], "zoo"]],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "zoo"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-stadium-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "stadium"], ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "stadium"]]],
-          ["all", ["match", ["get", "class"], ["entertainment", "sport", "leisure"], true, false], ["==", ["get", "subclass"], "stadium"]],
-          ["all", ["==", ["get", "class"], "amenity"], ["==", ["get", "subclass"], "stadium"]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "stadium",
-        "icon-optional": false
       },
       "paint": {
         "icon-color": "#a1a1a1",
@@ -6854,418 +7228,6 @@
       }
     },
     {
-      "id": "poi-park-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["leisure", "park"], true, false],
-            ["match", ["get", "subclass"], ["national_park", "national_monument", "state_park"], true, false]
-          ],
-          ["match", ["get", "tourism"], ["national_park", "national_monument"], true, false]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "park"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-rail-rank1-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "railway"], ["==", ["get", "subclass"], "station"], ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]],
-          [
-            "all",
-            ["match", ["get", "class"], ["transport"], true, false],
-            ["match", ["get", "subclass"], ["railway_station", "station", "subway", "train_station"], true, false],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "rail",
-        "icon-optional": false
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-rail-rank2-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "railway"], ["==", ["get", "subclass"], "station"], ["==", ["get", "rank"], 2]],
-          [
-            "all",
-            ["match", ["get", "class"], ["transport"], true, false],
-            ["match", ["get", "subclass"], ["railway_station", "station", "subway", "train_station"], true, false],
-            ["==", ["get", "rank"], 2]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-image": "rail",
-        "icon-size": 0.85,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": false,
-        "icon-optional": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          14.5, 10,
-          15, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.85,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-rail-rank3plus-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "railway"], ["==", ["get", "subclass"], "station"], ["all", ["has", "rank"], [">", ["get", "rank"], 2]]],
-          [
-            "all",
-            ["match", ["get", "class"], ["transport"], true, false],
-            ["match", ["get", "subclass"], ["railway_station", "station", "subway", "train_station"], true, false],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-image": "rail",
-        "icon-size": 0.75,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": false,
-        "icon-optional": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          15, 9,
-          16, 12
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.8,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-school-rank1-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        ["==", ["get", "class"], "college"],
-        ["match", ["get", "subclass"], ["university", "college"], true, false],
-        ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "school"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-school-rank2-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        ["==", ["get", "class"], "college"],
-        ["match", ["get", "subclass"], ["university", "college"], true, false],
-        ["==", ["get", "rank"], 2]
-      ],
-      "layout": {
-        "icon-size": 0.85,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "school"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-school-rank3plus-world_mid",
-      "type": "symbol",
-      "source": "world_mid",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        ["==", ["get", "class"], "college"],
-        ["match", ["get", "subclass"], ["university", "college"], true, false],
-        ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-      ],
-      "layout": {
-        "icon-size": 0.75,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "school"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-airport-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["match", ["get", "class"], ["transport"], true, false], ["==", ["get", "subclass"], "airport"]],
-          ["==", ["get", "class"], "airport"]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "airport"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-airfield-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["all", ["match", ["get", "class"], ["transport"], true, false], ["==", ["get", "subclass"], "airfield"]]],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "airfield"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
       "id": "place-airport-world_low",
       "type": "symbol",
       "source": "world_low",
@@ -7292,413 +7254,6 @@
         "text-allow-overlap": false,
         "symbol-placement": "point",
         "icon-image": "airport"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-hospital-rank1-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["healthcare"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ],
-          [
-            "all",
-            ["==", ["get", "class"], "hospital"],
-            ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "hospital"]],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ],
-          [
-            "all",
-            ["match", ["get", "class"], ["amenity"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "hospital"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-hospital-rank2-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["match", ["get", "class"], ["healthcare"], true, false], ["==", ["get", "subclass"], "hospital"], ["==", ["get", "rank"], 2]],
-          [
-            "all",
-            ["==", ["get", "class"], "hospital"],
-            ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "hospital"]],
-            ["==", ["get", "rank"], 2]
-          ],
-          ["all", ["match", ["get", "class"], ["amenity"], true, false], ["==", ["get", "subclass"], "hospital"], ["==", ["get", "rank"], 2]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.85,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "hospital"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-hospital-rank3plus-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["healthcare"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ],
-          [
-            "all",
-            ["==", ["get", "class"], "hospital"],
-            ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "hospital"]],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ],
-          [
-            "all",
-            ["match", ["get", "class"], ["amenity"], true, false],
-            ["==", ["get", "subclass"], "hospital"],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.75,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "hospital"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-museum-rank1-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 14,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["entertainment", "tourism"], true, false],
-            ["match", ["get", "subclass"], ["museum", "gallery"], true, false],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ],
-          ["all", ["==", ["get", "class"], "museum"], ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "museum"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-museum-rank2-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["entertainment", "tourism"], true, false],
-            ["match", ["get", "subclass"], ["museum", "gallery"], true, false],
-            ["==", ["get", "rank"], 2]
-          ],
-          ["all", ["==", ["get", "class"], "museum"], ["==", ["get", "rank"], 2]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.85,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "museum"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-museum-rank3plus-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["entertainment", "tourism"], true, false],
-            ["match", ["get", "subclass"], ["museum", "gallery"], true, false],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ],
-          ["all", ["==", ["get", "class"], "museum"], ["all", ["has", "rank"], [">", ["get", "rank"], 2]]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.75,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "museum"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-zoo-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": ["all", ["has", "name"], ["==", ["get", "class"], "zoo"], ["==", ["get", "subclass"], "zoo"]],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "zoo"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-stadium-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "stadium"], ["any", ["!", ["has", "subclass"]], ["==", ["get", "subclass"], "stadium"]]],
-          ["all", ["match", ["get", "class"], ["entertainment", "sport", "leisure"], true, false], ["==", ["get", "subclass"], "stadium"]],
-          ["all", ["==", ["get", "class"], "amenity"], ["==", ["get", "subclass"], "stadium"]]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": true,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "stadium",
-        "icon-optional": false
       },
       "paint": {
         "icon-color": "#a1a1a1",
@@ -7737,336 +7292,6 @@
         "symbol-placement": "point",
         "icon-image": "stadium",
         "icon-optional": false
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-park-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          [
-            "all",
-            ["match", ["get", "class"], ["leisure", "park"], true, false],
-            ["match", ["get", "subclass"], ["national_park", "national_monument", "state_park"], true, false]
-          ],
-          ["match", ["get", "tourism"], ["national_park", "national_monument"], true, false]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "park"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-rail-rank1-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "railway"], ["==", ["get", "subclass"], "station"], ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]],
-          [
-            "all",
-            ["match", ["get", "class"], ["transport"], true, false],
-            ["match", ["get", "subclass"], ["railway_station", "station", "subway", "train_station"], true, false],
-            ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "rail",
-        "icon-optional": false
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-rail-rank2-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "railway"], ["==", ["get", "subclass"], "station"], ["==", ["get", "rank"], 2]],
-          [
-            "all",
-            ["match", ["get", "class"], ["transport"], true, false],
-            ["match", ["get", "subclass"], ["railway_station", "station", "subway", "train_station"], true, false],
-            ["==", ["get", "rank"], 2]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-image": "rail",
-        "icon-size": 0.85,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": false,
-        "icon-optional": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          14.5, 10,
-          15, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.85,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-rail-rank3plus-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        [
-          "any",
-          ["all", ["==", ["get", "class"], "railway"], ["==", ["get", "subclass"], "station"], ["all", ["has", "rank"], [">", ["get", "rank"], 2]]],
-          [
-            "all",
-            ["match", ["get", "class"], ["transport"], true, false],
-            ["match", ["get", "subclass"], ["railway_station", "station", "subway", "train_station"], true, false],
-            ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-          ]
-        ]
-      ],
-      "layout": {
-        "icon-image": "rail",
-        "icon-size": 0.75,
-        "icon-allow-overlap": true,
-        "icon-ignore-placement": false,
-        "icon-optional": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          15, 9,
-          16, 12
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.8,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-school-rank1-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 12,
-      "filter": [
-        "all",
-        ["has", "name"],
-        ["==", ["get", "class"], "college"],
-        ["match", ["get", "subclass"], ["university", "college"], true, false],
-        ["any", ["!", ["has", "rank"]], ["==", ["get", "rank"], 1]]
-      ],
-      "layout": {
-        "icon-size": 0.9,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "school"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-school-rank2-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 14.5,
-      "filter": [
-        "all",
-        ["has", "name"],
-        ["==", ["get", "class"], "college"],
-        ["match", ["get", "subclass"], ["university", "college"], true, false],
-        ["==", ["get", "rank"], 2]
-      ],
-      "layout": {
-        "icon-size": 0.85,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "school"
-      },
-      "paint": {
-        "icon-color": "#a1a1a1",
-        "icon-opacity": 0.9,
-        "text-color": "#a1a1a1",
-        "text-halo-color": "#313131",
-        "text-halo-width": 1.5,
-        "text-halo-blur": 1
-      }
-    },
-    {
-      "id": "poi-school-rank3plus-world_low",
-      "type": "symbol",
-      "source": "world_low",
-      "source-layer": "poi",
-      "minzoom": 15,
-      "filter": [
-        "all",
-        ["has", "name"],
-        ["==", ["get", "class"], "college"],
-        ["match", ["get", "subclass"], ["university", "college"], true, false],
-        ["all", ["has", "rank"], [">", ["get", "rank"], 2]]
-      ],
-      "layout": {
-        "icon-size": 0.75,
-        "icon-allow-overlap": false,
-        "icon-ignore-placement": false,
-        "text-field": ["coalesce", ["get", "name:en"], ["get", "name"]],
-        "text-font": ["Noto Sans Regular"],
-        "text-size": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          12, 10,
-          14, 12,
-          16, 14
-        ],
-        "text-offset": [0, 1.2],
-        "text-anchor": "top",
-        "text-optional": true,
-        "text-allow-overlap": false,
-        "symbol-placement": "point",
-        "icon-image": "school"
       },
       "paint": {
         "icon-color": "#a1a1a1",
