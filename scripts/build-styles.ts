@@ -25,11 +25,15 @@ const TILEJSON_FIELDS = [
 
 function resolveStyleConfig(): BaseStyleConfig {
   const assetsBase = process.env.ASSETS_BASE_URL || DEFAULT_ASSETS_BASE;
+  const spriteCdn = process.env.SPRITE_CDN;
+  const useAbsoluteSprite =
+    spriteCdn != null && String(spriteCdn).trim().length > 0;
   return {
     glyphsBaseUrl: process.env.GLYPHS_CDN || assetsBase,
     glyphsPath: "glyphs",
-    spriteBaseUrl: process.env.SPRITE_CDN || assetsBase,
+    spriteBaseUrl: useAbsoluteSprite ? String(spriteCdn).trim() : assetsBase,
     spritePath: "sprites/basemap",
+    spriteRelativeToStyle: !useAbsoluteSprite,
     dataBaseUrl: process.env.DATA_CDN || "https://data.storypath.studio",
   };
 }
@@ -140,7 +144,8 @@ async function buildStyle(): Promise<void> {
   
   const config = resolveStyleConfig();
   console.log(
-    `Using style URLs (override with ASSETS_BASE_URL, GLYPHS_CDN, SPRITE_CDN, DATA_CDN)\n`
+    "Using style URLs (override with ASSETS_BASE_URL, GLYPHS_CDN, SPRITE_CDN, DATA_CDN)\n" +
+      `  sprite: ${config.spriteRelativeToStyle ? "relative (sprites next to style.json)" : "absolute (SPRITE_CDN or assets base)"}\n`
   );
   
   try {

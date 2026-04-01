@@ -21,8 +21,8 @@ import { loadPlacesAttributesByState, updateMapFeatureStates } from "./shared/ut
  *     // ... other options
  *   });
  * 
- * For static hosting or simple HTML pages, use the generated JSON:
- *   style: "./style.json"  // or "./style.generated.json"
+ * For static hosting or simple HTML pages, this module fetches `./style.json` and passes it to
+ * the map (relative `sprite` in JSON is turned into an absolute URL; MapLibre requires that).
  */
 
 // ============================================================================
@@ -69,12 +69,43 @@ const bearing = (typeof window !== 'undefined' && window.mapBearing !== undefine
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-const mapStyleUrl = `./style.json?v=${Date.now()}`;
+/**
+ * MapLibre GL requires an absolute `sprite` URL. Built `style.json` uses a path relative
+ * to the style file (e.g. `sprites/basemap`) so one artifact works on any host; resolve it here.
+ */
+function absolutizeSpriteUrl(sprite, styleJsonAbsoluteUrl) {
+  if (typeof sprite !== "string") return sprite;
+  const s = sprite.trim();
+  if (!s) return sprite;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return sprite;
+  return new URL(s, styleJsonAbsoluteUrl).href;
+}
+
+function styleJsonBaseUrl(styleUrlRel) {
+  if (typeof window !== "undefined" && window.location?.href) {
+    return new URL(styleUrlRel, window.location.href).href;
+  }
+  return new URL(styleUrlRel, import.meta.url).href;
+}
+
+async function fetchStyleWithResolvedSprite(styleUrlRel) {
+  const styleAbsoluteUrl = styleJsonBaseUrl(styleUrlRel);
+  const res = await fetch(styleUrlRel);
+  if (!res.ok) {
+    throw new Error(`Failed to load style (${res.status}): ${styleUrlRel}`);
+  }
+  const style = await res.json();
+  style.sprite = absolutizeSpriteUrl(style.sprite, styleAbsoluteUrl);
+  return style;
+}
+
+const mapStyleUrlRel = `./style.json?v=${Date.now()}`;
+const mapStyleSpec = await fetchStyleWithResolvedSprite(mapStyleUrlRel);
 
 // Initialize map
 const map = new maplibregl.Map({
   container: "map-container",
-  style: mapStyleUrl,
+  style: mapStyleSpec,
   center: center,
   zoom: zoom,
   pitch: pitch,
