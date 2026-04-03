@@ -48,6 +48,148 @@ html, body {
   pointer-events: none; 
 }
 
+/* Population density legend (bottom-left; MapLibre adds ctrl margin) */
+.maplibregl-ctrl-bottom-left {
+  bottom: 45px;
+}
+
+.density-legend {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  max-width: 168px;
+  position: relative;
+  isolation: isolate;
+  /* Transparent outer so only .density-legend__slide paints fill—two opaque layers composited badly during swipe. */
+  background: transparent;
+  /* Border instead of box-shadow so overflow:hidden does not clip the stroke */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: "Noto Sans", system-ui, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #d8dee8;
+  pointer-events: auto;
+}
+
+/* Slide shell: swipe transform + collapse (mirrors #charts-dock + .charts-dock-slide). */
+.density-legend__slide {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background: rgba(30, 36, 46, 0.92);
+  border-radius: 4px 4px 0 0;
+  transform: translate3d(0, 0, 0);
+  max-height: 480px;
+  transition: transform 0.5s ease, max-height 0.5s ease, opacity 0.5s ease;
+}
+
+/* Padding stays on inner during swipe/collapse so content does not jump horizontally. */
+.density-legend__inner {
+  padding: 8px 10px 6px;
+  background: transparent;
+}
+
+.density-legend--collapsed .density-legend__slide {
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.density-legend__toggle {
+  flex-shrink: 0;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px 10px;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 4px 4px;
+  font: inherit;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: #c9d1d9;
+  /* Fully opaque bar: semi-transparent rgba still showed legend rows through the button while swiping */
+  position: relative;
+  z-index: 1;
+  transform: translateZ(0);
+  background: #1e242e;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.density-legend__toggle:hover {
+  background: #28303c;
+  color: #e8eaed;
+}
+
+.density-legend__toggle:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: -2px;
+}
+
+.density-legend--collapsed .density-legend__toggle {
+  border-top: none;
+  border-radius: 4px;
+  padding-top: 10px;
+}
+
+.density-legend__title {
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #eef2f7;
+  margin-bottom: 2px;
+}
+
+.density-legend__unit {
+  font-size: 10px;
+  opacity: 0.78;
+  margin-bottom: 6px;
+}
+
+.density-legend__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.density-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 1px 0;
+}
+
+.density-legend__swatch {
+  flex-shrink: 0;
+  width: 14px;
+  height: 10px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.density-legend__label {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.maplibregl-ctrl-group button {
+  width: 100%;
+  padding-bottom: 10px;
+  padding-top: 8px;
+  background-color: #192028;
+  text-decoration: underline;
+}
+
 /* Places popup styling */
 .maplibregl-popup-content {
   background: #2a2a2a;
@@ -156,6 +298,10 @@ html, body {
 
 @media (prefers-reduced-motion: reduce) {
   #charts-dock {
+    transition-duration: 0.01ms;
+  }
+
+  .density-legend__slide {
     transition-duration: 0.01ms;
   }
 }

@@ -2,7 +2,7 @@
  * Charts dock slide-in drawer: edge tab toggles panel; compact scrim; localStorage; map resize event.
  * Default: open on wide viewports, closed on compact when no stored preference.
  */
-import { STORAGE_KEYS, COMPACT_BREAKPOINT } from "./dock-constants.js";
+import { STORAGE_KEYS, COMPACT_BREAKPOINT, TOUCH_SWIPE_GESTURE } from "./dock-constants.js";
 
 const STORAGE_KEY = STORAGE_KEYS.DRAWER_OPEN;
 const COMPACT_MQ = window.matchMedia(`(max-width: ${COMPACT_BREAKPOINT}px)`);
@@ -127,10 +127,12 @@ function init() {
   });
 
   // Swipe-to-close gesture (touch devices)
-  const SWIPE_THRESHOLD_PX = 60;
-  const SWIPE_THRESHOLD_RATIO = 0.3;
-  const SWIPE_VELOCITY_MIN = 0.5; // px/ms
-  const DIRECTION_LOCK_PX = 10;
+  const {
+    THRESHOLD_PX: SWIPE_THRESHOLD_PX,
+    THRESHOLD_RATIO: SWIPE_THRESHOLD_RATIO,
+    VELOCITY_MIN: SWIPE_VELOCITY_MIN,
+    DIRECTION_LOCK_PX,
+  } = TOUCH_SWIPE_GESTURE;
   const reducedMotionMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
   const resizeHandle = document.getElementById("charts-dock-resize-handle");
 

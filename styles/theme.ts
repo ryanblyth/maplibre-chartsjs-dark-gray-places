@@ -32,6 +32,7 @@ import {
   type ThemeLabelFonts,
   type ThemePlaces
 } from "../shared/styles/index.js";
+import { placesDensityPaletteBase } from "../shared/placesDensityPalette.js";
 
 // ============================================================================
 // BASEMAP STYLE CONFIGURATIONS
@@ -959,23 +960,10 @@ type DensityPalette = NonNullable<ThemePlaces["densityColors"]>;
 // Sidebar chart anchors from charts/chartUtils.js (converted from RGBA to hex):
 // cyan #00beff, purple #b74aff, pink #ff2d78, green #00eb9b, orange #ff9500
 // Keep thresholds fixed and experiment with fill progression only.
-// The enabled densityPaletteCandidateA is pinned to Version A.
+// Fill ramp thresholds/colors: shared/placesDensityPalette.js (also used by density legend UI).
 const densityPaletteCandidateA: DensityPalette = {
-  defaultFillColor: "#dff8f3",
+  ...placesDensityPaletteBase,
   defaultOutlineColor: "#b7d8d2",
-  ranges: [
-    { threshold: 100, fillColor: "#c7f3ef" },
-    { threshold: 300, fillColor: "#a7eaf7" },
-    { threshold: 1000, fillColor: "#87dbfb" },
-    { threshold: 2000, fillColor: "#66c9f6" },
-    { threshold: 3000, fillColor: "#5ab2f0" },
-    { threshold: 4000, fillColor: "#6d97ee" },
-    { threshold: 5000, fillColor: "#8a7ef2" },
-    { threshold: 7500, fillColor: "#a86bea" },
-    { threshold: 10000, fillColor: "#c95fdc" },
-    { threshold: 15000, fillColor: "#df57bd" },
-    { threshold: 25000, fillColor: "#cf438d" },
-  ],
 };
 
 // Density colors are pinned to Version A.
