@@ -86,7 +86,7 @@ const usStatesFilter = ["match", ["coalesce", ["get", "name:en"], ["get", "name"
 
 export function createPlaceLabelLayers(theme: Theme): LayerSpecification[] {
   const c = theme.colors;
-  const placeLabelPaint = { "text-color": c.label.place.color, "text-halo-color": c.label.place.halo, "text-halo-width": 2, "text-halo-blur": 1 };
+  const placeLabelPaint = { "text-color": c.label.place.color, "text-halo-color": c.label.place.halo, "text-halo-width": .75, "text-halo-blur": .5 };
   const placeLabelPaintThin = { ...placeLabelPaint, "text-halo-width": 1.5 };
   
   // Use theme-configured font for place labels, with fallback to default fonts
