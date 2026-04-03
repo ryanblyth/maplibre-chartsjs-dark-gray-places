@@ -48,15 +48,17 @@ npm run build
 
 This runs `build:utils` then `build:styles`.
 
-### 3. Build styles for local `npm run serve` (sprites)
+### 3. Sprite URL: relative (default) vs absolute (`SPRITE_CDN`)
 
-If sprites are not yet on the CDN, run:
+`npm run build:styles` writes **`"sprite": "sprites/basemap"`** (no host) so one `style.json` works on any host. **MapLibre GL JS requires an absolute sprite URL** at runtime; [`map.js`](../map.js) fetches the style, resolves `sprite` against the style JSON URL, then passes the patched spec to the map. Local `npm run serve` and production both load `sprites/basemap@2x.png` (etc.) from the **same origin and path prefix** as `style.json`, as long as you deploy the `sprites/` directory next to `style.json`.
+
+If sprites are hosted elsewhere, set **`SPRITE_CDN`** to the absolute base (no trailing `/sprites`):
 
 ```bash
-npm run build:styles:local
+SPRITE_CDN=https://assets.storypath.studio npm run build:styles
 ```
 
-This sets `SPRITE_CDN=http://localhost:8080` so MapLibre loads `sprites/basemap*` from the dev server. `npm run dev` runs `build:styles:local` before `serve`. For production, deploy sprites and use `npm run build:styles` (default `sprite` URL).
+`npm run build:styles:local` is shorthand for `SPRITE_CDN=http://localhost:8080` (absolute localhost URLs). `npm run dev` still runs `build:styles:local` before `serve`; for relative sprites you can use `npm run build:styles` once, then `npm run serve`.
 
 ### 4. Verify TileJSON (CDN / Worker)
 
@@ -134,9 +136,9 @@ Shared utilities for building styles:
 
 [scripts/build-styles.ts](scripts/build-styles.ts) calls `resolveStyleConfig()`:
 
-- **Default** `ASSETS_BASE_URL`: `https://assets.storypath.studio` — used for `glyphsBaseUrl` and `spriteBaseUrl` unless overridden
+- **Default** `ASSETS_BASE_URL`: `https://assets.storypath.studio` — used for `glyphsBaseUrl` (and as `spriteBaseUrl` when building an absolute sprite URL)
 - **`GLYPHS_CDN`** — glyph PBF base URL
-- **`SPRITE_CDN`** — sprite JSON/PNG base URL (set to `http://localhost:8080` if you only serve `sprites/` locally and do not host them on `assets`)
+- **`SPRITE_CDN`** — if **set** (non-empty), `style.sprite` is `${SPRITE_CDN}/sprites/basemap`. If **unset**, `style.sprite` is **`sprites/basemap`** (relative to the style document URL)
 - **`DATA_CDN`** — TileJSON / vector tiles (default `https://data.storypath.studio`)
 
 ```bash
@@ -153,7 +155,7 @@ The main MapLibre style file. Contains:
 
 - `version`: MapLibre style spec version (8)
 - `sources`: Data sources with inlined tile URLs — each source has a `tiles` array and `vector_layers` (for vector sources) baked in at build time. There are no `url` properties pointing at TileJSON endpoints; MapLibre reads the `tiles` array directly.
-- `sprite`: Sprite sheet URL
+- `sprite`: Sprite sheet base URL — relative `sprites/basemap` by default, or absolute when `SPRITE_CDN` is set at build time
 - `glyphs`: Font glyph URL pattern
 - `layers`: Array of layer definitions
 - `projection`: Map projection type

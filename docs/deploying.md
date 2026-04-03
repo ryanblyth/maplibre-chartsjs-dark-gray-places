@@ -17,19 +17,23 @@ This map is designed to work with static hosting platforms like:
 
 The map uses a hybrid approach for assets:
 
-### Local Assets (optional when using CDN sprites)
+### Local Assets (sprites next to `style.json`)
 
-The built `style.json` defaults to **glyphs, sprites, and sprite JSON** on `https://assets.storypath.studio/` (same paths as the old `data` host). If you override `SPRITE_CDN` to your app origin, bundle:
+The built `style.json` uses a **relative** `sprite` value (`sprites/basemap`) unless you build with **`SPRITE_CDN`** set. Deploy the **`sprites/`** directory **next to** `style.json` (same URL path layout as this repository):
 
-- **Sprites** - `sprites/` directory
+- **Sprites** — `sprites/` directory
   - `basemap.png` and `basemap.json`
   - `basemap@2x.png` and `basemap@2x.json`
-  - Served from the URL given by `sprite` in `style.json`
+  - Preview `map.js` resolves the relative `sprite` against the style URL, then MapLibre loads PNG/JSON from that absolute base (same origin as `style.json` when deployed as siblings)
+
+Glyphs still default to `https://assets.storypath.studio/glyphs/` unless you override `GLYPHS_CDN` / `ASSETS_BASE_URL` when building.
+
+If sprites must live on a **different** origin or path than `style.json`, build with **`SPRITE_CDN`** pointing at that base URL.
 
 ### External Assets (loaded from CDN)
 
-- **Glyphs** (fonts) - `https://assets.storypath.studio/glyphs/`
-- **Sprites** (icons) - URL prefix in `style.json` `sprite` field (default `https://assets.storypath.studio/sprites/basemap`)
+- **Glyphs** (fonts) - `https://assets.storypath.studio/glyphs/` (unless overridden at build time)
+- **Sprites** (icons) - Default: relative `sprites/basemap` in `style.json` (same origin as the style). Optional: absolute URL when built with `SPRITE_CDN`
 - **Starfield script** - Preview uses the vendored `vendor/maplibre-gl-starfield.js` (assigns `globalThis.MapLibreStarryBackground`). Production pages can load the same file or the CDN copy if it assigns the global.
 - **PMTiles data** - Map data URLs in `style.json`
 - **Preview (`preview.html` + `style.css`)** - MapLibre / PMTiles from `unpkg.com`; Chart.js and Fuse from `https://esm.sh/` (see import map in `preview.html`); layout and dock UI styles in `style.css`
@@ -63,9 +67,9 @@ NODE_ENV=production npm run build
 
 [scripts/build-styles.ts](scripts/build-styles.ts) resolves URLs via `resolveStyleConfig()`:
 
-- Default asset host: `https://assets.storypath.studio` (glyphs + sprites), overridable with `ASSETS_BASE_URL`
+- Default asset host: `https://assets.storypath.studio` (glyphs; also used as sprite base **only** when `SPRITE_CDN` is set), overridable with `ASSETS_BASE_URL`
 - `GLYPHS_CDN` — glyph PBF base URL
-- `SPRITE_CDN` — sprite PNG/JSON base URL (use `http://localhost:8080` for local `npm run serve` if you do not host sprites on `assets`)
+- `SPRITE_CDN` — if set, sprite PNG/JSON load from this absolute base + `sprites/basemap`. If unset, `style.json` uses relative `sprites/basemap` (deploy `sprites/` beside `style.json`)
 - `DATA_CDN` — TileJSON / vector tile base (default `https://data.storypath.studio`)
 
 Example:
@@ -334,7 +338,7 @@ If the map isn't immediately visible, lazy load MapLibre and PMTiles libraries.
 
 For different environments, you can use environment variables:
 
-Defaults use `https://assets.storypath.studio` for glyphs and sprites. Override when building:
+Defaults use `https://assets.storypath.studio` for glyphs. Sprites are **relative** in `style.json` unless you set `SPRITE_CDN`. Override when building:
 
 ```bash
 ASSETS_BASE_URL=https://cdn.example.com npm run build:styles
@@ -390,8 +394,10 @@ map.on('error', (e) => {
 - Not a glyph/sprite URL issue. MapLibre is validating the style against vector tile contents. Check that each TileJSON URL returns 200, tiles load, and the archive behind the Worker matches the expected `source-layer` names (see layer definitions under `shared/styles/layers/`). Wrong or empty tiles often produce this after a hostname or Worker change.
 - From the repo, run `npm run verify:tilejson` (optional: `DATA_CDN=https://data.storypath.studio`) to print HTTP status and `vector_layers` for each TileJSON used by the style.
 
-**Local dev: sprites 404 on `assets.storypath.studio`:**
-- Run `npm run build:styles:local` before `npm run serve` so `sprite` points at `http://localhost:8080/sprites/basemap` (files in this repo). The `npm run dev` script runs `build:styles:local` automatically. For production builds, upload `sprites/basemap*` to your CDN and run `npm run build:styles` without `SPRITE_CDN`.
+**Local dev: sprites 404:**
+- With default **`npm run build:styles`**, `sprite` is relative — serve the repo root so `style.json` and `sprites/` share the same base URL (e.g. `http://localhost:8080/style.json` → `http://localhost:8080/sprites/basemap@2x.png`).
+- If `style.json` still points at an old absolute CDN URL, rebuild with `npm run build:styles`.
+- Optional: `npm run build:styles:local` sets `SPRITE_CDN=http://localhost:8080` for explicit absolute sprite URLs. `npm run dev` runs that before `serve`.
 
 ## Security
 

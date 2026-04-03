@@ -990,12 +990,15 @@ export interface ThemePlaces {
     /** Fill color (fallback used when density data is not available) */
     color: string;
     /** 
-     * Base fill opacity (0.0 to 1.0)
-     * Can be enhanced by data-driven styling based on population.
-     * Default: 0.15 if not specified.
-     * Adjust this value to control the transparency of place fills.
+     * Fill opacity for place polygons.
+     * Accepts:
+     * - single number (0.0 to 1.0) for constant base opacity
+     * - zoom/stop tuples: [zoom, opacity, zoom, opacity, ...]
+     * - object of named stops: { z5: 0, z10: 1, z15: 1 }
+     * Base opacity is still enhanced by population-driven styling.
+     * Default: 0.35 baseline when not specified.
      */
-    opacity?: number;
+    opacity?: number | number[] | Record<string, number>;
   };
   /** Outline styling for place boundaries */
   outline: {

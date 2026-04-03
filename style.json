@@ -2,7 +2,7 @@
   "version": 8,
   "name": "My Custom Map Fixed Basemap",
   "glyphs": "https://assets.storypath.studio/glyphs/{fontstack}/{range}.pbf",
-  "sprite": "https://assets.storypath.studio/sprites/basemap",
+  "sprite": "sprites/basemap",
   "sources": {
     "world_labels": {
       "type": "vector",
@@ -4203,29 +4203,29 @@
           ],
             0
           ],
-          "#ecda9a",
+          "#dff8f3",
           100,
-          "#f6e6b8",
+          "#c7f3ef",
           300,
-          "#f3d28f",
+          "#a7eaf7",
           1000,
-          "#f0bd6b",
+          "#87dbfb",
           2000,
-          "#f2a14a",
+          "#66c9f6",
           3000,
-          "#f08a2a",
+          "#5ab2f0",
           4000,
-          "#ef6800",
+          "#6d97ee",
           5000,
-          "#f04f1a",
+          "#8a7ef2",
           7500,
-          "#f03a34",
+          "#a86bea",
           10000,
-          "#ee2b4e",
+          "#c95fdc",
           15000,
-          "#e21f64",
+          "#df57bd",
           25000,
-          "#c81b78"
+          "#cf438d"
         ],
         "circle-radius": [
           "interpolate",
@@ -4341,29 +4341,29 @@
       [
             "step",
             ["feature-state", "pop_density_sqmi"],
-            "#ecda9a",
+            "#dff8f3",
             100,
-            "#f6e6b8",
+            "#c7f3ef",
             300,
-            "#f3d28f",
+            "#a7eaf7",
             1000,
-            "#f0bd6b",
+            "#87dbfb",
             2000,
-            "#f2a14a",
+            "#66c9f6",
             3000,
-            "#f08a2a",
+            "#5ab2f0",
             4000,
-            "#ef6800",
+            "#6d97ee",
             5000,
-            "#f04f1a",
+            "#8a7ef2",
             7500,
-            "#f03a34",
+            "#a86bea",
             10000,
-            "#ee2b4e",
+            "#c95fdc",
             15000,
-            "#e21f64",
+            "#df57bd",
             25000,
-            "#c81b78"
+            "#cf438d"
           ],
           "#6a7588"
         ],
@@ -4372,7 +4372,7 @@
           ["linear"],
           ["zoom"],
           5, 0,
-          6.5,
+          7,
           [
             "*",
             1,
@@ -4396,10 +4396,82 @@
               ]
             ]
           ],
-          13,
+          10,
           [
             "*",
-            1,
+            0.7,
+            [
+              "+",
+              1,
+              [
+              "case",
+                ["!=", ["feature-state", "pop_total"], null],
+                [
+                "interpolate",
+                ["linear"],
+                ["feature-state", "pop_total"],
+                0, 0,
+                10000, 0.05,
+                50000, 0.1,
+                100000, 0.15,
+                500000, 0.2
+                ],
+                0
+              ]
+            ]
+          ],
+          12,
+          [
+            "*",
+            0.3,
+            [
+              "+",
+              1,
+              [
+              "case",
+                ["!=", ["feature-state", "pop_total"], null],
+                [
+                "interpolate",
+                ["linear"],
+                ["feature-state", "pop_total"],
+                0, 0,
+                10000, 0.05,
+                50000, 0.1,
+                100000, 0.15,
+                500000, 0.2
+                ],
+                0
+              ]
+            ]
+          ],
+          14,
+          [
+            "*",
+            0.2,
+            [
+              "+",
+              1,
+              [
+              "case",
+                ["!=", ["feature-state", "pop_total"], null],
+                [
+                "interpolate",
+                ["linear"],
+                ["feature-state", "pop_total"],
+                0, 0,
+                10000, 0.05,
+                50000, 0.1,
+                100000, 0.15,
+                500000, 0.2
+                ],
+                0
+              ]
+            ]
+          ],
+          16,
+          [
+            "*",
+            0,
             [
               "+",
               1,
@@ -4438,47 +4510,47 @@
       [
             "step",
             ["feature-state", "pop_density_sqmi"],
-            "#c4b87a",
+            "#3b4654",
             100,
-            "#b9ad8a",
+            "#3b4654",
             300,
-            "#b69e6b",
+            "#3b4654",
             1000,
-            "#b48e50",
+            "#3b4654",
             2000,
-            "#b67938",
+            "#3b4654",
             3000,
-            "#b46820",
+            "#3b4654",
             4000,
-            "#b34e00",
+            "#3b4654",
             5000,
-            "#b43b14",
+            "#3b4654",
             7500,
-            "#b42c27",
+            "#3b4654",
             10000,
-            "#b3203b",
+            "#3b4654",
             15000,
-            "#aa174b",
+            "#3b4654",
             25000,
-            "#96145a"
+            "#3b4654"
           ],
-          "#8a9598"
+          "#3b4654"
         ],
         "line-width": [
           "interpolate",
           ["linear"],
           ["zoom"],
-          5, 0.5,
+          5, 0,
           10, 1,
-          15, 1.5
+          15, 1
         ],
         "line-opacity": [
           "interpolate",
           ["linear"],
           ["zoom"],
           5, 0.1,
-          6.5, 0.6,
-          13, 0.6
+          6.5, 0.75,
+          13, 0.75
         ]
       }
     },

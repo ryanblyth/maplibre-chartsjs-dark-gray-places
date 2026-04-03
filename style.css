@@ -1,12 +1,12 @@
 /* preview.html — map layout, popups, charts dock */
 
 :root {
-  --charts-panel-width: min(420px, 40vw);
+  --charts-panel-width: max(340px, min(420px, 40vw));
 }
 
 @media (max-width: 768px) {
   :root {
-    --charts-panel-width: min(420px, 90vw);
+    --charts-panel-width: max(340px, min(420px, 90vw));
   }
 }
 
@@ -141,6 +141,7 @@ html, body {
   right: 0;
   bottom: 0;
   width: var(--charts-panel-width);
+  min-width: 340px;
   z-index: 10;
   overflow: visible;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -258,8 +259,7 @@ body.charts-dock-resize-active {
 }
 
 .charts-dock-content-first {
-  padding-bottom: .5rem;
-  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid #333333;
 }
 
@@ -342,15 +342,37 @@ body.charts-dock-resize-active {
   color: #444;
 }
 
+#charts-dock.charts-dock-light .charts-dock-commute-block,
+#charts-dock.charts-dock-light .charts-dock-doughnuts-row,
+#charts-dock.charts-dock-light .charts-dock-top-cities-block {
+  border-top-color: rgba(0, 0, 0, 0.12);
+}
+
+#charts-dock.charts-dock-light .charts-dock-doughnut-block + .charts-dock-doughnut-block {
+  border-left-color: rgba(0, 0, 0, 0.12);
+}
+
 #charts-dock.charts-dock-light .charts-dock-placeholder,
 #charts-dock.charts-dock-light .charts-dock-geoid,
-#charts-dock.charts-dock-light .charts-dock-summary dt,
 #charts-dock.charts-dock-light .charts-dock-no-attrs,
 #charts-dock.charts-dock-light .charts-dock-charts-msg {
   color: #5c6370;
 }
 
+/* Match Demographics by percent chart axis ticks (chartUtils tickColor / Chart.js defaults) */
+#charts-dock.charts-dock-light .charts-dock-summary dt {
+  color: #444444;
+}
+
 #charts-dock.charts-dock-light .charts-dock-summary dd {
+  color: #1a1a1a;
+}
+
+#charts-dock.charts-dock-light .charts-dock-see-more {
+  color: #5c6370;
+}
+
+#charts-dock.charts-dock-light .charts-dock-see-more:hover {
   color: #1a1a1a;
 }
 
@@ -418,13 +440,18 @@ body.charts-dock-resize-active {
 .charts-dock-doughnuts-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 16px 0;
   margin-top: 8px;
 }
 
 .charts-dock-doughnut-block {
   flex: 1 1 160px;
   min-width: 140px;
+}
+
+.charts-dock-doughnut-block + .charts-dock-doughnut-block {
+  border-left: 1px solid #333333;
+  padding-left: 16px;
 }
 
 .charts-dock-doughnut-inner {
@@ -438,6 +465,20 @@ body.charts-dock-resize-active {
   min-height: 200px;
   height: 200px;
   width: 100%;
+}
+
+.charts-dock-demographics-block,
+.charts-dock-commute-block,
+.charts-dock-doughnut-block,
+.charts-dock-top-cities-block {
+  margin-bottom: 24px;
+  padding-top: 24px;
+}
+
+.charts-dock-commute-block,
+.charts-dock-doughnuts-row,
+.charts-dock-top-cities-block {
+  border-top: 1px solid #333333;
 }
 
 .charts-dock-commute-block,
@@ -501,24 +542,67 @@ body.charts-dock-resize-active {
   font-family: ui-monospace, monospace;
 }
 
+.charts-dock-summary-root {
+  --charts-dock-summary-label-width: 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.charts-dock-see-more {
+  align-self: flex-start;
+  margin: 0;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #9a9a9a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.charts-dock-see-more:hover {
+  color: #c9d1d9;
+}
+
+.charts-dock-see-more:focus {
+  outline: none;
+}
+
+.charts-dock-see-more:focus-visible {
+  outline: 2px solid rgba(0, 190, 255, 0.85);
+  outline-offset: 2px;
+}
+
 .charts-dock-summary {
   margin: 0;
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 6px 12px;
+  grid-template-columns: var(--charts-dock-summary-label-width) minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 6px;
   font-size: 0.8125rem;
+  align-items: baseline;
 }
 
 .charts-dock-summary dt {
   margin: 0;
-  color: #9a9a9a;
+  font-size: 12px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #c9d1d9;
+  min-width: 0;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .charts-dock-summary dd {
   margin: 0;
   color: #e8eaed;
   font-weight: 500;
+  min-width: 0;
 }
 
 .charts-dock-no-attrs {

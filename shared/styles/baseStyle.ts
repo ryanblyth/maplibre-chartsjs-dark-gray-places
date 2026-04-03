@@ -23,6 +23,12 @@ export interface BaseStyleConfig {
   spriteBaseUrl: string;
   /** Sprite path relative to spriteBaseUrl (e.g., "basemaps/dark-blue/sprites/basemap"). Defaults to "shared/assets/sprites/basemap" for backward compatibility */
   spritePath?: string;
+  /**
+   * When true, `style.sprite` is only `spritePath` (no host). MapLibre resolves it relative to the style JSON URL.
+   * Requires deploying `sprites/` next to `style.json` (same path layout as this repo). When false, sprite is
+   * `${spriteBaseUrl}/${spritePath}`.
+   */
+  spriteRelativeToStyle?: boolean;
   /** Base URL for tile TileJSON and assets (e.g., "https://data.storypath.studio") */
   dataBaseUrl: string;
 }
@@ -58,14 +64,18 @@ export function createGlobalSources(config: BaseStyleConfig): Record<string, Sou
  */
 export function createBaseStyle(config: BaseStyleConfig = defaultConfig): StyleSpecification {
   // Use configurable sprite path, defaulting to shared location for backward compatibility
-  const spritePath = config.spritePath || 'shared/assets/sprites/basemap';
+  const spritePath = (config.spritePath || "shared/assets/sprites/basemap").replace(/^\/+/, "");
   // Use configurable glyphs path, defaulting to shared/assets/glyphs for local dev
   const glyphsPath = config.glyphsPath || 'shared/assets/glyphs';
+  const sprite =
+    config.spriteRelativeToStyle === true
+      ? spritePath
+      : `${config.spriteBaseUrl.replace(/\/+$/, "")}/${spritePath}`;
   return {
     version: 8,
     name: "Base Style",
     glyphs: `${config.glyphsBaseUrl}/${glyphsPath}/{fontstack}/{range}.pbf`,
-    sprite: `${config.spriteBaseUrl}/${spritePath}`,
+    sprite,
     sources: createGlobalSources(config),
     layers: [],
   };

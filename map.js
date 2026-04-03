@@ -21,8 +21,8 @@ import { loadPlacesAttributesByState, updateMapFeatureStates } from "./shared/ut
  *     // ... other options
  *   });
  * 
- * For static hosting or simple HTML pages, use the generated JSON:
- *   style: "./style.json"  // or "./style.generated.json"
+ * For static hosting or simple HTML pages, this module fetches `./style.json` and passes it to
+ * the map (relative `sprite` in JSON is turned into an absolute URL; MapLibre requires that).
  */
 
 // ============================================================================
@@ -69,12 +69,43 @@ const bearing = (typeof window !== 'undefined' && window.mapBearing !== undefine
 const protocol = new pmtiles.Protocol();
 maplibregl.addProtocol("pmtiles", protocol.tile);
 
-const mapStyleUrl = `./style.json?v=${Date.now()}`;
+/**
+ * MapLibre GL requires an absolute `sprite` URL. Built `style.json` uses a path relative
+ * to the style file (e.g. `sprites/basemap`) so one artifact works on any host; resolve it here.
+ */
+function absolutizeSpriteUrl(sprite, styleJsonAbsoluteUrl) {
+  if (typeof sprite !== "string") return sprite;
+  const s = sprite.trim();
+  if (!s) return sprite;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return sprite;
+  return new URL(s, styleJsonAbsoluteUrl).href;
+}
+
+function styleJsonBaseUrl(styleUrlRel) {
+  if (typeof window !== "undefined" && window.location?.href) {
+    return new URL(styleUrlRel, window.location.href).href;
+  }
+  return new URL(styleUrlRel, import.meta.url).href;
+}
+
+async function fetchStyleWithResolvedSprite(styleUrlRel) {
+  const styleAbsoluteUrl = styleJsonBaseUrl(styleUrlRel);
+  const res = await fetch(styleUrlRel);
+  if (!res.ok) {
+    throw new Error(`Failed to load style (${res.status}): ${styleUrlRel}`);
+  }
+  const style = await res.json();
+  style.sprite = absolutizeSpriteUrl(style.sprite, styleAbsoluteUrl);
+  return style;
+}
+
+const mapStyleUrlRel = `./style.json?v=${Date.now()}`;
+const mapStyleSpec = await fetchStyleWithResolvedSprite(mapStyleUrlRel);
 
 // Initialize map
 const map = new maplibregl.Map({
   container: "map-container",
-  style: mapStyleUrl,
+  style: mapStyleSpec,
   center: center,
   zoom: zoom,
   pitch: pitch,
@@ -155,11 +186,58 @@ map.on("error", (e) => {
   console.error("Map error:", err);
 });
 
-// Log zoom when window.MAP_DEBUG_ZOOM is true (checked on each event so DevTools can toggle without reload).
-function mapDebugZoomLog() {
-  if (typeof window !== "undefined" && window.MAP_DEBUG_ZOOM === true) {
-    console.log("[map zoom]", Number(map.getZoom().toFixed(4)));
+function interpolateLinearStops(stops, zoom) {
+  if (!Array.isArray(stops) || stops.length < 2) return null;
+  if (zoom <= stops[0][0]) return stops[0][1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [z0, v0] = stops[i];
+    const [z1, v1] = stops[i + 1];
+    if (zoom <= z1) {
+      const t = (zoom - z0) / (z1 - z0 || 1);
+      return v0 + (v1 - v0) * t;
+    }
   }
+  return stops[stops.length - 1][1];
+}
+
+function getPlacesBaseOpacityAtZoom() {
+  try {
+    const expr = map.getPaintProperty("places-fill", "fill-opacity");
+    if (!Array.isArray(expr) || expr[0] !== "interpolate") return null;
+    const stops = [];
+    for (let i = 3; i < expr.length; i += 2) {
+      const z = expr[i];
+      const val = expr[i + 1];
+      if (typeof z !== "number") continue;
+      if (typeof val === "number") {
+        stops.push([z, val]);
+      } else if (Array.isArray(val) && val[0] === "*" && typeof val[1] === "number") {
+        // places fill opacity uses ["*", baseOpacity, populationFactorExpression]
+        stops.push([z, val[1]]);
+      }
+    }
+    if (!stops.length) return null;
+    return interpolateLinearStops(stops, map.getZoom());
+  } catch {
+    return null;
+  }
+}
+
+// Log zoom and places base opacity by default on load/zoomend. Set window.MAP_DEBUG_ZOOM = false to disable.
+function mapDebugZoomLog() {
+  if (typeof window !== "undefined" && window.MAP_DEBUG_ZOOM === false) return;
+  const currentZoom = Number(map.getZoom().toFixed(4));
+  const placesBaseOpacity = getPlacesBaseOpacityAtZoom();
+  if (placesBaseOpacity == null) {
+    console.log("[map zoom]", currentZoom, "| placesBaseOpacity", "n/a");
+    return;
+  }
+  console.log(
+    "[map zoom]",
+    currentZoom,
+    "| placesBaseOpacity",
+    Number(placesBaseOpacity.toFixed(4))
+  );
 }
 map.on("zoomend", mapDebugZoomLog);
 map.once("load", mapDebugZoomLog);

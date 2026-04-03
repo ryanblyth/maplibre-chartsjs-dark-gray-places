@@ -4,7 +4,7 @@
 import { STORAGE_KEYS } from "./dock-constants.js";
 
 const STORAGE_KEY = STORAGE_KEYS.PANEL_WIDTH;
-const MIN_WIDTH = 280;
+const MIN_WIDTH = 340;
 const KEYBOARD_STEP = 16;
 function maxPanelWidth() {
   return Math.min(720, Math.max(MIN_WIDTH, Math.floor(window.innerWidth * 0.9)));

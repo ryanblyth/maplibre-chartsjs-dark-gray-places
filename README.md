@@ -24,7 +24,7 @@ A custom MapLibre basemap created from the dark-gray template. The development p
 4. **View the preview:**
    Open [http://localhost:8080/preview.html](http://localhost:8080/preview.html) (or the same path on whatever port you set — see Troubleshooting).
 
-**One-shot full build and serve:** `npm run dev` runs `build:utils`, then `build:styles:local` (sprites load from this repo at `http://localhost:8080/sprites/`), then `serve`. For production CDN URLs in `style.json`, use `npm run build:styles` instead of `build:styles:local`.
+**One-shot full build and serve:** `npm run dev` runs `build:utils`, then `build:styles:local`, then `serve`. By default, `npm run build:styles` writes a **relative** `sprite` URL (`sprites/basemap`) so MapLibre loads sprites from the same origin as `style.json` (works for local `serve` and production if you deploy `sprites/` next to `style.json`). `build:styles:local` sets `SPRITE_CDN=http://localhost:8080` for an **absolute** sprite base (optional; use if you prefer explicit localhost URLs).
 
 ## Project Structure
 
@@ -116,7 +116,7 @@ This map is designed to work with Cloudflare Pages or any static hosting.
 - **Local files**: Sprites (bundled in `sprites/`), preview HTML/JS modules, charts dock
 - **CDN files**:
   - Glyphs (fonts): `https://assets.storypath.studio/glyphs/` (override with `GLYPHS_CDN` / `ASSETS_BASE_URL` when building)
-  - Map sprites (icons): URL in `style.json` `sprite` field (default `https://assets.storypath.studio/sprites/basemap`; override with `SPRITE_CDN` for local `sprites/`)
+  - Map sprites (icons): `style.json` `sprite` is **`sprites/basemap` by default** (relative path in JSON; `map.js` resolves it to an absolute URL for MapLibre). Deploy the `sprites/` folder beside `style.json`. For sprites on another host or path, build with **`SPRITE_CDN`** set to that base URL (absolute `sprite` in `style.json`).
   - Starfield script: `https://assets.storypath.studio/js/maplibre-gl-starfield.js`
   - PMTiles / TileJSON: External URLs in `style.json` (default `https://data.storypath.studio`)
   - Census places attributes, manifest, search index: `https://assets.storypath.studio/` (see `shared/utils/placesData.ts`, `data/dockDataConfig.js`)
@@ -140,8 +140,8 @@ See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 
 - `prepare` (runs on `npm install`) - `npm run build:utils` — compile `shared/utils/*.ts` to `.js`
 - `npm run build:utils` - TypeScript compile for browser utilities only
-- `npm run build:styles` - Build map style from TypeScript source (production CDN defaults for sprites)
-- `npm run build:styles:local` - Same, with `SPRITE_CDN=http://localhost:8080` for local `sprites/`
+- `npm run build:styles` - Build map style (default **relative** `sprite`: `sprites/basemap`; glyphs/data still use CDN defaults unless overridden)
+- `npm run build:styles:local` - Same as `build:styles` but sets `SPRITE_CDN=http://localhost:8080` for an **absolute** sprite URL
 - `npm run verify:tilejson` - Fetch TileJSONs from `DATA_CDN` and print `vector_layers` (CDN / Worker check)
 - `npm run build:shields` - Rebuild highway shield sprites
 - `node scripts/extract-place-centroids.js` - Regenerate `data/placeCentroids.js` from the places PMTiles point archive (run when place data changes)
@@ -159,10 +159,10 @@ See [docs/deploying.md](docs/deploying.md) for detailed deployment guide.
 This map uses external CDN assets to reduce bundle size:
 
 - **Glyphs** (fonts): Loaded from `https://assets.storypath.studio/glyphs/` (see `style.json`)
-- **Sprites** (icons): Loaded from the `sprite` URL in `style.json`
+- **Sprites** (icons): Resolved from the `sprite` field in `style.json` (default relative path `sprites/basemap` next to `style.json`, or absolute if built with `SPRITE_CDN`)
 - **Starfield**: Preview loads [`vendor/maplibre-gl-starfield.js`](vendor/maplibre-gl-starfield.js) (vendored; exposes `globalThis.MapLibreStarryBackground` for ES modules)
 - **PMTiles / TileJSON**: Map data from URLs in `style.json` (default host `data.storypath.studio`)
-- **Preview**: MapLibre and PMTiles from `unpkg.com`; glyphs and census JSON from `assets.storypath.studio`; sprites from `style.json` (localhost when using `build:styles:local`); Chart.js and Fuse from `esm.sh` per `preview.html` import map
+- **Preview**: MapLibre and PMTiles from `unpkg.com`; glyphs and census JSON from `assets.storypath.studio`; sprites from the same origin as `style.json` when `sprite` is relative (default), or from `SPRITE_CDN` when built with `build:styles:local`; Chart.js and Fuse from `esm.sh` per `preview.html` import map
 
 These are loaded on-demand and cached by the browser.
 
@@ -192,8 +192,8 @@ These are loaded on-demand and cached by the browser.
 
 **Missing sprites?**
 
-- Ensure `sprites/` directory exists
-- Check that sprite paths in `style.json` are correct
+- Ensure `sprites/` exists and is deployed **next to** `style.json` (default relative `sprite` resolves from the style URL)
+- If sprites live on another host, rebuild with `SPRITE_CDN=https://your.cdn.example.com` (no trailing path; base only)
 
 ## License
 
