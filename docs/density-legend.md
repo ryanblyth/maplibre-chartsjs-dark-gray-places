@@ -25,7 +25,7 @@ Change the ramp in **one place** (`placesDensityPalette.js`), then rebuild style
 
 - **Toggle** — “Hide legend” / “Show legend” collapses or expands the ramp; `aria-controls` targets `#density-legend-panel` on the slide element.
 - **Vertical swipe** — Uses [`dock-constants.js`](../dock-constants.js) `TOUCH_SWIPE_GESTURE` (same threshold/velocity idea as [`charts-dock-drawer.js`](../charts-dock-drawer.js), axis is vertical).
-- **DOM shape (charts-dock-style)** — Outer [`.density-legend`](../style.css), then [`.density-legend__slide`](../style.css) (swipe `transform` + `max-height` / `opacity` collapse), then [`.density-legend__inner`](../style.css) (padding only), then the toggle as a **sibling** of the slide so the button does not move with the swipe preview.
+- **DOM shape (charts-dock-style)** — Outer [`.density-legend`](../style.css), then [`.density-legend__slide`](../style.css) (swipe `transform` + `max-height` collapse), then [`.density-legend__inner`](../style.css) (padding only), then the toggle as a **sibling** of the slide so the button does not move with the swipe preview.
 
 ## Styling and compositing
 

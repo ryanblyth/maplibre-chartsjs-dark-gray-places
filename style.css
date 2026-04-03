@@ -75,18 +75,14 @@ html, body {
 
 /* Slide shell: swipe transform + collapse (mirrors #charts-dock + .charts-dock-slide). */
 .density-legend__slide {
-  position: relative;
-  z-index: 0;
   width: 100%;
   min-height: 0;
-  box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: hidden;
+  overflow: hidden;
   background: rgba(30, 36, 46, 0.92);
   border-radius: 4px 4px 0 0;
   transform: translate3d(0, 0, 0);
   max-height: 480px;
-  transition: transform 0.5s ease, max-height 0.5s ease, opacity 0.5s ease;
+  transition: transform 0.5s ease, max-height 0.5s ease;
 }
 
 /* Padding stays on inner during swipe/collapse so content does not jump horizontally. */
@@ -97,8 +93,6 @@ html, body {
 
 .density-legend--collapsed .density-legend__slide {
   max-height: 0;
-  margin: 0;
-  padding: 0;
 }
 
 .density-legend__toggle {

@@ -52,12 +52,6 @@ function setLegendCollapsed(container, toggle, collapsed) {
   toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
 }
 
-/** Clear inline swipe styles so CSS transition on .density-legend__slide applies (charts-dock pattern). */
-function clearLegendSlideInlineStyles(slide) {
-  slide.style.transition = "";
-  slide.style.transform = "";
-}
-
 /**
  * MapLibre IControl: population density ramp (bottom-left). DOM mirrors charts dock:
  * `.density-legend__slide` (transform + collapse) + `.density-legend__inner` (padding only) + toggle sibling.
@@ -230,7 +224,8 @@ export class DensityLegendControl {
         swiping = false;
         directionLocked = false;
         lastDeltaY = 0;
-        clearLegendSlideInlineStyles(slide);
+        slide.style.transition = "";
+        slide.style.transform = "";
       },
       { passive: true }
     );
@@ -301,7 +296,8 @@ export class DensityLegendControl {
         const committed = dragPx > threshold || velocity > VELOCITY_MIN;
 
         if (committed) {
-          clearLegendSlideInlineStyles(slide);
+          slide.style.transition = "";
+          slide.style.transform = "";
           setLegendCollapsed(container, toggle, false);
         }
 
