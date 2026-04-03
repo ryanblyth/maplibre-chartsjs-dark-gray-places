@@ -315,16 +315,6 @@ export function createPlacesLayers(theme: Theme): LayerSpecification[] {
     ]);
   }
 
-  // Opacity crossfade for outlines (stay subtle at low zoom, full by 6.5+)
-  const outlineZoomRamp = [
-    "interpolate",
-    ["linear"],
-    ["zoom"],
-    5, 0.1,
-    6.5, places.outline.opacity ?? 0.6,
-    13, places.outline.opacity ?? 0.6
-  ];
-
   // TileJSON vector_layers use `places_points` (see npm run verify:tilejson). Older names (places/points) are not in metadata.
   const pointLayerIds = [{ id: "places-points-lowzoom", layerName: "places_points" }];
 

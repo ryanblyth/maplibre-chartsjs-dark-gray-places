@@ -1024,11 +1024,10 @@ const PLACES_BORDER_COLOR = "#3b4654";
 const PLACES_BORDER_OPACITY = 0.75;
 const PLACES_BORDER_WIDTH = { z5: 0, z10: 1, z15: 1 };
 
-const selectedDensityPaletteBase: DensityPalette = densityPaletteCandidateA;
 const selectedDensityPalette: DensityPalette = {
-  ...selectedDensityPaletteBase,
+  ...densityPaletteCandidateA,
   defaultOutlineColor: PLACES_BORDER_COLOR,
-  ranges: selectedDensityPaletteBase.ranges.map((range) => ({
+  ranges: densityPaletteCandidateA.ranges.map((range) => ({
     ...range,
     outlineColor: PLACES_BORDER_COLOR,
   })),
