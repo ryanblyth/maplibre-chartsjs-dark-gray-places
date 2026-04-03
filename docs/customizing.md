@@ -2,6 +2,8 @@
 
 This guide explains how to customize the My Custom Map Fixed map. The development preview (`preview.html`) includes the map plus a **charts dock** (census charts, place search); map styling still comes from `styles/theme.ts` as described below.
 
+**See also:** [Population density legend (preview UI)](density-legend.md) — bottom-left ramp control, shared palette with `theme.ts`, touch behavior, and compositing notes.
+
 ## Color Customization
 
 All colors are defined in `styles/theme.ts`. The theme file exports a `myCustomMapFixedTheme` object with color definitions.

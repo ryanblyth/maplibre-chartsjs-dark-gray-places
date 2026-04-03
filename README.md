@@ -1,6 +1,6 @@
 # My Custom Map Fixed Map
 
-A custom MapLibre basemap created from the dark-gray template. The development preview (`preview.html`) includes a **map plus a charts dock** (Chart.js, place search, census charts).
+A custom MapLibre basemap created from the dark-gray template. The development preview (`preview.html`) includes a **map plus a charts dock** (Chart.js, place search, census charts) and a **population density legend** (bottom-left, same ramp as place polygons). See [docs/density-legend.md](docs/density-legend.md).
 
 ## Quick Start
 
@@ -38,7 +38,7 @@ A custom MapLibre basemap created from the dark-gray template. The development p
 │   ├── build-styles.ts # Generate style.json
 │   ├── build-shields.ts # Build highway shields
 │   └── extract-place-centroids.js # Generate data/placeCentroids.js from PMTiles
-├── shared/             # Shared utilities (layers, expressions, places/*.ts)
+├── shared/             # Shared utilities (layers, expressions, places/*.ts); `placesDensityPalette.js` + `densityLegendControl.js` — [density legend](docs/density-legend.md)
 ├── charts/             # Chart.js dock modules (preview.html)
 ├── data/               # Places index, manifest, search helpers, static centroids
 ├── docs/               # Documentation
