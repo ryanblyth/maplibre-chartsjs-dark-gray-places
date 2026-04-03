@@ -32,6 +32,7 @@ import {
   type ThemeLabelFonts,
   type ThemePlaces
 } from "../shared/styles/index.js";
+import { placesDensityPaletteBase } from "../shared/placesDensityPalette.js";
 
 // ============================================================================
 // BASEMAP STYLE CONFIGURATIONS
@@ -290,8 +291,8 @@ export const myCustomMapFixedColors: ThemeColors = {
   // Labels - Harmonious monochrome grays with good contrast
   label: {
     place: {
-      color: "#f7eddf",      // Light gray for good contrast
-      halo: "#1a1020",       // Very dark halo (width set in shared/styles/layers/labels/place.ts)
+      color: "#ffffff",      // Light gray for good contrast
+      halo: "#1b2432",       // Very dark halo (width set in shared/styles/layers/labels/place.ts)
     },
     road: {
       major: { color: "#b1b1b1", opacity: 0.8 },      // Light gray
@@ -959,65 +960,13 @@ type DensityPalette = NonNullable<ThemePlaces["densityColors"]>;
 // Sidebar chart anchors from charts/chartUtils.js (converted from RGBA to hex):
 // cyan #00beff, purple #b74aff, pink #ff2d78, green #00eb9b, orange #ff9500
 // Keep thresholds fixed and experiment with fill progression only.
-// The enabled densityPaletteCandidateA is pinned to Version A.
+// Fill ramp thresholds/colors: shared/placesDensityPalette.js (also used by density legend UI).
 const densityPaletteCandidateA: DensityPalette = {
-  defaultFillColor: "#dff8f3",
+  ...placesDensityPaletteBase,
   defaultOutlineColor: "#b7d8d2",
-  ranges: [
-    { threshold: 100, fillColor: "#c7f3ef" },
-    { threshold: 300, fillColor: "#a7eaf7" },
-    { threshold: 1000, fillColor: "#87dbfb" },
-    { threshold: 2000, fillColor: "#66c9f6" },
-    { threshold: 3000, fillColor: "#5ab2f0" },
-    { threshold: 4000, fillColor: "#6d97ee" },
-    { threshold: 5000, fillColor: "#8a7ef2" },
-    { threshold: 7500, fillColor: "#a86bea" },
-    { threshold: 10000, fillColor: "#c95fdc" },
-    { threshold: 15000, fillColor: "#df57bd" },
-    { threshold: 25000, fillColor: "#cf438d" },
-  ],
-};
-
-// Density palette candidate B not actively used. Keep for future experiments if needed.
-const densityPaletteCandidateB: DensityPalette = {
-  defaultFillColor: "#e6fbf4",
-  defaultOutlineColor: "#bfdcd2",
-  ranges: [
-    { threshold: 100, fillColor: "#c8f8ea" },
-    { threshold: 300, fillColor: "#a7f0dc" },
-    { threshold: 1000, fillColor: "#84e6d0" },
-    { threshold: 2000, fillColor: "#65dbcf" },
-    { threshold: 3000, fillColor: "#56cde1" },
-    { threshold: 4000, fillColor: "#5ab7f0" },
-    { threshold: 5000, fillColor: "#6f9df3" },
-    { threshold: 7500, fillColor: "#8d82ef" },
-    { threshold: 10000, fillColor: "#ac69e2" },
-    { threshold: 15000, fillColor: "#cb54c5" },
-    { threshold: 25000, fillColor: "#e2479d" },
-  ],
-};
-
-// Density palette candidate C not actively used. Keep for future experiments if needed.
-const densityPaletteCandidateC: DensityPalette = {
-  defaultFillColor: "#e8f2ef",
-  defaultOutlineColor: "#b9ccc7",
-  ranges: [
-    { threshold: 100, fillColor: "#d6ebe8" },
-    { threshold: 300, fillColor: "#c2e2e6" },
-    { threshold: 1000, fillColor: "#acd6e6" },
-    { threshold: 2000, fillColor: "#96c8e2" },
-    { threshold: 3000, fillColor: "#82b7dc" },
-    { threshold: 4000, fillColor: "#7f9fda" },
-    { threshold: 5000, fillColor: "#8a8bd8" },
-    { threshold: 7500, fillColor: "#9b79d0" },
-    { threshold: 10000, fillColor: "#ab68c2" },
-    { threshold: 15000, fillColor: "#bc5aa9" },
-    { threshold: 25000, fillColor: "#cc4f8d" },
-  ],
 };
 
 // Density colors are pinned to Version A.
-// Keep B/C constants above for future experiments if needed.
 
 // Permanent places border styling.
 const PLACES_BORDER_COLOR = "#3b4654";

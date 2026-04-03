@@ -4,6 +4,7 @@ import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
 import { initializePlacesInteractivity } from "./shared/utils/placesMapSetup.js";
 import { defaultPlacePopupAttributeConfig } from "./shared/utils/placesPopup.js";
 import { loadPlacesAttributesByState, updateMapFeatureStates } from "./shared/utils/placesData.js";
+import { DensityLegendControl } from "./shared/densityLegendControl.js";
 
 /**
  * My Custom Map Fixed Basemap - Map Initialization
@@ -118,6 +119,7 @@ const map = new maplibregl.Map({
 });
 
 map.addControl(new maplibregl.NavigationControl(), "top-left");
+map.addControl(new DensityLegendControl(), "bottom-left");
 
 const attributionControl = new maplibregl.AttributionControl({
   compact: false,
