@@ -247,7 +247,7 @@ export const myCustomMapFixedPlaces: ThemePlaces = {
   minZoom: 5,
   fill: {
     color: "#6a7588",  // Change fill color
-    opacity: 0.15,     // Change base opacity
+    opacity: { z5: 0, z10: 0.8, z15: 1.0 }, // Zoom-stop base opacity
   },
   outline: {
     color: "#8a9598",  // Change outline color

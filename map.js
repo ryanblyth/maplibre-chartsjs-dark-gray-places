@@ -186,11 +186,58 @@ map.on("error", (e) => {
   console.error("Map error:", err);
 });
 
-// Log zoom when window.MAP_DEBUG_ZOOM is true (checked on each event so DevTools can toggle without reload).
-function mapDebugZoomLog() {
-  if (typeof window !== "undefined" && window.MAP_DEBUG_ZOOM === true) {
-    console.log("[map zoom]", Number(map.getZoom().toFixed(4)));
+function interpolateLinearStops(stops, zoom) {
+  if (!Array.isArray(stops) || stops.length < 2) return null;
+  if (zoom <= stops[0][0]) return stops[0][1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [z0, v0] = stops[i];
+    const [z1, v1] = stops[i + 1];
+    if (zoom <= z1) {
+      const t = (zoom - z0) / (z1 - z0 || 1);
+      return v0 + (v1 - v0) * t;
+    }
   }
+  return stops[stops.length - 1][1];
+}
+
+function getPlacesBaseOpacityAtZoom() {
+  try {
+    const expr = map.getPaintProperty("places-fill", "fill-opacity");
+    if (!Array.isArray(expr) || expr[0] !== "interpolate") return null;
+    const stops = [];
+    for (let i = 3; i < expr.length; i += 2) {
+      const z = expr[i];
+      const val = expr[i + 1];
+      if (typeof z !== "number") continue;
+      if (typeof val === "number") {
+        stops.push([z, val]);
+      } else if (Array.isArray(val) && val[0] === "*" && typeof val[1] === "number") {
+        // places fill opacity uses ["*", baseOpacity, populationFactorExpression]
+        stops.push([z, val[1]]);
+      }
+    }
+    if (!stops.length) return null;
+    return interpolateLinearStops(stops, map.getZoom());
+  } catch {
+    return null;
+  }
+}
+
+// Log zoom and places base opacity by default on load/zoomend. Set window.MAP_DEBUG_ZOOM = false to disable.
+function mapDebugZoomLog() {
+  if (typeof window !== "undefined" && window.MAP_DEBUG_ZOOM === false) return;
+  const currentZoom = Number(map.getZoom().toFixed(4));
+  const placesBaseOpacity = getPlacesBaseOpacityAtZoom();
+  if (placesBaseOpacity == null) {
+    console.log("[map zoom]", currentZoom, "| placesBaseOpacity", "n/a");
+    return;
+  }
+  console.log(
+    "[map zoom]",
+    currentZoom,
+    "| placesBaseOpacity",
+    Number(placesBaseOpacity.toFixed(4))
+  );
 }
 map.on("zoomend", mapDebugZoomLog);
 map.once("load", mapDebugZoomLog);

@@ -150,6 +150,18 @@ export function createPlacesLayers(theme: Theme): LayerSpecification[] {
     return flat.length >= 2 && flat.length % 2 === 0 ? flat : defaultStops;
   }
 
+  // Fill opacity defaults to legacy behavior: fade in by z6.5, steady through z13.
+  function normalizeFillOpacityStops(
+    input: number | number[] | Record<string, number> | undefined
+  ): number[] {
+    const defaultFillOpacityStops = [6.5, 0.35, 13, 0.35];
+    if (input === undefined) return defaultFillOpacityStops;
+    if (typeof input === "number") {
+      return [6.5, input, 13, input];
+    }
+    return normalizeStops(input, defaultFillOpacityStops);
+  }
+
   function getZoomBreaks(stops: number[], fallbackBreaks: number[]): number[] {
     if (stops.length >= 2 && stops.length % 2 === 0) {
       const zooms: number[] = [];
@@ -268,15 +280,40 @@ export function createPlacesLayers(theme: Theme): LayerSpecification[] {
         places.outline.color
       ];
   
-  // Opacity crossfade for polygons (fade in from z5 to z6.5)
-  const polygonZoomRamp = [
-    "interpolate",
-    ["linear"],
-    ["zoom"],
-    5, 0,
-    6.5, places.fill.opacity ?? 0.35,
-    13, places.fill.opacity ?? 0.35
+  const fillOpacityStops = normalizeFillOpacityStops(places.fill.opacity);
+  let fillOpacityBreaks = getZoomBreaks(fillOpacityStops, [6.5, 13]).filter((z) => z > 5);
+  if (fillOpacityBreaks.length === 0) {
+    fillOpacityBreaks = [6.5, 13];
+  }
+
+  const populationOpacityFactor = [
+    "+",
+    1.0,
+    [
+      "case",
+      ["!=", ["feature-state", "pop_total"], null],
+      [
+        "interpolate",
+        ["linear"],
+        ["feature-state", "pop_total"],
+        0, 0,
+        10000, 0.05,
+        50000, 0.1,
+        100000, 0.15,
+        500000, 0.2
+      ],
+      0
+    ]
   ];
+
+  const fillOpacityExpression: any[] = ["interpolate", ["linear"], ["zoom"], 5, 0];
+  for (const z of fillOpacityBreaks) {
+    fillOpacityExpression.push(z, [
+      "*",
+      valueAtZoom(fillOpacityStops, 0.35, z),
+      populationOpacityFactor
+    ]);
+  }
 
   // Opacity crossfade for outlines (stay subtle at low zoom, full by 6.5+)
   const outlineZoomRamp = [
@@ -393,58 +430,7 @@ export function createPlacesLayers(theme: Theme): LayerSpecification[] {
       filter: ["all", ["has", "GEOID"]],
       paint: {
         "fill-color": fillColorExpression,
-        "fill-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          5, 0,
-          6.5, [
-            "*",
-            places.fill.opacity ?? 0.35,
-            [
-              "+",
-              1.0,
-              [
-                "case",
-                ["!=", ["feature-state", "pop_total"], null],
-                [
-                  "interpolate",
-                  ["linear"],
-                  ["feature-state", "pop_total"],
-                  0, 0,
-                  10000, 0.05,
-                  50000, 0.1,
-                  100000, 0.15,
-                  500000, 0.2
-                ],
-                0
-              ]
-            ]
-          ],
-          13, [
-            "*",
-            places.fill.opacity ?? 0.35,
-            [
-              "+",
-              1.0,
-              [
-                "case",
-                ["!=", ["feature-state", "pop_total"], null],
-                [
-                  "interpolate",
-                  ["linear"],
-                  ["feature-state", "pop_total"],
-                  0, 0,
-                  10000, 0.05,
-                  50000, 0.1,
-                  100000, 0.15,
-                  500000, 0.2
-                ],
-                0
-              ]
-            ]
-          ]
-        ],
+        "fill-opacity": fillOpacityExpression,
         "fill-antialias": false,
       }
     });
