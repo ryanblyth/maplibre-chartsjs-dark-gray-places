@@ -2,9 +2,9 @@
  * Land layers (landcover, landuse)
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type { FilterSpecification, LayerSpecification } from "maplibre-gl";
 import type { Theme } from "../theme.js";
-import { landcoverFillColor, landuseFillColor } from "./expressions.js";
+import { expressionFilter, landcoverFillColor, landuseFillColor } from "./expressions.js";
 
 export function createLandcoverLayers(theme: Theme): LayerSpecification[] {
   const c = theme.colors;
@@ -21,10 +21,10 @@ export function createLandcoverLayers(theme: Theme): LayerSpecification[] {
   
   // Filter out ice class from landcover if ice layers are enabled
   // This prevents duplicate/conflicting ice rendering
-  const excludeIceFilter = theme.ice?.enabled 
-    ? ["!=", ["get", "class"], "ice"]
-    : true; // Show all if ice is disabled
-  
+  const excludeIceFilter: FilterSpecification = theme.ice?.enabled
+    ? expressionFilter(["!=", ["get", "class"], "ice"])
+    : true;
+
   return [
     { 
       id: "landcover-world", 
@@ -73,10 +73,10 @@ export function createUSLandLayers(theme: Theme): LayerSpecification[] {
   const luFill = landuseFillColor(c, landuseConfig);
   
   // Filter out ice class from landcover if ice layers are enabled
-  const excludeIceFilter = theme.ice?.enabled 
-    ? ["!=", ["get", "class"], "ice"]
+  const excludeIceFilter: FilterSpecification = theme.ice?.enabled
+    ? expressionFilter(["!=", ["get", "class"], "ice"])
     : true;
-  
+
   return [
     { 
       id: "landcover-us", 

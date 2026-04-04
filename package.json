@@ -17,7 +17,7 @@
   "devDependencies": {
     "@mapbox/vector-tile": "^2.0.4",
     "@types/node": "^20.10.0",
-    "maplibre-gl": "^4.0.0",
+    "maplibre-gl": "^5.13.0",
     "pbf": "^4.0.1",
     "pmtiles": "^4.4.0",
     "sharp": "^0.34.5",

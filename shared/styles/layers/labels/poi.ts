@@ -4,10 +4,16 @@
  * Displays icons for various POI categories at zoom 12+
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type { DataDrivenPropertyValueSpecification, LayerSpecification } from "maplibre-gl";
 import type { Theme, ThemePOIs } from "../../theme.js";
 import { createTextField } from "../../baseStyle.js";
 import { filters } from "../expressions.js";
+
+function poiTextSize(v: unknown): DataDrivenPropertyValueSpecification<number> {
+  return v as DataDrivenPropertyValueSpecification<number>;
+}
+
+type SymbolLayerLayout = NonNullable<Extract<LayerSpecification, { type: "symbol" }>["layout"]>;
 
 /**
  * Creates POI icon layers for various categories
@@ -51,20 +57,19 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
   // Use theme-configured font for POI labels, with fallback to default fonts
   const poiFont = theme.labelFonts?.poi ?? theme.labelFonts?.default ?? theme.fonts.regular;
   
-  // Base layout for POI icons
   const baseLayout = {
     "icon-size": poiConfig.iconSize || 0.8,
     "icon-allow-overlap": false,
     "icon-ignore-placement": false,
     "text-field": createTextField(),
     "text-font": poiFont,
-    "text-size": ["interpolate", ["linear"], ["zoom"], 12, 10, 14, 12, 16, 14],
+    "text-size": poiTextSize(["interpolate", ["linear"], ["zoom"], 12, 10, 14, 12, 16, 14]),
     "text-offset": [0, 1.2],
     "text-anchor": "top",
     "text-optional": true,
     "text-allow-overlap": false,
-    "symbol-placement": "point" as const,
-  };
+    "symbol-placement": "point",
+  } as SymbolLayerLayout;
   
   const layers: LayerSpecification[] = [];
   
@@ -664,9 +669,9 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
           "icon-optional": false,
           "text-field": createTextField(),
           "text-font": poiFont,
-          "text-size": ["interpolate", ["linear"], ["zoom"], 14.5, 10, 15, 12, 16, 14],
+          "text-size": poiTextSize(["interpolate", ["linear"], ["zoom"], 14.5, 10, 15, 12, 16, 14]),
           "text-offset": [0, 1.2],
-          "text-anchor": "top",
+          "text-anchor": "top" as const,
           "text-optional": true,
           "text-allow-overlap": false,
           "symbol-placement": "point" as const,
@@ -727,9 +732,9 @@ export function createPOILayers(theme: Theme): LayerSpecification[] {
           "icon-optional": false,
           "text-field": createTextField(),
           "text-font": poiFont,
-          "text-size": ["interpolate", ["linear"], ["zoom"], 15, 9, 16, 12],
+          "text-size": poiTextSize(["interpolate", ["linear"], ["zoom"], 15, 9, 16, 12]),
           "text-offset": [0, 1.2],
-          "text-anchor": "top",
+          "text-anchor": "top" as const,
           "text-optional": true,
           "text-allow-overlap": false,
           "symbol-placement": "point" as const,
