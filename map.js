@@ -123,7 +123,8 @@ map.addControl(new DensityLegendControl(), "bottom-left");
 
 const attributionControl = new maplibregl.AttributionControl({
   compact: false,
-  customAttribution: "<a href='https://maplibre.org/'>MapLibre</a> | © <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors, © <a href='https://openmaptiles.org/'>OpenMapTiles</a> | <a href='https://www.naturalearthdata.com/'>Natural Earth</a>"
+  customAttribution:
+    "<a href='https://maplibre.org/'>MapLibre</a> | © <a href='https://storypath.studio/'>StoryPath Studio</a> | © <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors | © <a href='https://openmaptiles.org/'>OpenMapTiles</a> | <a href='https://www.naturalearthdata.com/'>Natural Earth</a>"
 });
 map.addControl(attributionControl);
 
