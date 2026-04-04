@@ -10,8 +10,14 @@
  * TileJSON URL: {dataBaseUrl}/graticules.json
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type {
+  DataDrivenPropertyValueSpecification,
+  ExpressionSpecification,
+  FilterSpecification,
+  LayerSpecification,
+} from "maplibre-gl";
 import type { Theme } from "../theme.js";
+import { expressionFilter } from "./expressions.js";
 
 // Default values
 const DEFAULT_GRID_COLOR = "#4a5568";
@@ -24,6 +30,10 @@ const DEFAULT_LABEL_SIZE = { min: 10, max: 12 };
 const OPACITY_FADE_FACTOR = 0.7; // Starting opacity multiplier for fade-in
 const LABEL_SPACING = 300; // Pixels between labels along lines
 
+function gridOpacityPaint(v: unknown): DataDrivenPropertyValueSpecification<number> {
+  return v as DataDrivenPropertyValueSpecification<number>;
+}
+
 /**
  * Creates a width expression from theme configuration
  */
@@ -31,8 +41,8 @@ function createWidthExpression(
   width: number | { min: number; max: number } | undefined,
   gridMinZoom: number,
   gridMaxZoom: number
-): unknown {
-  if (typeof width === 'number') {
+): DataDrivenPropertyValueSpecification<number> {
+  if (typeof width === "number") {
     return width;
   }
   if (width) {
@@ -42,7 +52,7 @@ function createWidthExpression(
       ["zoom"],
       gridMinZoom, width.min,
       gridMaxZoom, width.max
-    ];
+    ] as DataDrivenPropertyValueSpecification<number>;
   }
   return [
     "interpolate",
@@ -50,7 +60,7 @@ function createWidthExpression(
     ["zoom"],
     gridMinZoom, 0.5,
     gridMaxZoom, 1.0
-  ];
+  ] as DataDrivenPropertyValueSpecification<number>;
 }
 
 /**
@@ -60,8 +70,8 @@ function createLabelSizeExpression(
   size: number | { min: number; max: number } | undefined,
   labelMinZoom: number,
   gridMaxZoom: number
-): unknown {
-  if (typeof size === 'number') {
+): DataDrivenPropertyValueSpecification<number> {
+  if (typeof size === "number") {
     return size;
   }
   if (size) {
@@ -71,7 +81,7 @@ function createLabelSizeExpression(
       ["zoom"],
       labelMinZoom, size.min,
       gridMaxZoom, size.max
-    ];
+    ] as DataDrivenPropertyValueSpecification<number>;
   }
   return [
     "interpolate",
@@ -79,23 +89,24 @@ function createLabelSizeExpression(
     ["zoom"],
     labelMinZoom, DEFAULT_LABEL_SIZE.min,
     gridMaxZoom, DEFAULT_LABEL_SIZE.max
-  ];
+  ] as DataDrivenPropertyValueSpecification<number>;
 }
 
 /**
  * Creates a label field expression for coordinate display
  */
-function createLabelField(direction: "lat" | "lon"): unknown {
-  const suffix = direction === "lat" 
-    ? ["case", [">", ["get", "value"], 0], "N", ["<", ["get", "value"], 0], "S", "°"]
-    : ["case", [">", ["get", "value"], 0], "E", ["<", ["get", "value"], 0], "W", "°"];
-  
+function createLabelField(direction: "lat" | "lon"): ExpressionSpecification {
+  const suffix =
+    direction === "lat"
+      ? (["case", [">", ["get", "value"], 0], "N", ["<", ["get", "value"], 0], "S", "°"] as ExpressionSpecification)
+      : (["case", [">", ["get", "value"], 0], "E", ["<", ["get", "value"], 0], "W", "°"] as ExpressionSpecification);
+
   return [
     "concat",
     ["to-string", ["abs", ["get", "value"]]],
     "°",
     suffix
-  ];
+  ] as ExpressionSpecification;
 }
 
 /**
@@ -130,14 +141,11 @@ export function createGridLayers(theme: Theme): LayerSpecification[] {
     const interval = config.interval ?? DEFAULT_INTERVAL;
     const lineWidth = createWidthExpression(config.width, gridMinZoom, gridMaxZoom);
     
-    // Build filter: kind + step interval
-    const filter: unknown[] = [
-      "all",
-      ["==", ["get", "kind"], kind]
-    ];
+    const filterParts: unknown[] = [["==", ["get", "kind"], kind]];
     if (interval) {
-      filter.push(["==", ["get", "step"], String(interval)]);
+      filterParts.push(["==", ["get", "step"], String(interval)]);
     }
+    const filter: FilterSpecification = expressionFilter(["all", ...filterParts]);
     
     const layerId = kind === "parallel" ? "grid-latitude" : "grid-longitude";
     
@@ -153,14 +161,14 @@ export function createGridLayers(theme: Theme): LayerSpecification[] {
       paint: {
         "line-color": lineColor,
         "line-width": lineWidth,
-        "line-opacity": [
+        "line-opacity": gridOpacityPaint([
           "interpolate",
           ["linear"],
           ["zoom"],
           gridMinZoom, lineOpacity * OPACITY_FADE_FACTOR,
           gridMaxZoom, lineOpacity,
           gridMaxZoom + 1, 0.0
-        ],
+        ]),
       }
     });
     
@@ -192,14 +200,14 @@ export function createGridLayers(theme: Theme): LayerSpecification[] {
         },
         paint: {
           "text-color": labelColor,
-          "text-opacity": [
+          "text-opacity": gridOpacityPaint([
             "interpolate",
             ["linear"],
             ["zoom"],
             labelMinZoom, labelOpacity * OPACITY_FADE_FACTOR,
             gridMaxZoom, labelOpacity,
             gridMaxZoom + 1, 0.0
-          ],
+          ]),
           "text-halo-color": "#000000",
           "text-halo-width": 1,
           "text-halo-blur": 0.5,

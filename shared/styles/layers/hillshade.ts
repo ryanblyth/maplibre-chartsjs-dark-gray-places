@@ -2,7 +2,7 @@
  * Hillshade layers (terrain shading from elevation data)
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type { LayerSpecification, PropertyValueSpecification } from "maplibre-gl";
 import type { Theme } from "../theme.js";
 
 /**
@@ -31,8 +31,7 @@ export function createHillshadeLayers(theme: Theme): LayerSpecification[] {
   // This simulates opacity by reducing the intensity of the hillshade effect
   const effectiveExaggeration = baseExaggeration * opacity;
   
-  // For fade-out at maxZoom, use zoom-based exaggeration
-  let exaggerationExpr: unknown;
+  let exaggerationExpr: PropertyValueSpecification<number>;
   if (hillshade.maxZoom !== undefined) {
     exaggerationExpr = [
       "interpolate",
@@ -40,8 +39,8 @@ export function createHillshadeLayers(theme: Theme): LayerSpecification[] {
       ["zoom"],
       hillshade.minZoom ?? 0, effectiveExaggeration,
       hillshade.maxZoom, effectiveExaggeration,
-      hillshade.maxZoom + 1, 0.0,  // Fade out by reducing exaggeration to 0
-    ];
+      hillshade.maxZoom + 1, 0.0,
+    ] as PropertyValueSpecification<number>;
   } else {
     exaggerationExpr = effectiveExaggeration;
   }
@@ -51,7 +50,7 @@ export function createHillshadeLayers(theme: Theme): LayerSpecification[] {
     type: "hillshade",
     source: "world-hillshade",
     minzoom: hillshade.minZoom ?? 0,
-    maxzoom: hillshade.maxZoom ? hillshade.maxZoom + 1 : undefined,
+    ...(hillshade.maxZoom !== undefined ? { maxzoom: hillshade.maxZoom + 1 } : {}),
     paint: {
       "hillshade-illumination-direction": hillshade.illuminationDirection ?? 335,
       "hillshade-illumination-anchor": hillshade.illuminationAnchor ?? "viewport",

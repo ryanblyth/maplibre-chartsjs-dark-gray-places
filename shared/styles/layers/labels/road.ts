@@ -2,16 +2,17 @@
  * Road label layers
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type { FilterSpecification, LayerSpecification } from "maplibre-gl";
 import type { Theme } from "../../theme.js";
 import { createAbbreviatedTextField } from "../../baseStyle.js";
+import { expressionFilter } from "../expressions.js";
 
 export function createRoadLabelLayers(theme: Theme): LayerSpecification[] {
   const c = theme.colors;
-  const majorFilter = ["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["match", ["get", "class"], ["motorway", "trunk", "primary"], true, false], ["has", "name"]];
-  const secondaryFilter = ["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["==", ["get", "class"], "secondary"], ["has", "name"]];
-  const tertiaryFilter = ["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["match", ["get", "class"], ["tertiary", "residential"], true, false], ["has", "name"]];
-  const otherFilter = ["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["!", ["match", ["get", "class"], ["motorway", "trunk", "primary", "secondary", "tertiary", "residential"], true, false]], ["has", "name"]];
+  const majorFilter: FilterSpecification = expressionFilter(["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["match", ["get", "class"], ["motorway", "trunk", "primary"], true, false], ["has", "name"]]);
+  const secondaryFilter: FilterSpecification = expressionFilter(["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["==", ["get", "class"], "secondary"], ["has", "name"]]);
+  const tertiaryFilter: FilterSpecification = expressionFilter(["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["match", ["get", "class"], ["tertiary", "residential"], true, false], ["has", "name"]]);
+  const otherFilter: FilterSpecification = expressionFilter(["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["!", ["match", ["get", "class"], ["motorway", "trunk", "primary", "secondary", "tertiary", "residential"], true, false]], ["has", "name"]]);
   
   // Use theme-configured font for road labels, with fallback to default fonts
   const roadFont = theme.labelFonts?.road ?? theme.labelFonts?.default ?? theme.fonts.regular;
@@ -57,9 +58,9 @@ export function createHighwayShieldLayers(theme: Theme): LayerSpecification[] {
   const stateHighwayConfig = shields?.stateHighway || { enabled: true, sprite: "shield-state", textColor: "#1a4d1a", minZoom: 8 };
   
   // Filter for roads that have a ref (route number)
-  const interstateFilter = ["all", ["has", "ref"], ["==", ["get", "network"], "us-interstate"]];
-  const usHighwayFilter = ["all", ["has", "ref"], ["==", ["get", "network"], "us-highway"]];
-  const stateHighwayFilter = ["all", ["has", "ref"], ["match", ["get", "network"], ["us-state", "US:US", "US"], true, false]];
+  const interstateFilter: FilterSpecification = expressionFilter(["all", ["has", "ref"], ["==", ["get", "network"], "us-interstate"]]);
+  const usHighwayFilter: FilterSpecification = expressionFilter(["all", ["has", "ref"], ["==", ["get", "network"], "us-highway"]]);
+  const stateHighwayFilter: FilterSpecification = expressionFilter(["all", ["has", "ref"], ["match", ["get", "network"], ["us-state", "US:US", "US"], true, false]]);
   
   // Base layout shared by all shields (can be overridden per-shield)
   const baseShieldLayout = {
@@ -97,7 +98,7 @@ export function createHighwayShieldLayers(theme: Theme): LayerSpecification[] {
         "icon-image": interstateConfig.sprite,
         "icon-text-fit-padding": interstateConfig.textPadding || [2, 4, 2, 4],
         "text-size": buildTextSize(interstateConfig.textSize),
-        "text-font": interstateConfig.textFont || theme.fonts.bold || theme.fonts.regular,
+        "text-font": interstateConfig.textFont || theme.fonts.semibold || theme.fonts.regular,
       }, 
       paint: { 
         "text-color": interstateConfig.textColor,
@@ -119,7 +120,7 @@ export function createHighwayShieldLayers(theme: Theme): LayerSpecification[] {
         "icon-image": usHighwayConfig.sprite,
         "icon-text-fit-padding": usHighwayConfig.textPadding || [2, 4, 2, 4],
         "text-size": buildTextSize(usHighwayConfig.textSize),
-        "text-font": usHighwayConfig.textFont || theme.fonts.bold || theme.fonts.regular,
+        "text-font": usHighwayConfig.textFont || theme.fonts.semibold || theme.fonts.regular,
       }, 
       paint: { 
         "text-color": usHighwayConfig.textColor,
@@ -141,7 +142,7 @@ export function createHighwayShieldLayers(theme: Theme): LayerSpecification[] {
         "icon-image": stateHighwayConfig.sprite,
         "icon-text-fit-padding": stateHighwayConfig.textPadding || [2, 4, 2, 4],
         "text-size": buildTextSize(stateHighwayConfig.textSize),
-        "text-font": stateHighwayConfig.textFont || theme.fonts.bold || theme.fonts.regular,
+        "text-font": stateHighwayConfig.textFont || theme.fonts.semibold || theme.fonts.regular,
       }, 
       paint: { 
         "text-color": stateHighwayConfig.textColor,

@@ -2,25 +2,26 @@
  * Road layers (world, US, tunnels, bridges)
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type { DataDrivenPropertyValueSpecification, LayerSpecification } from "maplibre-gl";
 import type { Theme } from "../theme.js";
-import { 
-  roadColorExpr, 
-  roadColorWithTertiaryExpr, 
-  buildingFillColor, 
-  tunnelColorExpr, 
-  bridgeColorExpr, 
+import {
+  roadColorExpr,
+  roadColorWithTertiaryExpr,
+  buildingFillColor,
+  tunnelColorExpr,
+  bridgeColorExpr,
   filters,
+  expressionFilter,
   roadWidthExpr,
   roadWidthExprRealWorld,
   roadCasingWidthExpr,
   roadCasingWidthExprRealWorld,
-  zoomWidthExpr
+  zoomWidthExpr,
 } from "./expressions.js";
 import type { RoadClassWidths } from "../theme.js";
 
 /** Helper to get road width expression based on theme settings */
-function getRoadWidthExpr(widths: RoadClassWidths, theme: Theme): unknown {
+function getRoadWidthExpr(widths: RoadClassWidths, theme: Theme): DataDrivenPropertyValueSpecification<number> {
   if (theme.settings?.realWorldScale) {
     const minZoom = theme.settings.realWorldScaleMinZoom ?? 15;
     return roadWidthExprRealWorld(widths, minZoom);
@@ -28,10 +29,12 @@ function getRoadWidthExpr(widths: RoadClassWidths, theme: Theme): unknown {
   return roadWidthExpr(widths);
 }
 
-// Casing width helper - currently uses fixed scaling (not real-world)
-// Real-world casing scaling can be revisited in the future if needed
-function getRoadCasingWidthExpr(widths: RoadClassWidths, _theme: Theme): unknown {
+function getRoadCasingWidthExpr(widths: RoadClassWidths, _theme: Theme): DataDrivenPropertyValueSpecification<number> {
   return roadCasingWidthExpr(widths);
+}
+
+function lineWidthInterpolation(v: unknown): DataDrivenPropertyValueSpecification<number> {
+  return v as DataDrivenPropertyValueSpecification<number>;
 }
 
 export function createWorldRoadLayers(theme: Theme): LayerSpecification[] {
@@ -84,42 +87,34 @@ export function createUSRoadLayers(theme: Theme): LayerSpecification[] {
     if (buildingConfig?.enabled === false) {
       return null;
     }
-    
-    const buildingPaint: any = {
-      "fill-color": buildingFillColor(c, buildingHeightColorsMinZoom),
-      "fill-outline-color": c.building.outline,
-      "fill-opacity": o.building
-    };
-    
-    // Add fade-out opacity if maxZoom is set
+
+    let fillOpacity: DataDrivenPropertyValueSpecification<number> = o.building;
     if (buildingMaxZoom !== undefined) {
-      buildingPaint["fill-opacity"] = [
+      fillOpacity = [
         "interpolate",
         ["linear"],
         ["zoom"],
         minzoom, o.building,
         buildingMaxZoom, o.building,
         buildingMaxZoom + 1, 0.0
-      ];
+      ] as DataDrivenPropertyValueSpecification<number>;
     }
-    
-    const buildingLayer: any = {
+
+    return {
       id,
       type: "fill",
       source: "us_high",
       "source-layer": "building",
       minzoom,
-      paint: buildingPaint
+      ...(buildingMaxZoom !== undefined ? { maxzoom: buildingMaxZoom + 1 } : {}),
+      paint: {
+        "fill-color": buildingFillColor(c, buildingHeightColorsMinZoom),
+        "fill-outline-color": c.building.outline,
+        "fill-opacity": fillOpacity,
+      },
     };
-    
-    // Only add maxzoom if it's defined (JSON doesn't support undefined)
-    if (buildingMaxZoom !== undefined) {
-      buildingLayer.maxzoom = buildingMaxZoom + 1;
-    }
-    
-    return buildingLayer;
   };
-  
+
   const layers: LayerSpecification[] = [
     // Tunnel layers - inherit road widths and colors (can be overridden in theme)
     { id: "road-tunnel-casing", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 6, filter: filters.tunnel, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": tunnelCasingColor, "line-width": casingWidth, "line-opacity": o.tunnel } },
@@ -181,43 +176,36 @@ export function createUSOverlayRoadLayers(theme: Theme): LayerSpecification[] {
     if (buildingConfig?.enabled === false) {
       return null;
     }
-    
+
     const buildingHeightColorsMinZoom = buildingConfig?.heightColorsMinZoom;
-    const buildingPaint: any = {
-      "fill-color": buildingFillColor(c, buildingHeightColorsMinZoom),
-      "fill-outline-color": c.building.outline,
-      "fill-opacity": o.building
-    };
-    
-    // Add fade-out opacity if maxZoom is set
+
+    let fillOpacity: DataDrivenPropertyValueSpecification<number> = o.building;
     if (buildingMaxZoom !== undefined) {
-      buildingPaint["fill-opacity"] = [
+      fillOpacity = [
         "interpolate",
         ["linear"],
         ["zoom"],
         minzoom, o.building,
         buildingMaxZoom, o.building,
         buildingMaxZoom + 1, 0.0
-      ];
+      ] as DataDrivenPropertyValueSpecification<number>;
     }
-    
-    const buildingLayer: any = {
+
+    return {
       id,
       type: "fill",
       source: "us_high",
       "source-layer": "building",
       minzoom,
-      paint: buildingPaint
+      ...(buildingMaxZoom !== undefined ? { maxzoom: buildingMaxZoom + 1 } : {}),
+      paint: {
+        "fill-color": buildingFillColor(c, buildingHeightColorsMinZoom),
+        "fill-outline-color": c.building.outline,
+        "fill-opacity": fillOpacity,
+      },
     };
-    
-    // Only add maxzoom if it's defined (JSON doesn't support undefined)
-    if (buildingMaxZoom !== undefined) {
-      buildingLayer.maxzoom = buildingMaxZoom + 1;
-    }
-    
-    return buildingLayer;
   };
-  
+
   const layers: LayerSpecification[] = [];
   
   // US buildings (high zoom) - always starts at zoom 13 per PMTiles data availability
@@ -233,13 +221,13 @@ export function createUSOverlayRoadLayers(theme: Theme): LayerSpecification[] {
     { id: "road-us", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 6, filter: filters.normalRoad, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": roadColor, "line-width": roadWidth } },
     
     // Alleys - only appear at zoom 14+
-    { id: "road-alley", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 14, filter: filters.alley, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": c.road.service, "line-width": ["interpolate", ["linear"], ["zoom"], 14, 0.3, 15, 0.6, 18, 1.2] } },
+    { id: "road-alley", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 14, filter: filters.alley, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": c.road.service, "line-width": lineWidthInterpolation(["interpolate", ["linear"], ["zoom"], 14, 0.3, 15, 0.6, 18, 1.2]) } },
     
     // Parking aisles - only appear at zoom 15+ (even later than alleys)
-    { id: "road-parking-aisle", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 15, filter: filters.parkingAisle, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": c.road.parkingAisle || c.road.service, "line-width": ["interpolate", ["linear"], ["zoom"], 15, 0.2, 16, 0.4, 18, 0.8] } },
+    { id: "road-parking-aisle", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 15, filter: filters.parkingAisle, layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": c.road.parkingAisle || c.road.service, "line-width": lineWidthInterpolation(["interpolate", ["linear"], ["zoom"], 15, 0.2, 16, 0.4, 18, 0.8]) } },
     
     // Other roads (catch-all for unhandled road classes)
-    { id: "road-other", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 14, filter: ["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["!", ["match", ["get", "class"], ["motorway", "trunk", "primary", "secondary", "tertiary", "residential", "service", "minor", "unclassified"], true, false]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": c.road.other, "line-width": ["interpolate", ["linear"], ["zoom"], 14, 0.3, 15, 0.5] } },
+    { id: "road-other", type: "line", source: "us_high", "source-layer": "transportation", minzoom: 14, filter: expressionFilter(["all", ["!=", ["get", "brunnel"], "tunnel"], ["!=", ["get", "brunnel"], "bridge"], ["!", ["match", ["get", "class"], ["motorway", "trunk", "primary", "secondary", "tertiary", "residential", "service", "minor", "unclassified"], true, false]]]), layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": c.road.other, "line-width": lineWidthInterpolation(["interpolate", ["linear"], ["zoom"], 14, 0.3, 15, 0.5]) } },
     
     // US Bridges - rendered on TOP of everything
     // Bridge casing commented out - can be re-enabled if needed for highway interchanges
