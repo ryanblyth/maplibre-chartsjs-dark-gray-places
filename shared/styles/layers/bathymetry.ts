@@ -2,7 +2,7 @@
  * Bathymetry layers (ocean depth visualization)
  */
 
-import type { LayerSpecification } from "maplibre-gl";
+import type { DataDrivenPropertyValueSpecification, LayerSpecification } from "maplibre-gl";
 import type { Theme } from "../theme.js";
 
 /**
@@ -106,6 +106,41 @@ function generateBathymetryRamp(baseWaterColor: string): string[] {
   return stops.map((lightness, i) => 
     hslToHex(h, Math.min(100, saturations[i]), Math.max(5, Math.min(100, lightness)))
   );
+}
+
+function bathymetryFillColor(colorStops: unknown[]): DataDrivenPropertyValueSpecification<string> {
+  return [
+    "interpolate",
+    ["linear"],
+    [
+      "case",
+      ["has", "depth"],
+      [
+        "case",
+        [">=", ["get", "depth"], 0],
+        ["get", "depth"],
+        ["*", ["get", "depth"], -1]
+      ],
+      0
+    ],
+    ...colorStops
+  ] as DataDrivenPropertyValueSpecification<string>;
+}
+
+function bathymetryLayerOpacity(
+  minZ: number,
+  maxZ: number,
+  minOpacity: number,
+  fullOpacity: number
+): DataDrivenPropertyValueSpecification<number> {
+  return [
+    "interpolate",
+    ["linear"],
+    ["zoom"],
+    minZ, minOpacity,
+    maxZ, fullOpacity,
+    maxZ + 1, 0.0
+  ] as DataDrivenPropertyValueSpecification<number>;
 }
 
 /**
@@ -245,30 +280,13 @@ export function createBathymetryLayers(theme: Theme): LayerSpecification[] {
       minzoom: bathy.minZoom ?? 0,
       maxzoom: (bathy.maxZoom ?? 6) + 1,  // Add 1 for fade-out
       paint: {
-        "fill-color": [
-          "interpolate",
-          ["linear"],
-          [
-            "case",
-            ["has", "depth"],
-            [
-              "case",
-              [">=", ["get", "depth"], 0],
-              ["get", "depth"],
-              ["*", ["get", "depth"], -1]
-            ],
-            0  // Fallback if depth property doesn't exist
-          ],
-          ...colorStops  // Using theme-based colors
-        ],
-        "fill-opacity": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          bathy.minZoom ?? 0, layerOpacity * (baseOpacityMin / baseOpacityMax),  // Scale opacity at minZoom
-          bathy.maxZoom ?? 6, layerOpacity,  // Full layer opacity at maxZoom
-          (bathy.maxZoom ?? 6) + 1, 0.0   // Fade out after maxZoom
-        ]
+        "fill-color": bathymetryFillColor(colorStops),
+        "fill-opacity": bathymetryLayerOpacity(
+          bathy.minZoom ?? 0,
+          bathy.maxZoom ?? 6,
+          layerOpacity * (baseOpacityMin / baseOpacityMax),
+          layerOpacity
+        )
       }
     });
   }

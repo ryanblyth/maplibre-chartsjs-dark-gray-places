@@ -52,16 +52,18 @@ function isSimpleArray(arr: unknown[]): boolean {
  * Check if an object is "simple" (2-3 properties, all primitive values)
  */
 function isSimpleObject(obj: Record<string, unknown>): boolean {
-  const keys = Object.keys(obj);
+  const keys = Object.keys(obj).filter(k => obj[k] !== undefined);
   if (keys.length < 2 || keys.length > 3) return false;
-  
-  // All values must be primitives or null
-  return Object.values(obj).every(v => 
-    v === null || 
-    typeof v === 'string' || 
-    typeof v === 'number' || 
-    typeof v === 'boolean'
-  );
+
+  return keys.every(k => {
+    const v = obj[k];
+    return (
+      v === null ||
+      typeof v === 'string' ||
+      typeof v === 'number' ||
+      typeof v === 'boolean'
+    );
+  });
 }
 
 /**
@@ -94,6 +96,7 @@ function formatValue(value: unknown, indent = 0, context: FormatContext = {}): s
   const spaces = '  '.repeat(indent);
   
   if (value === null) return 'null';
+  if (value === undefined) return 'null';
   if (typeof value === 'string') return JSON.stringify(value);
   if (typeof value === 'number' || typeof value === 'boolean') return String(value);
   
@@ -280,7 +283,7 @@ function formatValue(value: unknown, indent = 0, context: FormatContext = {}): s
   
   if (typeof value === 'object' && value !== null) {
     const obj = value as Record<string, unknown>;
-    const keys = Object.keys(obj);
+    const keys = Object.keys(obj).filter(k => obj[k] !== undefined);
     if (keys.length === 0) return '{}';
     
     if (isSimpleObject(obj)) {
@@ -312,6 +315,7 @@ function formatValue(value: unknown, indent = 0, context: FormatContext = {}): s
 function formatMatchExpression(arr: unknown[]): string {
   const formatItem = (item: unknown): string => {
     if (item === null) return 'null';
+    if (item === undefined) return 'null';
     if (typeof item === 'string') return JSON.stringify(item);
     if (typeof item === 'number' || typeof item === 'boolean') return String(item);
     if (Array.isArray(item)) {
@@ -321,7 +325,7 @@ function formatMatchExpression(arr: unknown[]): string {
     if (typeof item === 'object') {
       // Objects in match - format compactly
       const obj = item as Record<string, unknown>;
-      const keys = Object.keys(obj);
+      const keys = Object.keys(obj).filter(k => obj[k] !== undefined);
       const pairs = keys.map(key => JSON.stringify(key) + ': ' + formatItem(obj[key]));
       return '{' + pairs.join(', ') + '}';
     }
