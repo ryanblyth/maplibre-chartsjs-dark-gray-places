@@ -98,12 +98,17 @@ export async function loadPlacesAttributesByState(statefp: string): Promise<Plac
  * ```
  */
 export async function loadPlacesAttributesByStates(statefps: string[]): Promise<PlacesAttributeData> {
-  const results = await Promise.all(
+  const settled = await Promise.allSettled(
     statefps.map(statefp => loadPlacesAttributesByState(statefp))
   );
-  
-  // Merge all results into a single object
-  return Object.assign({}, ...results);
+  const successful = settled
+    .filter((r): r is PromiseFulfilledResult<PlacesAttributeData> => r.status === "fulfilled")
+    .map(r => r.value);
+  const failCount = settled.length - successful.length;
+  if (failCount > 0) {
+    console.warn(`[places] Failed to load data for ${failCount} of ${settled.length} states`);
+  }
+  return Object.assign({}, ...successful);
 }
 
 /**

@@ -32,7 +32,7 @@ import {
   redrawStateTopCitiesChart,
 } from "./charts/stateTopCitiesDock.js";
 import { loadManifest } from "./data/manifestLoader.js";
-import { formatNumber } from "./charts/chartUtils.js";
+import { formatCurrency, formatNumber } from "./charts/chartUtils.js";
 import { STORAGE_KEYS } from "./dock-constants.js";
 
 export const EVENT_NAME = "place-selected";
@@ -56,11 +56,6 @@ const demographicDoughnutCanvas = document.getElementById("dock-demographic-doug
 const commuteDoughnutCanvas = document.getElementById("dock-commute-doughnut-chart");
 const stateTopCitiesCanvas = document.getElementById("dock-state-top-cities-chart");
 const dock = document.getElementById("charts-dock");
-
-function formatDockCurrency(n) {
-  if (n == null || Number.isNaN(Number(n))) return "—";
-  return `$${Number(n).toLocaleString("en-US")}`;
-}
 
 function appendSummaryRows(dl, rows) {
   for (const [label, val] of rows) {
@@ -192,7 +187,7 @@ function render(detail) {
     ["Population", formatNumber(attrs.pop_total)],
     ["Pop Density Sq Mile", densityDisplay],
     ["Median household income", formatNumber(attrs.median_hh_income)],
-    ["Median age", attrs.median_age != null ? String(attrs.median_age) : "—"],
+    ["Median age", formatNumber(attrs.median_age)],
   ];
 
   const leadDl = document.createElement("dl");
@@ -210,10 +205,10 @@ function render(detail) {
     ["Households", formatNumber(attrs.households)],
     ["Housing Units", formatNumber(attrs.housing_units)],
     ["Avg Household Size", formatNumber(attrs.avg_household_size)],
-    ["Median Home Value", formatDockCurrency(attrs.median_home_value)],
-    ["Median Owner Cost Mortgage", formatDockCurrency(attrs.median_owner_cost_mortgage)],
-    ["Median Gross Rent", formatDockCurrency(attrs.median_gross_rent)],
-    ["Per Capita Income", formatDockCurrency(attrs.per_capita_income)],
+    ["Median Home Value", formatCurrency(attrs.median_home_value)],
+    ["Median Owner Cost Mortgage", formatCurrency(attrs.median_owner_cost_mortgage)],
+    ["Median Gross Rent", formatCurrency(attrs.median_gross_rent)],
+    ["Per Capita Income", formatCurrency(attrs.per_capita_income)],
   ];
 
   const extraWrap = document.createElement("div");

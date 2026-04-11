@@ -139,12 +139,14 @@ console.log(data["0644000"]); // Los Angeles attributes
 
 ### `loadPlacesAttributesByStates(statefps)`
 
-Load attribute data for multiple states.
+Load attribute data for multiple states concurrently.
 
 **Parameters:**
 - `statefps`: Array of two-digit state FIPS codes
 
 **Returns:** `Promise<PlacesAttributeData>`
+
+**Note:** Uses `Promise.allSettled` internally — if one state's fetch fails, the others are still applied and the failed state remains uncached for retry.
 
 ### `getVisibleStates(map)`
 
@@ -359,7 +361,8 @@ Common attributes:
 - **Initial Load**: Pre-loads visible states (typically 5-10 states = 5-10 KB total)
 - **Caching**: Loaded data is cached to avoid redundant requests
 - **Feature States**: Uses MapLibre feature states for efficient data-driven styling
-- **Incremental Loading**: Can load additional states as user pans
+- **Incremental Loading**: Automatically loads additional states as the user pans or zooms to new areas, triggered by `moveend` (fast path) and `idle` (retry after tiles finish rendering)
+- **Partial Failure Resilience**: If one state's attribute fetch fails, other states in the same batch are still applied; the failed state remains uncached and is retried on the next `idle` event
 
 ## Troubleshooting
 
@@ -370,7 +373,15 @@ Common attributes:
 3. Verify places layer is enabled in theme
 4. Check that attribute data is loading (see Network tab)
 
-### Popups show "No data available"
+### Places show gray fill instead of density colors
+
+On mobile or narrow viewports, the initial `getVisibleStates` call only loads states visible at startup. States outside the initial viewport render with the fallback gray fill until their attribute data is loaded.
+
+This is handled automatically: `moveend` and `idle` event handlers detect newly-visible uncached states and fetch their data. If a fetch fails transiently, the `idle` handler retries the next time the map settles. No manual intervention is needed — gray places should resolve within a second or two of scrolling to a new area.
+
+If places remain gray persistently, check the browser console for network errors fetching the attribute JSON files.
+
+
 
 - The state's attribute data hasn't been loaded yet
 - Check visible states with `getVisibleStates(map)`
@@ -411,13 +422,29 @@ await initializePlacesInteractivity(map, {
 ### Example 3: Dynamic Loading
 
 ```typescript
-// Load additional states as user pans
+// Load additional states as user pans, with idle-based retry for resilience
+import { getVisibleStates, isCached } from './shared/utils/placesData.js';
+import { loadAdditionalStates } from './shared/utils/placesMapSetup.js';
+
 map.on('moveend', async () => {
-  const visibleStates = getVisibleStates(map);
-  const newStates = visibleStates.filter(s => !isCached(s));
-  
+  const newStates = getVisibleStates(map).filter(s => !isCached(s));
   if (newStates.length > 0) {
     await loadAdditionalStates(map, newStates);
+  }
+});
+
+// Retry after tiles finish loading — catches cases where the moveend fetch
+// failed or feature states need to be applied to freshly rendered tiles.
+let idleLoadInProgress = false;
+map.on('idle', async () => {
+  if (idleLoadInProgress) return;
+  const newStates = getVisibleStates(map).filter(s => !isCached(s));
+  if (newStates.length === 0) return;
+  idleLoadInProgress = true;
+  try {
+    await loadAdditionalStates(map, newStates);
+  } finally {
+    idleLoadInProgress = false;
   }
 });
 ```
