@@ -1,9 +1,9 @@
 /* global maplibregl, pmtiles */
 import { getStateApproxCenterLngLat } from "./data/stateCentroids.js";
 import { placeCentroidsByGeoid } from "./data/placeCentroids.js";
-import { initializePlacesInteractivity } from "./shared/utils/placesMapSetup.js";
+import { initializePlacesInteractivity, loadAdditionalStates } from "./shared/utils/placesMapSetup.js";
 import { defaultPlacePopupAttributeConfig } from "./shared/utils/placesPopup.js";
-import { loadPlacesAttributesByState, updateMapFeatureStates } from "./shared/utils/placesData.js";
+import { loadPlacesAttributesByState, updateMapFeatureStates, getVisibleStates, isCached } from "./shared/utils/placesData.js";
 import { DensityLegendControl } from "./shared/densityLegendControl.js";
 
 /**
@@ -611,6 +611,12 @@ function setupPlacesInteractivity() {
       onInitComplete: (states, data) => {
         console.log(`Places interactivity initialized for ${states.length} states, ${Object.keys(data).length} places`);
         placesInitialized = true;
+        const missed = getVisibleStates(map).filter(s => !isCached(s));
+        if (missed.length > 0) {
+          loadAdditionalStates(map, missed).catch(err =>
+            console.warn("[map] post-init loadAdditionalStates failed", err)
+          );
+        }
       },
       onPlaceClick: (geoid, attrs, displayName) => {
         window.dispatchEvent(
@@ -643,6 +649,31 @@ map.on('load', () => { setupPlacesInteractivity(); });
 if (map.loaded() && map.getStyle()) {
   setupPlacesInteractivity();
 }
+
+map.on("moveend", async () => {
+  const newStates = getVisibleStates(map).filter(s => !isCached(s));
+  if (newStates.length === 0) return;
+  try {
+    await loadAdditionalStates(map, newStates);
+  } catch (err) {
+    console.warn("[map] moveend loadAdditionalStates failed", err);
+  }
+});
+
+let idleLoadInProgress = false;
+map.on("idle", async () => {
+  if (idleLoadInProgress) return;
+  const newStates = getVisibleStates(map).filter(s => !isCached(s));
+  if (newStates.length === 0) return;
+  idleLoadInProgress = true;
+  try {
+    await loadAdditionalStates(map, newStates);
+  } catch (err) {
+    console.warn("[map] idle loadAdditionalStates failed", err);
+  } finally {
+    idleLoadInProgress = false;
+  }
+});
 // ============================================================================
 // Low-zoom tile prefetch: warm Cloudflare edge cache after initial load
 // ============================================================================
