@@ -14,6 +14,7 @@ declare const maplibregl: {
 import type { Map as MapLibreMap, MapGeoJSONFeature } from "maplibre-gl";
 import type { PlaceAttributes, PlacesAttributeData } from "./placesData.js";
 import { getAttributesRowForGeoidFromCache } from "./placesData.js";
+import { isAcsMissingNumericValue } from "./acsSentinels.js";
 
 /**
  * Configuration for a single popup attribute
@@ -116,9 +117,12 @@ export function getFeatureDisplayName(feature: {
  */
 export function formatAttributeValue(key: string, value: any): string {
   if (value === null || value === undefined) {
-    return '<em>N/A</em>';
+    return "—";
   }
-  
+  if (isAcsMissingNumericValue(value)) {
+    return "—";
+  }
+
   // Handle different value types
   if (typeof value === 'number') {
     // Check if it's a currency field

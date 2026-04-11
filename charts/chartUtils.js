@@ -1,6 +1,7 @@
 /**
  * Shared utility functions for chart modules.
  */
+import { isAcsMissingNumericValue } from "../shared/utils/acsSentinels.js";
 import {
   Chart,
   CategoryScale,
@@ -36,20 +37,25 @@ export function ensureBarComponentsRegistered() {
 }
 
 export function safeNumber(value) {
-  if (value == null || Number.isNaN(Number(value))) {
+  if (value == null || Number.isNaN(Number(value)) || isAcsMissingNumericValue(value)) {
     return 0;
   }
   return Number(value);
 }
 
 export function formatPercent(num) {
-  if (num == null) return "N/A";
+  if (num == null || isAcsMissingNumericValue(num)) return "—";
   return `${Number(num).toFixed(1)}%`;
 }
 
 export function formatNumber(n) {
-  if (n == null || Number.isNaN(n)) return "—";
+  if (n == null || Number.isNaN(n) || isAcsMissingNumericValue(n)) return "—";
   return new Intl.NumberFormat("en-US").format(n);
+}
+
+export function formatCurrency(n) {
+  if (n == null || Number.isNaN(Number(n)) || isAcsMissingNumericValue(n)) return "—";
+  return `$${Number(n).toLocaleString("en-US")}`;
 }
 
 export function tickColor() {
