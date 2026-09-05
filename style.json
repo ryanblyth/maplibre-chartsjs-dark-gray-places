@@ -2,7 +2,7 @@
   "version": 8,
   "name": "My Custom Map Fixed Basemap",
   "glyphs": "https://assets.storypath.studio/glyphs/{fontstack}/{range}.pbf",
-  "sprite": "sprites/basemap",
+  "sprite": "http://localhost:8080/sprites/basemap",
   "sources": {
     "world_labels": {
       "type": "vector",
